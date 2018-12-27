@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BD235B5321D43E3F00B69689 /* CustomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5221D43E3F00B69689 /* CustomTextView.swift */; };
+		BD235B5521D543A300B69689 /* NewPostCell2.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5421D543A300B69689 /* NewPostCell2.swift */; };
+		BD235B5721D574D200B69689 /* ChooseCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5621D574D200B69689 /* ChooseCategoryController.swift */; };
+		BD235B5921D5804800B69689 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5821D5804800B69689 /* MapViewController.swift */; };
 		BD294E0021D1A18C00976663 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294DFF21D1A18C00976663 /* AppDelegate.swift */; };
 		BD294E0221D1A18C00976663 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E0121D1A18C00976663 /* TabBarController.swift */; };
 		BD294E0521D1A18C00976663 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD294E0321D1A18C00976663 /* Main.storyboard */; };
@@ -19,13 +23,25 @@
 		BD294E1C21D1B60700976663 /* HomeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E1B21D1B60700976663 /* HomeHeader.swift */; };
 		BD294E1E21D1D30200976663 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E1D21D1D30200976663 /* CategoryCell.swift */; };
 		BD294E2121D1F29500976663 /* CategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E2021D1F29500976663 /* CategoryModel.swift */; };
+		BD6A524721D400220094D175 /* NewPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6A524621D400220094D175 /* NewPostController.swift */; };
+		BD6A524C21D406A10094D175 /* CustomLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6A524B21D406A10094D175 /* CustomLabel.swift */; };
+		BD6A524E21D409A50094D175 /* NewPostCell1.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6A524D21D409A50094D175 /* NewPostCell1.swift */; };
 		BDBBA22621D2AF960033A53C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BDBBA22521D2AF960033A53C /* GoogleService-Info.plist */; };
+		BDF88FE621D2B9B9004277E3 /* CollectionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF88FE521D2B9B9004277E3 /* CollectionsCell.swift */; };
+		BDF88FE821D2EED9004277E3 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF88FE721D2EED9004277E3 /* LoginController.swift */; };
+		BDF88FEA21D2F012004277E3 /* RegistrationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF88FE921D2F012004277E3 /* RegistrationController.swift */; };
+		BDF88FED21D2F56A004277E3 /* CustomTextFiels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF88FEC21D2F56A004277E3 /* CustomTextFiels.swift */; };
+		BDF88FF121D30619004277E3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF88FF021D30619004277E3 /* User.swift */; };
 		FBAB290F56684E92400DCC42 /* Pods_Classifieds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DCBA56CAD8F8E4F7FF9752A /* Pods_Classifieds.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0ED3886017A114BFA40E5D09 /* Pods-Classifieds.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Classifieds.release.xcconfig"; path = "Pods/Target Support Files/Pods-Classifieds/Pods-Classifieds.release.xcconfig"; sourceTree = "<group>"; };
 		1DCBA56CAD8F8E4F7FF9752A /* Pods_Classifieds.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Classifieds.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD235B5221D43E3F00B69689 /* CustomTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextView.swift; sourceTree = "<group>"; };
+		BD235B5421D543A300B69689 /* NewPostCell2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostCell2.swift; sourceTree = "<group>"; };
+		BD235B5621D574D200B69689 /* ChooseCategoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseCategoryController.swift; sourceTree = "<group>"; };
+		BD235B5821D5804800B69689 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		BD294DFC21D1A18C00976663 /* Classifieds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Classifieds.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD294DFF21D1A18C00976663 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BD294E0121D1A18C00976663 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -40,7 +56,15 @@
 		BD294E1B21D1B60700976663 /* HomeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeader.swift; sourceTree = "<group>"; };
 		BD294E1D21D1D30200976663 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		BD294E2021D1F29500976663 /* CategoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryModel.swift; sourceTree = "<group>"; };
+		BD6A524621D400220094D175 /* NewPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostController.swift; sourceTree = "<group>"; };
+		BD6A524B21D406A10094D175 /* CustomLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLabel.swift; sourceTree = "<group>"; };
+		BD6A524D21D409A50094D175 /* NewPostCell1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostCell1.swift; sourceTree = "<group>"; };
 		BDBBA22521D2AF960033A53C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BDF88FE521D2B9B9004277E3 /* CollectionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsCell.swift; sourceTree = "<group>"; };
+		BDF88FE721D2EED9004277E3 /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		BDF88FE921D2F012004277E3 /* RegistrationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationController.swift; sourceTree = "<group>"; };
+		BDF88FEC21D2F56A004277E3 /* CustomTextFiels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextFiels.swift; sourceTree = "<group>"; };
+		BDF88FF021D30619004277E3 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		D021F81A81BF00076615E562 /* Pods-Classifieds.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Classifieds.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Classifieds/Pods-Classifieds.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -85,6 +109,7 @@
 		BD294DFE21D1A18C00976663 /* Classifieds */ = {
 			isa = PBXGroup;
 			children = (
+				BDF88FEB21D2F557004277E3 /* Utilities */,
 				BD294DFF21D1A18C00976663 /* AppDelegate.swift */,
 				BD294E0121D1A18C00976663 /* TabBarController.swift */,
 				BD294E1F21D1F27B00976663 /* Model */,
@@ -102,10 +127,15 @@
 		BD294E1921D1B0F800976663 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				BDF88FE921D2F012004277E3 /* RegistrationController.swift */,
+				BDF88FE721D2EED9004277E3 /* LoginController.swift */,
 				BD294E1121D1A59100976663 /* HomeController.swift */,
+				BD294E1721D1AFD100976663 /* ColletionsViewController.swift */,
 				BD294E1321D1A94D00976663 /* SearchController.swift */,
 				BD294E1521D1ACD000976663 /* SavedItemsController.swift */,
-				BD294E1721D1AFD100976663 /* ColletionsViewController.swift */,
+				BD235B5621D574D200B69689 /* ChooseCategoryController.swift */,
+				BD235B5821D5804800B69689 /* MapViewController.swift */,
+				BD6A524821D4020B0094D175 /* NewPost */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -115,6 +145,7 @@
 			children = (
 				BD294E1B21D1B60700976663 /* HomeHeader.swift */,
 				BD294E1D21D1D30200976663 /* CategoryCell.swift */,
+				BDF88FE521D2B9B9004277E3 /* CollectionsCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -123,8 +154,29 @@
 			isa = PBXGroup;
 			children = (
 				BD294E2021D1F29500976663 /* CategoryModel.swift */,
+				BDF88FF021D30619004277E3 /* User.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		BD6A524821D4020B0094D175 /* NewPost */ = {
+			isa = PBXGroup;
+			children = (
+				BD6A524621D400220094D175 /* NewPostController.swift */,
+				BD6A524D21D409A50094D175 /* NewPostCell1.swift */,
+				BD235B5421D543A300B69689 /* NewPostCell2.swift */,
+			);
+			path = NewPost;
+			sourceTree = "<group>";
+		};
+		BDF88FEB21D2F557004277E3 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				BDF88FEC21D2F56A004277E3 /* CustomTextFiels.swift */,
+				BD6A524B21D406A10094D175 /* CustomLabel.swift */,
+				BD235B5221D43E3F00B69689 /* CustomTextView.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		D8B886A0B01B9F9E9BE62573 /* Pods */ = {
@@ -213,12 +265,32 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Classifieds/Pods-Classifieds-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/JGProgressHUD/JGProgressHUD.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JGProgressHUD.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -251,14 +323,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDF88FE821D2EED9004277E3 /* LoginController.swift in Sources */,
 				BD294E0221D1A18C00976663 /* TabBarController.swift in Sources */,
+				BD235B5321D43E3F00B69689 /* CustomTextView.swift in Sources */,
 				BD294E1621D1ACD000976663 /* SavedItemsController.swift in Sources */,
+				BD235B5721D574D200B69689 /* ChooseCategoryController.swift in Sources */,
 				BD294E1821D1AFD100976663 /* ColletionsViewController.swift in Sources */,
+				BDF88FED21D2F56A004277E3 /* CustomTextFiels.swift in Sources */,
+				BD6A524C21D406A10094D175 /* CustomLabel.swift in Sources */,
+				BDF88FE621D2B9B9004277E3 /* CollectionsCell.swift in Sources */,
+				BD6A524E21D409A50094D175 /* NewPostCell1.swift in Sources */,
+				BD235B5521D543A300B69689 /* NewPostCell2.swift in Sources */,
+				BDF88FF121D30619004277E3 /* User.swift in Sources */,
 				BD294E1E21D1D30200976663 /* CategoryCell.swift in Sources */,
+				BD235B5921D5804800B69689 /* MapViewController.swift in Sources */,
+				BD6A524721D400220094D175 /* NewPostController.swift in Sources */,
 				BD294E0021D1A18C00976663 /* AppDelegate.swift in Sources */,
 				BD294E1C21D1B60700976663 /* HomeHeader.swift in Sources */,
 				BD294E1221D1A59100976663 /* HomeController.swift in Sources */,
 				BD294E2121D1F29500976663 /* CategoryModel.swift in Sources */,
+				BDF88FEA21D2F012004277E3 /* RegistrationController.swift in Sources */,
 				BD294E1421D1A94D00976663 /* SearchController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -20,9 +20,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
         window = UIWindow()
-        let tabController = TabBarController()
-        let navController = UINavigationController(rootViewController: tabController)
-        window?.rootViewController = navController
+//        let tabController = UINavigationController(rootViewController: RegistrationController())
+        let tabBarController = TabBarControllr()
+        window?.rootViewController = tabBarController
         
         return true
     }

@@ -22,8 +22,6 @@ class CategoryCell: UICollectionViewCell {
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.layer.cornerRadius = 8
-        iv.clipsToBounds = true
         return iv
     }()
     
