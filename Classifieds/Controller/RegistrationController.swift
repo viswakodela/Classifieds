@@ -18,6 +18,7 @@ class RegistrationController: UIViewController {
         view.backgroundColor = .white
         navigationController?.navigationBar.isHidden = true
         setupStackView()
+        
     }
     
     let coverPhoto: UIImageView = {
@@ -123,7 +124,6 @@ class RegistrationController: UIViewController {
     
     let handlingRegister = JGProgressHUD(style: .dark)
     
-    let tabBarControllr = TabBarControllr()
     
     @objc func handleRegister() {
         print("Handle Register")
@@ -133,11 +133,13 @@ class RegistrationController: UIViewController {
         Auth.auth().createUser(withEmail: email, password: password) { (result, err) in
             if let error = err {
                 self.showProgressHUD(error: error)
+                return
             }
             self.saveUserIntoDatabase()
             self.handlingRegister.textLabel.text = "Registering"
             self.handlingRegister.dismiss()
-            self.navigationController?.pushViewController(self.tabBarControllr, animated: true)
+            let tabBarControllr = TabBarControllr()
+            self.navigationController?.pushViewController(tabBarControllr, animated: true)
         }
     }
     
@@ -149,6 +151,7 @@ class RegistrationController: UIViewController {
         Firestore.firestore().collection("users").document(uid).setData(userData) { (err) in
             if let error = err {
                 self.showProgressHUD(error: error)
+                print(error.localizedDescription)
             }
         }
     }

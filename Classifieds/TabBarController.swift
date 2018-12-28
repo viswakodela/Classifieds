@@ -17,9 +17,14 @@ class TabBarControllr: UITabBarController {
         view.backgroundColor = .red
         tabBar.tintColor = .black
         
-        if Auth.auth().currentUser?.uid == nil {
-            present(RegistrationController(), animated: true, completion: nil)
+        DispatchQueue.main.async {
+            if Auth.auth().currentUser?.uid == nil {
+                let navRegController = UINavigationController(rootViewController: RegistrationController())
+                self.present(navRegController, animated: true, completion: nil)
+            }
+            return
         }
+        
         
         let homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
         let homeNavController = self.navBarController(image: #imageLiteral(resourceName: "home_unselected"), title: "Home", rootViewController: homeController)

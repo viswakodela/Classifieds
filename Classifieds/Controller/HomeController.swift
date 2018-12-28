@@ -23,6 +23,14 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         collectionViewSetup()
         navigationControllerSetup()
         fetchCurrentUserfromFirebase()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogOut))
+        
+    }
+    
+    @objc func handleLogOut() {
+        try? Auth.auth().signOut()
+        let navRegControleller = UINavigationController(rootViewController: RegistrationController())
+        present(navRegControleller, animated: true, completion: nil)
         
     }
     
@@ -49,6 +57,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         guard let uid = Auth.auth().currentUser?.uid else {return}
         Firestore.firestore().collection("users").document(uid).getDocument { (snapshot, err) in
             if let error = err {
+                print(error)
                 self.showProgressHUD(error: error)
             }
             guard let userDictionary = snapshot?.data() else {return}

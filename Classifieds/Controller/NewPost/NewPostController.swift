@@ -8,55 +8,12 @@
 
 import UIKit
 
-class NewPostController: UITableViewController, NewCell2Delegate, ChooseCategoryDelegate {
+class NewPostController: UITableViewController, ChooseCategoryDelegate, MapControllerDelegate {
     
     
+    
+    var post: Post?
     var cell: NewPostCell2?
-    var indexPath: IndexPath?
-    func buttonTapped(indexPath: IndexPath, selector: Selector) {
-        self.indexPath = indexPath
-        if indexPath.row == 0 {
-            var textFild = UITextField()
-            let alert = UIAlertController(title: "Enter Price (e.g. $150)", message: "", preferredStyle: .alert)
-            let cancelaction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-            
-            alert.addTextField { (textField) in
-                textField.placeholder = "Enter"
-                textFild = textField
-            }
-            
-            let okAction = UIAlertAction(title: "Ok", style: .default) { (action) in
-                guard let text = textFild.text else {return}
-                self.cell = self.tableView.cellForRow(at: indexPath) as? NewPostCell2
-                self.cell?.rightButton.setTitle("$\(text)", for: .normal)
-                self.tableView.reloadData()
-            }
-            alert.addAction(cancelaction)
-            alert.addAction(okAction)
-            self.present(alert, animated: true, completion: nil)
-        }
-        
-        if indexPath.row == 1 {
-            let chooseCategoryController = ChooseCategoryController()
-            chooseCategoryController.delegate = self
-            let navBarChooseController = UINavigationController(rootViewController: chooseCategoryController)
-            present(navBarChooseController, animated: true, completion: nil)
-        }
-        
-        if indexPath.row == 2 {
-            let mapViewController = MapViewController()
-            present(mapViewController, animated: true, completion: nil)
-        }
-    }
-    
-    func didChooseCategory(categoryName: String) {
-        print(categoryName)
-        guard let indexPath = self.indexPath else {return}
-        self.cell = self.tableView.cellForRow(at: indexPath) as? NewPostCell2
-        cell?.rightButton.setTitle(categoryName, for: .normal)
-        self.tableView.reloadData()
-    }
-    
     
     private let cellId = "cellId"
     private let newPost1CellId = "newPost1CellId"
@@ -67,6 +24,7 @@ class NewPostController: UITableViewController, NewCell2Delegate, ChooseCategory
     }
     
     fileprivate func setupLayout() {
+        tableView.keyboardDismissMode = .interactive
         navigationItem.title = "Add Listing"
         navigationController?.navigationBar.tintColor = .black
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(handleCancel))
@@ -83,6 +41,66 @@ class NewPostController: UITableViewController, NewCell2Delegate, ChooseCategory
     
     @objc func handleCancel() {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func handlePriceButton(button: UIButton) {
+        var textFild = UITextField()
+        let alert = UIAlertController(title: "Enter Price (e.g. $150)", message: "", preferredStyle: .alert)
+        let cancelaction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alert.addTextField { (textField) in
+            textField.placeholder = "Enter"
+            textFild = textField
+        }
+        
+        let okAction = UIAlertAction(title: "Ok", style: .default) { (action) in
+            guard let text = textFild.text else {return}
+            let priceText = Int(text)
+            let indexPath = IndexPath(row: 0, section: 2)
+            self.cell = self.tableView.cellForRow(at: indexPath) as? NewPostCell2
+
+            if priceText == nil {
+                self.cell?.rightButton.setTitle("Select", for: .normal)
+            } else {
+                self.cell?.rightButton.setTitle("$\(text)", for: .normal)
+                self.post?.price = priceText
+                self.tableView.reloadData()
+            }
+        }
+        alert.addAction(cancelaction)
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    @objc func handleCategoryButton(button: UIButton) {
+        let chooseCategoryController = ChooseCategoryController()
+        chooseCategoryController.delegate = self
+        let navBarChooseController = UINavigationController(rootViewController: chooseCategoryController)
+        present(navBarChooseController, animated: true, completion: nil)
+    }
+    
+    func didChooseCategory(categoryName: String) {
+        let indexPath = IndexPath(row: 1, section: 2)
+        self.cell = self.tableView.cellForRow(at: indexPath) as? NewPostCell2
+        cell?.rightButton.setTitle(categoryName, for: .normal)
+        self.post?.categoryName = categoryName
+        self.tableView.reloadData()
+    }
+
+    
+    @objc func handleLocationButton(button: UIButton) {
+        let mapController = MapViewController()
+        mapController.delegate = self
+        let navController = UINavigationController(rootViewController: mapController)
+        present(navController, animated: true)
+    }
+    
+    func didTapRow(location: String) {
+        let indexPath = IndexPath(row: 2, section: 2)
+        self.cell = self.tableView.cellForRow(at: indexPath) as? NewPostCell2
+        cell?.rightButton.setTitle(location, for: .normal)
+        self.post?.location = location
+        self.tableView.reloadData()
     }
 }
 
@@ -133,14 +151,17 @@ extension NewPostController {
         
         if indexPath.section == 2 {
             let cell = tableView.dequeueReusableCell(withIdentifier: newPost2CellId, for: indexPath) as! NewPostCell2
-            cell.newPost2Delegate = self
+//            cell.newPost2Delegate = self
             cell.indexPath = indexPath
             if indexPath.row == 0 {
                 cell.leftLabel.text = "Price"
+                cell.rightButton.addTarget(self, action: #selector(handlePriceButton), for: .touchUpInside)
             } else if indexPath.row == 1 {
                 cell.leftLabel.text = "Category"
+                cell.rightButton.addTarget(self, action: #selector(handleCategoryButton), for: .touchUpInside)
             } else {
                 cell.leftLabel.text = "Location"
+                cell.rightButton.addTarget(self, action: #selector(handleLocationButton), for: .touchUpInside)
             }
             return cell
         }
