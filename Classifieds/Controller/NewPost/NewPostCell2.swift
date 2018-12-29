@@ -8,15 +8,22 @@
 
 import UIKit
 
-protocol NewCell2Delegate: class {
-    func buttonTapped(indexPath: IndexPath, selector: Selector)
-}
-
 class NewPostCell2: UITableViewCell {
     
-    static let shared = NewPostCell2()
     
-    weak var newPost2Delegate: NewCell2Delegate?
+    class NewPostCell2TextField: UITextField {
+        override var intrinsicContentSize: CGSize {
+            return CGSize(width: 0, height: 44)
+        }
+        override func textRect(forBounds bounds: CGRect) -> CGRect {
+            return bounds.inset(by: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
+        }
+        override func editingRect(forBounds bounds: CGRect) -> CGRect {
+            return bounds.inset(by: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
+        }
+    }
+    
+    
     var indexPath: IndexPath!
     
     let newPostController = NewPostController()
@@ -25,60 +32,33 @@ class NewPostCell2: UITableViewCell {
         setupLayout()
     }
     
+    let textField: NewPostCell2TextField = {
+        let tf = NewPostCell2TextField()
+        tf.translatesAutoresizingMaskIntoConstraints = false
+        tf.placeholder = "Enter.."
+        tf.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
+        return tf
+    }()
+    
     let containerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    lazy var rightButton = createButton(selector: #selector(handleRightButton))
-    
-    func createButton(selector: Selector) -> UIButton {
-        let button = UIButton(type: .system)
-        button.setTitle("Select", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .gray
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18)
-        button.addTarget(self, action: selector, for: .touchUpInside)
-        return button
-    }
-    
-    @objc func handleTextFieldTextChange(notification: Notification) {
-        guard let userInfo = notification.userInfo else {return}
-        guard let text = userInfo["text"] else {return}
-        rightButton.titleLabel?.text = text as? String
-    }
-    
-    @objc func handleRightButton(selector: Selector) {
-        self.newPost2Delegate?.buttonTapped(indexPath: indexPath, selector: selector)
-    }
-    
-    let leftLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Price"
-        label.font = UIFont.boldSystemFont(ofSize: 20)
-        return label
-    }()
-    
     func setupLayout() {
+        
         addSubview(containerView)
         containerView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        containerView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         containerView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        containerView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         containerView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
-        let stackView = UIStackView(arrangedSubviews: [leftLabel, rightButton])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.spacing = 10
-        
-        containerView.addSubview(stackView)
-        stackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10).isActive = true
-        stackView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-        stackView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        containerView.addSubview(textField)
+        textField.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+        textField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        textField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        textField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -41,8 +41,10 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     @objc func handleNewPost() {
         
         print("Hnadling new Post")
-        let newPost = UINavigationController(rootViewController: NewPostController())
-        present(newPost, animated: true, completion: nil)
+        let newPostController = NewPostController()
+        newPostController.user = self.user
+        let navController = UINavigationController(rootViewController: newPostController)
+        present(navController, animated: true, completion: nil)
     }
     
     func showProgressHUD(error: Error) {

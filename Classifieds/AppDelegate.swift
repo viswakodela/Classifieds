@@ -21,7 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
         window = UIWindow()
 //        let tabController = UINavigationController(rootViewController: RegistrationController())
-        print(Auth.auth().currentUser?.uid)
         let tabBarController = TabBarControllr()
         window?.rootViewController = tabBarController
         

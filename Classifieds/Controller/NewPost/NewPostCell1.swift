@@ -65,7 +65,7 @@ extension NewPostCell1: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
             textView.text = "Start Typing.."
-            textView.textColor = .lightGray
+            textView.textColor = .gray
         }
     }
 }

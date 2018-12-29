@@ -11,7 +11,6 @@
 		BD235B5521D543A300B69689 /* NewPostCell2.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5421D543A300B69689 /* NewPostCell2.swift */; };
 		BD235B5721D574D200B69689 /* ChooseCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5621D574D200B69689 /* ChooseCategoryController.swift */; };
 		BD235B5921D5804800B69689 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5821D5804800B69689 /* MapViewController.swift */; };
-		BD235B7B21D5C55300B69689 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BD235B7A21D5C55300B69689 /* Default-568h@2x.png */; };
 		BD235B7D21D6912C00B69689 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B7C21D6912C00B69689 /* Post.swift */; };
 		BD294E0021D1A18C00976663 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294DFF21D1A18C00976663 /* AppDelegate.swift */; };
 		BD294E0221D1A18C00976663 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E0121D1A18C00976663 /* TabBarController.swift */; };
@@ -44,7 +43,6 @@
 		BD235B5421D543A300B69689 /* NewPostCell2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostCell2.swift; sourceTree = "<group>"; };
 		BD235B5621D574D200B69689 /* ChooseCategoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseCategoryController.swift; sourceTree = "<group>"; };
 		BD235B5821D5804800B69689 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
-		BD235B7A21D5C55300B69689 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		BD235B7C21D6912C00B69689 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		BD294DFC21D1A18C00976663 /* Classifieds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Classifieds.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD294DFF21D1A18C00976663 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -95,7 +93,6 @@
 		BD294DF321D1A18C00976663 = {
 			isa = PBXGroup;
 			children = (
-				BD235B7A21D5C55300B69689 /* Default-568h@2x.png */,
 				BD294DFE21D1A18C00976663 /* Classifieds */,
 				BD294DFD21D1A18C00976663 /* Products */,
 				D8B886A0B01B9F9E9BE62573 /* Pods */,
@@ -138,8 +135,6 @@
 				BD294E1721D1AFD100976663 /* ColletionsViewController.swift */,
 				BD294E1321D1A94D00976663 /* SearchController.swift */,
 				BD294E1521D1ACD000976663 /* SavedItemsController.swift */,
-				BD235B5621D574D200B69689 /* ChooseCategoryController.swift */,
-				BD235B5821D5804800B69689 /* MapViewController.swift */,
 				BD6A524821D4020B0094D175 /* NewPost */,
 			);
 			path = Controller;
@@ -171,6 +166,8 @@
 				BD6A524621D400220094D175 /* NewPostController.swift */,
 				BD6A524D21D409A50094D175 /* NewPostCell1.swift */,
 				BD235B5421D543A300B69689 /* NewPostCell2.swift */,
+				BD235B5621D574D200B69689 /* ChooseCategoryController.swift */,
+				BD235B5821D5804800B69689 /* MapViewController.swift */,
 			);
 			path = NewPost;
 			sourceTree = "<group>";
@@ -257,7 +254,6 @@
 				BD294E0A21D1A18E00976663 /* LaunchScreen.storyboard in Resources */,
 				BDBBA22621D2AF960033A53C /* GoogleService-Info.plist in Resources */,
 				BD294E0721D1A18E00976663 /* Assets.xcassets in Resources */,
-				BD235B7B21D5C55300B69689 /* Default-568h@2x.png in Resources */,
 				BD294E0521D1A18C00976663 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

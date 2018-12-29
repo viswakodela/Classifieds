@@ -50,6 +50,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         tableView.keyboardDismissMode = .onDrag
         tableView.layer.borderColor = UIColor.gray.cgColor
         tableView.layer.borderWidth = 2
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(handleCancel))
+    }
+    
+    @objc func handleCancel() {
+        dismiss(animated: true, completion: nil)
     }
     
     func setupLocationSearchController() {
@@ -85,7 +90,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
             let setArray = Array(set)
             for item in setArray {
                 self.matchingItems.insert(item, at: 0)
-                print("\(item.placemark.subThoroughfare ?? "No Name", item.placemark.thoroughfare)")
                 
                 let annotations = MKPointAnnotation()
                 annotations.coordinate = item.placemark.coordinate
@@ -100,6 +104,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
+        }
+        
+        guard let text = searchBar.text else {return}
+        if text.isEmpty {
+            self.matchingItems.removeAll()
+            tableView.reloadData()
         }
     }
     
@@ -223,9 +233,21 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label = HeaderLabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = UIColor(red: 220/255, green: 220/255, blue: 220/255, alpha: 1)
+        label.text = "Results"
+        return label
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return self.matchingItems.isEmpty ? 0 : 50
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let selectedCity = self.matchingItems[indexPath.row].placemark.locality else {return}
-        
+        tableView.deselectRow(at: indexPath, animated: true)
         self.dismiss(animated: true) {
           self.delegate?.didTapRow(location: selectedCity)
         }

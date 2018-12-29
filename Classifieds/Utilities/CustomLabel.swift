@@ -12,4 +12,8 @@ class HeaderLabel: UILabel {
     override func drawText(in rect: CGRect) {
         super.drawText(in: rect.inset(by: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)))
     }
+    
+    override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+        return bounds.insetBy(dx: 0, dy: 50)
+    }
 }

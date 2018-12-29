@@ -11,6 +11,7 @@ import Firebase
 
 class TabBarControllr: UITabBarController {
 
+        var user: User!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -25,8 +26,8 @@ class TabBarControllr: UITabBarController {
             return
         }
         
-        
         let homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
+        homeController.user = self.user
         let homeNavController = self.navBarController(image: #imageLiteral(resourceName: "home_unselected"), title: "Home", rootViewController: homeController)
         
         let collections = ColletionsViewController(collectionViewLayout: UICollectionViewFlowLayout())

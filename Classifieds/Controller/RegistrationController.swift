@@ -12,6 +12,8 @@ import JGProgressHUD
 
 class RegistrationController: UIViewController {
     
+    
+    var user: User?
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -124,6 +126,18 @@ class RegistrationController: UIViewController {
     
     let handlingRegister = JGProgressHUD(style: .dark)
     
+//    func fetchCurrentUser() {
+//        guard let uid = Auth.auth().currentUser?.uid else {return}
+//        Firestore.firestore().collection("users").document(uid).getDocument { (snapshot, err) in
+//            if let error = err {
+//                self.showProgressHUD(error: error)
+//            }
+//            guard let userDictionary = snapshot?.data() else {return}
+//            self.user = User(dictionary: userDictionary)
+//            print(self.user?.name)
+//        }
+//    }
+    
     
     @objc func handleRegister() {
         print("Handle Register")
@@ -136,8 +150,9 @@ class RegistrationController: UIViewController {
                 return
             }
             self.saveUserIntoDatabase()
+//            self.fetchCurrentUser()
             self.handlingRegister.textLabel.text = "Registering"
-            self.handlingRegister.dismiss()
+            self.handlingRegister.dismiss(afterDelay: 3, animated: true)
             let tabBarControllr = TabBarControllr()
             self.navigationController?.pushViewController(tabBarControllr, animated: true)
         }
