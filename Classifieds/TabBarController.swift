@@ -8,14 +8,16 @@
 
 import UIKit
 import Firebase
+import JGProgressHUD
 
 class TabBarControllr: UITabBarController {
 
-        var user: User!
+    var user: User?
+    var homeController: HomeController?
     override func viewDidLoad() {
         super.viewDidLoad()
+        fetchCurrentUserfromFirebase()
         // Do any additional setup after loading the view, typically from a nib.
-        view.backgroundColor = .red
         tabBar.tintColor = .black
         
         DispatchQueue.main.async {
@@ -26,9 +28,9 @@ class TabBarControllr: UITabBarController {
             return
         }
         
-        let homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
-        homeController.user = self.user
-        let homeNavController = self.navBarController(image: #imageLiteral(resourceName: "home_unselected"), title: "Home", rootViewController: homeController)
+        self.homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
+        guard let home = self.homeController else {return}
+        let homeNavController = self.navBarController(image: #imageLiteral(resourceName: "home_unselected"), title: "Home", rootViewController: home)
         
         let collections = ColletionsViewController(collectionViewLayout: UICollectionViewFlowLayout())
         let collectionsNavController = self.navBarController(image: #imageLiteral(resourceName: "collection"), title: "Collections", rootViewController: collections)
@@ -49,6 +51,18 @@ class TabBarControllr: UITabBarController {
         
         tabBarItem.imageInsets = UIEdgeInsets(top: -4, left: -4, bottom: 4, right: 4)
         
+    }
+    
+    func fetchCurrentUserfromFirebase() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        Firestore.firestore().collection("users").document(uid).getDocument { [unowned self] (snapshot, err) in
+            if let error = err {
+                print(error)
+            }
+            guard let userDictionary = snapshot?.data() else {return}
+            self.user = User(dictionary: userDictionary)
+            self.homeController?.user = self.user
+        }
     }
     
     func navBarController(image: UIImage, title: String, rootViewController: UIViewController = UIViewController()) -> UINavigationController {

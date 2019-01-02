@@ -12,7 +12,7 @@ import CoreLocation
 
 
 protocol MapControllerDelegate: class {
-    func didTapRow(location: String)
+    func didTapRow(title: String, subtitle: String)
 }
 
 
@@ -70,55 +70,78 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         searchBar.placeholder = "Search"
         navigationItem.searchController = resultsController
         definesPresentationContext = true
+        
+        guard let searchText = resultsController.searchBar.text else {return}
+        searchCompleter.queryFragment = searchText
     }
     
-    var matchingItems = [MKMapItem]()
+//    var matchingItems = [MKMapItem]()
+    lazy var searchCompleter: MKLocalSearchCompleter = {
+        let sC = MKLocalSearchCompleter()
+        sC.delegate = self
+        return sC
+    }()
+    var searchResults = [MKLocalSearchCompletion]()
+    var realResults = [MKMapItem]()
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        
-        let request = MKLocalSearch.Request()
-        request.naturalLanguageQuery = searchText
-        request.region = mapView.region
-        
-        let search = MKLocalSearch(request: request)
-        search.start { (resp, err) in
-            if let error = err {
-                print(error.localizedDescription)
-            }
-            guard let response = resp else{return}
-            let set = Set(response.mapItems)
-            let setArray = Array(set)
-            for item in setArray {
-                self.matchingItems.insert(item, at: 0)
-                
-                let annotations = MKPointAnnotation()
-                annotations.coordinate = item.placemark.coordinate
-                
-                guard let title = item.name else {return}
-                annotations.title = title
-                self.mapView.addAnnotation(annotations)
-                let center = CLLocationCoordinate2D(latitude: annotations.coordinate.latitude, longitude: annotations.coordinate.longitude)
-                let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 10000, longitudinalMeters: 10000)
-                self.mapView.setRegion(region, animated: true)
-            }
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-        
-        guard let text = searchBar.text else {return}
-        if text.isEmpty {
-            self.matchingItems.removeAll()
-            tableView.reloadData()
+        if !searchText.isEmpty {
+            searchCompleter.queryFragment = searchText
+        } else {
+            searchResults.removeAll()
+            self.tableView.reloadData()
         }
     }
+    
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//
+//        let request = MKLocalSearch.Request()
+//        request.naturalLanguageQuery = searchText
+//        request.region = mapView.region
+//
+//        let search = MKLocalSearch(request: request)
+//        search.start { (resp, err) in
+//            if let error = err {
+//                print(error.localizedDescription)
+//            }
+//            guard let response = resp else{return}
+//            let set = Set(response.mapItems)
+//            let setArray = Array(set)
+//
+//            for item in setArray {
+//
+//                self.matchingItems.insert(item, at: 0)
+//
+//                guard let firstItem = setArray.first else {return}
+//
+//                let annotations = MKPointAnnotation()
+//                annotations.coordinate = firstItem.placemark.coordinate
+//                guard let title = firstItem.name else {return}
+//                annotations.title = title
+//                annotations.subtitle = firstItem.placemark.locality
+//                self.mapView.addAnnotation(annotations)
+//                let center = CLLocationCoordinate2D(latitude: annotations.coordinate.latitude, longitude: annotations.coordinate.longitude)
+//                let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 10000, longitudinalMeters: 10000)
+//                self.mapView.setRegion(region, animated: true)
+//            }
+//            DispatchQueue.main.async {
+//                self.tableView.reloadData()
+//            }
+//        }
+//
+//        guard let text = searchBar.text else {return}
+//        if text.isEmpty {
+//            self.matchingItems.removeAll()
+//            tableView.reloadData()
+//        }
+//    }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         self.mapView.annotations.forEach { (annotation) in
             self.mapView.removeAnnotation(annotation)
         }
-        self.matchingItems.removeAll()
+        self.searchResults.removeAll()
         tableView.reloadData()
     }
     
@@ -146,21 +169,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         return addressLine
     }
     
-    func centerViewOnUserLocation() {
-        
-        if let location = locationManager.location {
-            let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-            let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 5000, longitudinalMeters: 5000)
-            mapView.setRegion(region, animated: true)
-        }
-    }
-    
     func checkPermission() {
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             checkLocationAuthorization()
-            centerViewOnUserLocation()
             locationManager.startUpdatingLocation()
         } else {
             print("Check the location Services")
@@ -173,7 +186,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
             break
         case .authorizedWhenInUse:
             // DO Map Stuff
-            mapView.showsUserLocation = true
+//            mapView.showsUserLocation = true
             break
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
@@ -199,8 +212,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         tableView.topAnchor.constraint(equalTo: mapView.bottomAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        
-        
     }
 }
 
@@ -210,25 +221,19 @@ extension MapViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         self.checkLocationAuthorization()
     }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else {return}
-        let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 5000, longitudinalMeters: 5000)
-        mapView.setRegion(region, animated: true)
-    }
 }
 
 extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return matchingItems.count
+        return searchResults.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: locationSearchCellId, for: indexPath)
-        let selectedItem = matchingItems[indexPath.row].placemark
-        cell.textLabel?.text = "\(parseAddress(selectedItem: selectedItem))"
+        let selectedItem = searchResults[indexPath.row]
+        cell.textLabel?.text = "\(selectedItem.title), \(selectedItem.subtitle)"
+//        cell.textLabel?.text = "\(parseAddress(selectedItem: selectedItem))"
         cell.textLabel?.numberOfLines = 0
         return cell
     }
@@ -236,20 +241,59 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label = HeaderLabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.backgroundColor = UIColor(red: 220/255, green: 220/255, blue: 220/255, alpha: 1)
+        label.backgroundColor = UIColor(red: 47/255, green: 79/255, blue: 79/255, alpha: 1)
         label.text = "Results"
+        label.textColor = .white
+        label.font = UIFont.boldSystemFont(ofSize: 18)
         return label
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return self.matchingItems.isEmpty ? 0 : 50
+        return self.searchResults.isEmpty ? 0 : 50
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let selectedCity = self.matchingItems[indexPath.row].placemark.locality else {return}
-        tableView.deselectRow(at: indexPath, animated: true)
-        self.dismiss(animated: true) {
-          self.delegate?.didTapRow(location: selectedCity)
+        
+        
+        let searchRequest = MKLocalSearch.Request()
+        let searchText = searchResults[indexPath.row]
+        searchRequest.naturalLanguageQuery = searchText.subtitle
+        searchRequest.region = mapView.region
+        
+        
+        let search = MKLocalSearch(request: searchRequest)
+        search.start { (resp, err) in
+            if let error = err {
+                print(error.localizedDescription)
+            }
+        guard let response = resp?.mapItems else{return}
+            
+            for item in response {
+                
+                let annotations = MKPointAnnotation()
+                annotations.coordinate = item.placemark.coordinate
+                guard let title = item.name else {return}
+                annotations.title = title
+                annotations.subtitle = item.placemark.locality
+                self.mapView.addAnnotation(annotations)
+                let center = CLLocationCoordinate2D(latitude: annotations.coordinate.latitude, longitude: annotations.coordinate.longitude)
+                let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 10000, longitudinalMeters: 10000 )
+                self.mapView.setRegion(region, animated: true)
+                self.dismiss(animated: true, completion: {
+                let title = searchText.title
+                let subtitle = searchText.subtitle
+                self.delegate?.didTapRow(title: title, subtitle: subtitle)
+                })
+            }
         }
     }
+}
+
+extension MapViewController: MKLocalSearchCompleterDelegate {
+    
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        self.searchResults = completer.results
+        self.tableView.reloadData()
+    }
+    
 }

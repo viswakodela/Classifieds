@@ -2,11 +2,12 @@
 //  NewPostCell1.swift
 //  Classifieds
 //
-//  Created by Viswa Kodela on 12/26/18.
+//  Created by Viswa Kodela on 12/31/18.
 //  Copyright © 2018 Viswa Kodela. All rights reserved.
 //
 
 import UIKit
+import MaterialComponents.MaterialTextFields
 
 class NewPostCell1: UITableViewCell {
     
@@ -21,18 +22,15 @@ class NewPostCell1: UITableViewCell {
         return view
     }()
     
-    lazy var textView: CustomTextView = {
-        let tv = CustomTextView()
+    lazy var textField: CustomTextField = {
+        let tv = CustomTextField(padding: 10)
+        tv.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
+        tv.placeholder = "Start Typing.."
         tv.translatesAutoresizingMaskIntoConstraints = false
-        tv.text = "Start Typing.."
-        tv.textColor = .gray
-        tv.delegate = self
-        tv.layer.borderColor = UIColor.lightGray.cgColor
-        tv.layer.borderWidth = 0.5
-        tv.font = UIFont.systemFont(ofSize: 20)
-        tv.clipsToBounds = true
         return tv
     }()
+    
+    
     
     func setupLayout() {
         
@@ -42,30 +40,16 @@ class NewPostCell1: UITableViewCell {
         containerView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         containerView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
-        containerView.addSubview(textView)
-        textView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        textView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        textView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        textView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        addSubview(textField)
+        
+        containerView.addSubview(textField)
+        textField.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        textField.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        textField.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        textField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-}
-
-extension NewPostCell1: UITextViewDelegate {
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        textView.text = nil
-        textView.textColor = .black
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.isEmpty {
-            textView.text = "Start Typing.."
-            textView.textColor = .gray
-        }
     }
 }

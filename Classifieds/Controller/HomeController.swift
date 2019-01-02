@@ -15,16 +15,17 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     private let cellId = "cellId"
     private let headerId = "headerId"
     
-    var user: User?
+    var user: User? {
+        didSet {
+            self.navigationItem.title = user?.name
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         collectionViewSetup()
         navigationControllerSetup()
-        fetchCurrentUserfromFirebase()
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogOut))
-        
     }
     
     @objc func handleLogOut() {
@@ -53,19 +54,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         hud.detailTextLabel.text = error.localizedDescription
         hud.show(in: self.view)
         hud.dismiss(afterDelay: 4)
-    }
-    
-    func fetchCurrentUserfromFirebase() {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        Firestore.firestore().collection("users").document(uid).getDocument { (snapshot, err) in
-            if let error = err {
-                print(error)
-                self.showProgressHUD(error: error)
-            }
-            guard let userDictionary = snapshot?.data() else {return}
-            self.user = User(dictionary: userDictionary)
-            self.navigationItem.title = self.user?.name
-        }
     }
     
     fileprivate func collectionViewSetup() {
@@ -97,7 +85,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
-        cell.backgroundColor = .black
+        cell.backgroundColor = .lightGray
         return cell
     }
     

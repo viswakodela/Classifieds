@@ -29,6 +29,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.showsHorizontalScrollIndicator = false
         collectionView.alwaysBounceHorizontal = true
         return collectionView
     }()
@@ -83,7 +84,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Item Tapped")
+        print(indexPath.item)
     }
     
     
