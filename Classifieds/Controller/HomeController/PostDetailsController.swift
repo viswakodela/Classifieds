@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MapKit
 
 class PostDetailsController: UIViewController {
     
@@ -31,7 +32,30 @@ class PostDetailsController: UIViewController {
             }
             titleLabel.text = posts.title
             descriptionView.text = posts.description
+            self.mapViewAnnotationStuff()
             collectionView.reloadData()
+        }
+    }
+    
+    func mapViewAnnotationStuff() {
+        
+        let geoCoder = CLGeocoder()
+        guard let location = posts.location else {return}
+        geoCoder.geocodeAddressString(location) { (placemarks, err) in
+            if let error = err {
+                print(error.localizedDescription)
+            }
+            guard let placemarks = placemarks, let firstLocation = placemarks.first else {return}
+            
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = firstLocation.location!.coordinate
+            annotation.title = self.posts.location
+            self.mapview.addAnnotation(annotation)
+            
+            let center = CLLocationCoordinate2D(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude)
+            let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 500, longitudinalMeters: 500 )
+            self.mapview.setRegion(region, animated: false)
+            
         }
     }
     
@@ -41,10 +65,9 @@ class PostDetailsController: UIViewController {
         let sv = UIScrollView()
         sv.translatesAutoresizingMaskIntoConstraints = false
         sv.alwaysBounceVertical = true
-        sv.contentSize.height = 1200
+        sv.contentSize.height = 2000
         sv.contentInsetAdjustmentBehavior = .never
         sv.delegate = self
-        sv.isPagingEnabled = true
         return sv
     }()
     
@@ -92,14 +115,32 @@ class PostDetailsController: UIViewController {
         tv.font = UIFont.systemFont(ofSize: 20)
         tv.sizeToFit()
         tv.numberOfLines = 0
+        tv.textColor = .gray
         tv.translatesAutoresizingMaskIntoConstraints = false
         return tv
+    }()
+    
+    let locationLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.text = "Location"
+        return label
+    }()
+    
+    lazy var mapview: MKMapView = {
+        let mv = MKMapView()
+        mv.translatesAutoresizingMaskIntoConstraints = false
+        mv.isZoomEnabled = false
+        mv.isScrollEnabled = false
+        mv.delegate = self
+        return mv
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        setupLayout()
         collectionView.register(PostImageCell.self, forCellWithReuseIdentifier: imageCellId)
     }
     
@@ -110,6 +151,7 @@ class PostDetailsController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        setupLayout()
         navigationController?.navigationBar.isHidden = true
     }
     
@@ -149,7 +191,21 @@ class PostDetailsController: UIViewController {
         descriptionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8).isActive = true
         descriptionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8).isActive = true
         descriptionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8).isActive = true
-        descriptionView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        descriptionView.heightAnchor.constraint(greaterThanOrEqualToConstant: 30).isActive = true
+        
+        if posts.location != nil {
+            scrollView.addSubview(locationLabel)
+            locationLabel.topAnchor.constraint(equalTo: descriptionView.bottomAnchor).isActive = true
+            locationLabel.leadingAnchor.constraint(equalTo: descriptionView.leadingAnchor).isActive = true
+            locationLabel.trailingAnchor.constraint(equalTo: descriptionView.trailingAnchor).isActive = true
+            locationLabel.heightAnchor.constraint(equalToConstant: 40).isActive = true
+            
+            scrollView.addSubview(mapview)
+            mapview.topAnchor.constraint(equalTo: locationLabel.bottomAnchor).isActive = true
+            mapview.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
+            mapview.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+            mapview.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        }
     }
 }
 
@@ -184,7 +240,6 @@ extension PostDetailsController: UICollectionViewDelegate, UICollectionViewDataS
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: imageCellId, for: indexPath) as! PostImageCell
         let image = imagesArray[indexPath.item]
-        print(image)
         cell.image = image
         return cell
     }
@@ -192,5 +247,26 @@ extension PostDetailsController: UICollectionViewDelegate, UICollectionViewDataS
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: view.frame.width, height: view.frame.width)
     }
+}
+
+extension PostDetailsController: MKMapViewDelegate {
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        let annotations = mapView.annotations
+        annotations.forEach { (annot) in
+            
+            let regionDistance: CLLocationDistance = 1000
+            let center = CLLocationCoordinate2D(latitude: annot.coordinate.latitude, longitude: annot.coordinate.longitude)
+            let regionSpan = MKCoordinateRegion.init(center: center, latitudinalMeters: regionDistance, longitudinalMeters: regionDistance)
+            
+            let options = [MKLaunchOptionsMapCenterKey : regionSpan.center, MKLaunchOptionsMapSpanKey : regionSpan.span] as [String : Any]
+            
+            let placemark = MKPlacemark(coordinate: annot.coordinate)
+            let mapItem = MKMapItem(placemark: placemark)
+            mapItem.name = annot.title ?? "Unknown Location"
+            mapItem.openInMaps(launchOptions: options)
+        }
+    }
+    
 }
 

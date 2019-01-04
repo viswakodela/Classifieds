@@ -23,7 +23,7 @@ class HomeControllerCell: UICollectionViewCell {
     
     let imageview: UIImageView = {
         let iv = UIImageView()
-        iv.contentMode = .scaleToFill
+        iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         iv.layer.cornerRadius = 5
         iv.clipsToBounds = true
