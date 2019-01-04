@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import MaterialComponents.MaterialTextFields
 
 class NewPostCell2: UITableViewCell {
     

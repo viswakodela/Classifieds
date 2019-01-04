@@ -9,7 +9,13 @@
 import UIKit
 import Firebase
 import JGProgressHUD
+import BSImagePicker
+import Photos
 
+
+protocol NewPostRefreshControlDelegate: class {
+    func didFinishPosting()
+}
 
 class CustiomeImagePicker: UIImagePickerController {
     var button: UIButton?
@@ -17,13 +23,15 @@ class CustiomeImagePicker: UIImagePickerController {
 
 class NewPostController: UITableViewController, ChooseCategoryDelegate, MapControllerDelegate {
     
-    lazy var post = Post()
+    weak var delegate: NewPostRefreshControlDelegate?
+    
+    
+    var imageAssets = [PHAsset]()
+    var photosArray = [UIImage]()
+    
+    var post: Post?
     var cell: NewPostCell3?
-    var user: User? {
-        didSet {
-            self.post.uid = user?.uid
-        }
-    }
+    var user: User?
     
     private let cellId = "cellId"
     private let newPost1CellId = "newPost1CellId"
@@ -33,7 +41,14 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLayout()
+        self.post = Post()
+        post?.uid = user?.uid
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(savePostToFirebase))
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = false
     }
     
     func createButton(selector: Selector) -> UIButton {
@@ -60,6 +75,12 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
 //        footer.translatesAutoresizingMaskIntoConstraints = false
         
         let stackView = UIStackView(arrangedSubviews: [image1Button, image2Button, image3Button, image4Button, image5Button])
+        image2Button.isHidden = true
+        image3Button.isHidden = true
+        image4Button.isHidden = true
+        image5Button.isHidden = true
+        
+        
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 8
@@ -75,12 +96,109 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
     }()
     
     @objc func imageButtonsImagePicker(button: UIButton) {
-        let imagePicker = CustiomeImagePicker()
-        imagePicker.sourceType = .photoLibrary
-        imagePicker.allowsEditing = true
-        imagePicker.button = button
-        imagePicker.delegate = self
-        present(imagePicker, animated: true, completion: nil)
+        
+        let vc = BSImagePickerViewController()
+        self.bs_presentImagePickerController(vc, animated: true, select: { (PHAsset) in
+            
+        }, deselect: { (PHAsset) in
+            
+        }, cancel: { ([PHAsset]) in
+            
+        }, finish: { (assets) in
+            for i in 0..<assets.count {
+                self.imageAssets.append(assets[i])
+            }
+            self.convertAssetsintoImages()
+        }, completion: nil)
+    }
+    
+    func convertAssetsintoImages() {
+        if imageAssets.count != 0 {
+            for asset in imageAssets {
+                let manager = PHImageManager.default()
+                let options = PHImageRequestOptions()
+                var thumbnail = UIImage()
+                options.isSynchronous = true
+                
+                manager.requestImage(for: asset, targetSize: CGSize(width: 600, height: 600), contentMode: .aspectFill, options: options) { (image, info) in
+                    guard let image = image else {return}
+                    thumbnail = image
+                }
+                guard let data = thumbnail.jpegData(compressionQuality: 0.4) else {return}
+                guard let newImage = UIImage(data: data) else {return}
+                self.photosArray.append(newImage)
+            }
+            
+            DispatchQueue.main.async {
+                
+                self.image2Button.isHidden = false
+                self.image3Button.isHidden = false
+                self.image4Button.isHidden = false
+                self.image5Button.isHidden = false
+                
+                var buttonsArray = [self.image1Button, self.image2Button, self.image3Button, self.image4Button, self.image5Button]
+                
+                for image in self.photosArray {
+                    for button in buttonsArray {
+                        if let imageIndex = self.photosArray.firstIndex(of: image), let buttonIndex = buttonsArray.firstIndex(of: button) {
+                            
+                            if imageIndex == buttonIndex {
+                                buttonsArray[buttonIndex].setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
+                                
+                                let fileName = UUID().uuidString
+                                let ref = Storage.storage().reference().child("postImages").child(fileName)
+                                
+                                let hud = JGProgressHUD(style: .dark)
+                                hud.textLabel.text = "Uploading Image"
+                                hud.show(in: self.view)
+                                
+                                guard let uploadData = image.jpegData(compressionQuality: 0.7) else {return}
+                                
+                                ref.putData(uploadData, metadata: nil, completion: { (metadata, err) in
+                                    hud.dismiss()
+                                    if let error = err {
+                                        self.showProgressHUD(error: error)
+                                        return
+                                    }
+                                    
+                                    ref.downloadURL(completion: { (url, err) in
+                                        if let error = err {
+                                            self.showProgressHUD(error: error)
+                                            return
+                                        }
+                                        
+                                        if button == self.image1Button {
+                                            self.post?.imageUrl1 = url?.absoluteString
+                                        } else if button == self.image2Button {
+                                            self.post?.imageUrl2 = url?.absoluteString
+                                        } else if button == self.image3Button {
+                                            self.post?.imageUrl3 = url?.absoluteString
+                                        } else if button == self.image4Button {
+                                            self.post?.imageUrl4 = url?.absoluteString
+                                        } else {
+                                            self.post?.imageUrl5 = url?.absoluteString
+                                        }
+                                        
+                                    })
+                                })
+                            }
+                        }
+                    }
+                }
+                
+//                self.photosArray.forEach({ (image) in
+//                    let firstImage = image
+//                    self.image1Button.setImage(firstImage.withRenderingMode(.alwaysOriginal), for: .normal)
+//                    let secondImage = image
+//                    self.image2Button.setImage(secondImage.withRenderingMode(.alwaysOriginal), for: .normal)
+//                    let thirdImage = image
+//                    self.image3Button.setImage(thirdImage.withRenderingMode(.alwaysOriginal), for: .normal)
+//                    let fourthImage = image
+//                    self.image3Button.setImage(fourthImage.withRenderingMode(.alwaysOriginal), for: .normal)
+//                })
+            }
+            
+        }
     }
     
     func showProgressHUD(error: Error) {
@@ -93,7 +211,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
     
     @objc fileprivate func savePostToFirebase() {
         
-        if post.title == nil && post.description == nil {
+        if post?.title == nil && post?.description == nil && post?.location == nil {
             let hud = JGProgressHUD(style: .dark)
             hud.textLabel.text = "Some fields are empty, Please check your entries"
             hud.show(in: self.view)
@@ -106,21 +224,29 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         hud.show(in: self.view)
         
         let postData: [String : Any] = [
-            "title" : self.post.title,
-            "description" : self.post.description,
-            "price" : self.post.price,
-            "categoryName" : self.post.categoryName,
-            "location" : self.post.location,
-            "uid" : self.post.uid,
-            "imageUrl1" : self.post.imageUrl1,
-            "imageUrl2" : self.post.imageUrl2,
-            "imageUrl3" : self.post.imageUrl3,
-            "imageUrl4" : self.post.imageUrl4,
-            "imageUrl5" : self.post.imageUrl5
+            "title" : self.post?.title,
+            "description" : self.post?.description,
+            "price" : self.post?.price,
+            "categoryName" : self.post?.categoryName,
+            "location" : self.post?.location,
+            "uid" : self.post?.uid,
+            "imageUrl1" : self.post?.imageUrl1,
+            "imageUrl2" : self.post?.imageUrl2,
+            "imageUrl3" : self.post?.imageUrl3,
+            "imageUrl4" : self.post?.imageUrl4,
+            "imageUrl5" : self.post?.imageUrl5
         ]
         
         guard let uid = self.user?.uid else {return}
         let postId = UUID().uuidString
+        
+//        Firestore.firestore().collection("posts").document(uid).setData(postData) { (err) in
+//            if let error = err {
+//                self.showProgressHUD(error: error)
+//            }
+//            hud.dismiss(afterDelay: 3, animated: true)
+//            self.dismiss(animated: true, completion: nil)
+//        }
     Firestore.firestore().collection("posts").document(uid).collection("userPosts").document(postId).setData(postData) { (err) in
             if let error = err {
                 print(error)
@@ -128,6 +254,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         hud.dismiss(afterDelay: 3, animated: true)
         self.dismiss(animated: true, completion: nil)
         }
+        delegate?.didFinishPosting()
     }
     
     fileprivate func setupLayout() {
@@ -150,7 +277,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
     }
     
     @objc func handleTitleChange(textField: UITextField) {
-        self.post.title = textField.text
+        self.post?.title = textField.text
     }
     
     @objc func handlePriceButton() {
@@ -175,7 +302,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
                 self.cell?.textField.text = "$\(text)"
                 self.tableView.reloadData()
             }
-            self.post.price = priceText
+            self.post?.price = priceText
         }
         alert.addAction(cancelaction)
         alert.addAction(okAction)
@@ -193,7 +320,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         let indexPath = IndexPath(row: 0, section: 3)
         self.cell = self.tableView.cellForRow(at: indexPath) as? NewPostCell3
         cell?.textField.text = categoryName
-        self.post.categoryName = categoryName
+        self.post?.categoryName = categoryName
         self.tableView.reloadData()
     }
 
@@ -209,7 +336,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         let indexPath = IndexPath(row: 0, section: 4)
         self.cell = self.tableView.cellForRow(at: indexPath) as? NewPostCell3
         cell?.textField.text = "\(title) \(subtitle)"
-        self.post.location = "\(title) \(subtitle)"
+        self.post?.location = "\(title) \(subtitle)"
         self.tableView.reloadData()
     }
 }
@@ -314,54 +441,56 @@ extension NewPostController: UITextViewDelegate {
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        self.post.description = textView.text
+        self.post?.description = textView.text
     }
 }
 
-extension NewPostController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
-        let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage
-        let imageButton = (picker as? CustiomeImagePicker)?.button
-        imageButton?.setImage(editedImage?.withRenderingMode(.alwaysOriginal), for: .normal)
-        self.dismiss(animated: true, completion: nil)
-        
-        let fileName = UUID().uuidString
-        let ref = Storage.storage().reference().child("postImages").child(fileName)
-        
-        let hud = JGProgressHUD(style: .dark)
-        hud.textLabel.text = "Uploading Image"
-        hud.show(in: view)
-        
-        guard let uploadData = editedImage?.jpegData(compressionQuality: 0.8) else {return}
-        
-        ref.putData(uploadData, metadata: nil) { (data, err) in
-            hud.dismiss()
-            if let error = err {
-                self.showProgressHUD(error: error)
-                return
-            }
-            print("Finish uploading the Image")
-            
-            ref.downloadURL { (url, err) in
-                if let error = err {
-                    self.showProgressHUD(error: error)
-                    return
-                }
-                
-                if imageButton == self.image1Button {
-                    self.post.imageUrl1 = url?.absoluteString
-                } else if imageButton == self.image2Button {
-                    self.post.imageUrl2 = url?.absoluteString
-                } else if imageButton == self.image3Button {
-                    self.post.imageUrl3 = url?.absoluteString
-                } else if imageButton == self.image4Button {
-                    self.post.imageUrl4 = url?.absoluteString
-                } else {
-                    self.post.imageUrl5 = url?.absoluteString
-                }
-            }
-        }
-    }
-}
+//extension NewPostController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+//
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+//
+//
+//
+//        let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage
+//        let imageButton = (picker as? CustiomeImagePicker)?.button
+//        imageButton?.setImage(editedImage?.withRenderingMode(.alwaysOriginal), for: .normal)
+//        self.dismiss(animated: true, completion: nil)
+//
+//        let fileName = UUID().uuidString
+//        let ref = Storage.storage().reference().child("postImages").child(fileName)
+//
+//        let hud = JGProgressHUD(style: .dark)
+//        hud.textLabel.text = "Uploading Image"
+//        hud.show(in: view)
+//
+//        guard let uploadData = editedImage?.jpegData(compressionQuality: 0.8) else {return}
+//
+//        ref.putData(uploadData, metadata: nil) { (data, err) in
+//            hud.dismiss()
+//            if let error = err {
+//                self.showProgressHUD(error: error)
+//                return
+//            }
+//            print("Finish uploading the Image")
+//
+//            ref.downloadURL { (url, err) in
+//                if let error = err {
+//                    self.showProgressHUD(error: error)
+//                    return
+//                }
+//
+//                if imageButton == self.image1Button {
+//                    self.post.imageUrl1 = url?.absoluteString
+//                } else if imageButton == self.image2Button {
+//                    self.post.imageUrl2 = url?.absoluteString
+//                } else if imageButton == self.image3Button {
+//                    self.post.imageUrl3 = url?.absoluteString
+//                } else if imageButton == self.image4Button {
+//                    self.post.imageUrl4 = url?.absoluteString
+//                } else {
+//                    self.post.imageUrl5 = url?.absoluteString
+//                }
+//            }
+//        }
+//    }
+//}

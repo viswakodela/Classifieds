@@ -11,6 +11,7 @@ import UIKit
 class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     
+    var homeController: HomeController?
     private let popularCategoryCell = "popularCategoryCell"
     
     let categoriesArray = [CategoryModel(image: #imageLiteral(resourceName: "phones"), categoryName: "Phones & Tablets"),
@@ -72,10 +73,6 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: popularCategoryCell, for: indexPath) as! CategoryCell
         cell.categoryModel = categoriesArray[indexPath.item]
-        cell.layer.cornerRadius = 8
-        cell.layer.borderWidth = 0.5
-        cell.layer.borderColor = UIColor.gray.cgColor
-        cell.clipsToBounds = true
         return cell
     }
     
@@ -84,7 +81,9 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(indexPath.item)
+        print("cell selected")
+        let selectedCategory = self.categoriesArray[indexPath.item]
+        homeController?.showHomeHeaderPush(catergory: selectedCategory)
     }
     
     

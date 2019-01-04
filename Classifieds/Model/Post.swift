@@ -22,6 +22,7 @@ class Post {
     var imageUrl3: String?
     var imageUrl4: String?
     var imageUrl5: String?
+    var imagesArray: [String]?
     
     init() {
         
@@ -40,6 +41,18 @@ class Post {
         self.imageUrl3 = dictionary["imageUrl3"] as? String
         self.imageUrl4 = dictionary["imageUrl4"] as? String
         self.imageUrl5 = dictionary["imageUrl5"] as? String
+        
+//        if imageUrl1 != nil {
+//            self.imagesArray?.append(imageUrl1!)
+//        } else if imageUrl2 != nil {
+//            self.imagesArray?.append(imageUrl2!)
+//        } else if imageUrl3 != nil {
+//            self.imagesArray?.append(imageUrl3!)
+//        } else if imageUrl4 != nil {
+//            self.imagesArray?.append(imageUrl4!)
+//        } else if imageUrl5 != nil {
+//            self.imagesArray?.append(imageUrl5!)
+//        }
     }
 }
 
