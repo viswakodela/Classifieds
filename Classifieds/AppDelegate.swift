@@ -13,16 +13,15 @@ import Firebase
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
         FirebaseApp.configure()
         window = UIWindow()
-        let tabController = TabBarController()
-        let navController = UINavigationController(rootViewController: tabController)
-        window?.rootViewController = navController
+//        let tabController = UINavigationController(rootViewController: RegistrationController())
+        let tabBarController = TabBarControllr()
+        window?.rootViewController = tabBarController
         
         return true
     }

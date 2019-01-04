@@ -22,14 +22,24 @@ class CategoryCell: UICollectionViewCell {
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.layer.cornerRadius = 8
-        iv.clipsToBounds = true
         return iv
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
+        
+        self.contentView.layer.cornerRadius = 2.0
+        self.contentView.layer.borderWidth = 1.0
+        self.contentView.layer.borderColor = UIColor.clear.cgColor
+        self.contentView.layer.masksToBounds = true
+        
+        self.layer.shadowColor = UIColor(red: 235/255, green: 235/255, blue: 235/255, alpha: 1).cgColor
+        self.layer.shadowOffset = CGSize(width: 0, height: 2.0)
+        self.layer.shadowRadius = 2.0
+        self.layer.shadowOpacity = 0.5
+        self.layer.masksToBounds = false
+        self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.contentView.layer.cornerRadius).cgPath
     }
     
     var categoryModel: CategoryModel! {

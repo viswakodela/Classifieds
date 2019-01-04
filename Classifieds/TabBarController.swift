@@ -7,27 +7,39 @@
 //
 
 import UIKit
+import Firebase
+import JGProgressHUD
 
-class TabBarController: UITabBarController {
+class TabBarControllr: UITabBarController {
 
+    var user: User?
+    var homeController: HomeController?
     override func viewDidLoad() {
         super.viewDidLoad()
+        fetchCurrentUserfromFirebase()
         // Do any additional setup after loading the view, typically from a nib.
-        view.backgroundColor = .red
+        tabBar.tintColor = .black
         
-        tabBar.tintColor = .blue
+        DispatchQueue.main.async {
+            if Auth.auth().currentUser?.uid == nil {
+                let navRegController = UINavigationController(rootViewController: RegistrationController())
+                self.present(navRegController, animated: true, completion: nil)
+            }
+            return
+        }
         
-        let homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
-        let homeNavController = self.tabBarController(image: #imageLiteral(resourceName: "home_unselected"), title: "Home", rootViewController: homeController)
+        self.homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
+        guard let home = self.homeController else {return}
+        let homeNavController = self.navBarController(image: #imageLiteral(resourceName: "home_unselected"), title: "Home", rootViewController: home)
         
         let collections = ColletionsViewController(collectionViewLayout: UICollectionViewFlowLayout())
-        let collectionsNavController = self.tabBarController(image: #imageLiteral(resourceName: "collection"), title: "Collections", rootViewController: collections)
+        let collectionsNavController = self.navBarController(image: #imageLiteral(resourceName: "collection"), title: "Collections", rootViewController: collections)
         
         let saveItemController = SavedItemsController(collectionViewLayout: UICollectionViewFlowLayout())
-        let savedNavController =  self.tabBarController(image: #imageLiteral(resourceName: "heart"), title: "Save", rootViewController: saveItemController)
+        let savedNavController =  self.navBarController(image: #imageLiteral(resourceName: "heart"), title: "Save", rootViewController: saveItemController)
         
         let searchController = SearchController()
-        let searchNavController = self.tabBarController(image: #imageLiteral(resourceName: "search_unselected"), title: "Search", rootViewController: searchController)
+        let searchNavController = self.navBarController(image: #imageLiteral(resourceName: "search_unselected"), title: "Search", rootViewController: searchController)
         
         
         
@@ -37,12 +49,26 @@ class TabBarController: UITabBarController {
                             searchNavController
                         ]
         
-        tabBarItem.imageInsets = UIEdgeInsets(top: 4, left: 0, bottom: -4, right: 0)
+        tabBarItem.imageInsets = UIEdgeInsets(top: -4, left: -4, bottom: 4, right: 4)
         
     }
     
-    func tabBarController(image: UIImage, title: String, rootViewController: UIViewController = UIViewController()) -> UIViewController {
-        let navController = rootViewController
+    func fetchCurrentUserfromFirebase() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        Firestore.firestore().collection("users").document(uid).getDocument { [unowned self] (snapshot, err) in
+            if let error = err {
+                print(error)
+            }
+            guard let userDictionary = snapshot?.data() else {return}
+            self.user = User(dictionary: userDictionary)
+            self.homeController?.user = self.user
+        }
+    }
+    
+    func navBarController(image: UIImage, title: String, rootViewController: UIViewController = UIViewController()) -> UINavigationController {
+        
+        let navController = UINavigationController(rootViewController: rootViewController)
+        navController.title = title
         navController.tabBarItem.image = image
         navController.tabBarItem.title = title
         return navController

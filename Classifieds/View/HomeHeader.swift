@@ -11,14 +11,15 @@ import UIKit
 class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     
+    var homeController: HomeController?
     private let popularCategoryCell = "popularCategoryCell"
     
     let categoriesArray = [CategoryModel(image: #imageLiteral(resourceName: "phones"), categoryName: "Phones & Tablets"),
                            CategoryModel(image: #imageLiteral(resourceName: "rooms"), categoryName: "Roomes/Beds"),
-                           CategoryModel(image: #imageLiteral(resourceName: "laptops"), categoryName: "Laptops"),
+                           CategoryModel(image: #imageLiteral(resourceName: "bookmark-bowl-business-705675"), categoryName: "Laptops"),
                            CategoryModel(image: #imageLiteral(resourceName: "jobs"), categoryName: "Jobs & Services"),
                            CategoryModel(image: #imageLiteral(resourceName: "furniture"), categoryName: "Furniture"),
-                           CategoryModel(image: #imageLiteral(resourceName: "cars"), categoryName: "Cars")
+                           CategoryModel(image: #imageLiteral(resourceName: "automobile-automotive-car-116675"), categoryName: "Cars")
                            ]
     
     lazy var collectionVie: UICollectionView = {
@@ -29,6 +30,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.showsHorizontalScrollIndicator = false
         collectionView.alwaysBounceHorizontal = true
         return collectionView
     }()
@@ -57,7 +59,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         
         addSubview(stackView)
         
-        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        stackView.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
         stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -71,10 +73,6 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: popularCategoryCell, for: indexPath) as! CategoryCell
         cell.categoryModel = categoriesArray[indexPath.item]
-        cell.layer.cornerRadius = 8
-        cell.layer.borderWidth = 0.5
-        cell.layer.borderColor = UIColor.gray.cgColor
-        cell.clipsToBounds = true
         return cell
     }
     
@@ -83,7 +81,9 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Item Tapped")
+        print("cell selected")
+        let selectedCategory = self.categoriesArray[indexPath.item]
+        homeController?.showHomeHeaderPush(catergory: selectedCategory)
     }
     
     
