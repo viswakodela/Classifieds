@@ -42,7 +42,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         postsArray.forEach { (post) in
             mapPosts.posts.append(post)
         }
-        present(mapPosts, animated: true, completion: nil)
+        navigationController?.pushViewController(mapPosts, animated: true)
     }
     
     var users = [User]()

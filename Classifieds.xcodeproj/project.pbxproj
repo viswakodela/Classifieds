@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BD04603A21E129360019705D /* ButtomUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD04603921E129360019705D /* ButtomUpController.swift */; };
+		BD04603C21E138DD0019705D /* BottomControllerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD04603B21E138DD0019705D /* BottomControllerCell.swift */; };
 		BD21771021DA89D30021890B /* NewPostCell1.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD21770F21DA89D30021890B /* NewPostCell1.swift */; };
 		BD235B5321D43E3F00B69689 /* CustomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5221D43E3F00B69689 /* CustomTextView.swift */; };
 		BD235B5521D543A300B69689 /* NewPostCell3.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5421D543A300B69689 /* NewPostCell3.swift */; };
@@ -46,6 +48,8 @@
 /* Begin PBXFileReference section */
 		0ED3886017A114BFA40E5D09 /* Pods-Classifieds.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Classifieds.release.xcconfig"; path = "Pods/Target Support Files/Pods-Classifieds/Pods-Classifieds.release.xcconfig"; sourceTree = "<group>"; };
 		1DCBA56CAD8F8E4F7FF9752A /* Pods_Classifieds.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Classifieds.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD04603921E129360019705D /* ButtomUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtomUpController.swift; sourceTree = "<group>"; };
+		BD04603B21E138DD0019705D /* BottomControllerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomControllerCell.swift; sourceTree = "<group>"; };
 		BD21770F21DA89D30021890B /* NewPostCell1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostCell1.swift; sourceTree = "<group>"; };
 		BD235B5221D43E3F00B69689 /* CustomTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextView.swift; sourceTree = "<group>"; };
 		BD235B5421D543A300B69689 /* NewPostCell3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostCell3.swift; sourceTree = "<group>"; };
@@ -197,6 +201,8 @@
 				BD9B73FF21DEA72D00196DB4 /* PostDetailsController.swift */,
 				BD9B740121DECDDA00196DB4 /* PostImageCell.swift */,
 				BD4D905021E022BA0036D206 /* MapPostsController.swift */,
+				BD04603921E129360019705D /* ButtomUpController.swift */,
+				BD04603B21E138DD0019705D /* BottomControllerCell.swift */,
 			);
 			path = HomeController;
 			sourceTree = "<group>";
@@ -374,10 +380,12 @@
 				BD7F2C0E21DD596A006BBC3E /* HomeControllerCell.swift in Sources */,
 				BD7F2C1021DD5BA0006BBC3E /* CustomCollectionViewHeader.swift in Sources */,
 				BD6A524C21D406A10094D175 /* CustomLabel.swift in Sources */,
+				BD04603C21E138DD0019705D /* BottomControllerCell.swift in Sources */,
 				BD4D905121E022BA0036D206 /* MapPostsController.swift in Sources */,
 				BDF88FE621D2B9B9004277E3 /* CollectionsCell.swift in Sources */,
 				BD6A524E21D409A50094D175 /* NewPostCell2.swift in Sources */,
 				BD235B5521D543A300B69689 /* NewPostCell3.swift in Sources */,
+				BD04603A21E129360019705D /* ButtomUpController.swift in Sources */,
 				BD9B740021DEA72D00196DB4 /* PostDetailsController.swift in Sources */,
 				BDF88FF121D30619004277E3 /* User.swift in Sources */,
 				BD7F2C1221DD86DF006BBC3E /* CategoryFilterController.swift in Sources */,

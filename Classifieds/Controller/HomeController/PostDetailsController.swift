@@ -12,6 +12,7 @@ import MapKit
 class PostDetailsController: UIViewController {
     
     private let imageCellId = "imageCellId"
+    var isOpened = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,7 +89,7 @@ class PostDetailsController: UIViewController {
         let sv = UIScrollView()
         sv.translatesAutoresizingMaskIntoConstraints = false
         sv.alwaysBounceVertical = true
-        sv.contentSize.height = 2000
+        sv.contentSize.height = 1500
         sv.contentInsetAdjustmentBehavior = .never
         sv.delegate = self
         return sv
@@ -127,7 +128,15 @@ class PostDetailsController: UIViewController {
     
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    lazy var priceLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         return label
@@ -135,22 +144,38 @@ class PostDetailsController: UIViewController {
     
     let descriptionView: UILabel = {
         let tv = UILabel()
-        tv.font = UIFont.systemFont(ofSize: 20)
+        tv.font = UIFont.systemFont(ofSize: 18)
         tv.sizeToFit()
         tv.numberOfLines = 0
         tv.textColor = .gray
+        tv.isUserInteractionEnabled = true
         tv.translatesAutoresizingMaskIntoConstraints = false
         return tv
     }()
     
     let locationLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.text = "Location"
         return label
     }()
+    
+    let dismissButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(#imageLiteral(resourceName: "icons8-cancel-100-2").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(handleDismiss), for: .touchUpInside)
+        return button
+    }()
+    
+    @objc func handleDismiss() {
+        if isOpened {
+            dismiss(animated: true, completion: nil)
+        }
+        navigationController?.popViewController(animated: true)
+    }
     
     lazy var mapview: MKMapView = {
         let mv = MKMapView()
@@ -162,6 +187,11 @@ class PostDetailsController: UIViewController {
     }()
     
     func setupLayout() {
+        
+        let attributedText = NSMutableAttributedString(string: "Price", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 20)])
+        attributedText.append(NSMutableAttributedString(string: String("  $\(posts.price ?? 0)"), attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor : UIColor.gray]))
+        priceLabel.attributedText = attributedText
+        
         view.addSubview(scrollView)
         scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
@@ -176,6 +206,12 @@ class PostDetailsController: UIViewController {
         collectionView.trailingAnchor.constraint(equalTo: vieww.trailingAnchor).isActive = true
         collectionView.bottomAnchor.constraint(equalTo: vieww.bottomAnchor).isActive = true
         
+        vieww.addSubview(dismissButton)
+        dismissButton.topAnchor.constraint(equalTo: vieww.topAnchor, constant: 20).isActive = true
+        dismissButton.leadingAnchor.constraint(equalTo: vieww.leadingAnchor).isActive = true
+        dismissButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        dismissButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
         vieww.addSubview(pageControl)
         pageControl.leadingAnchor.constraint(equalTo: vieww.leadingAnchor).isActive = true
         pageControl.trailingAnchor.constraint(equalTo: vieww.trailingAnchor).isActive = true
@@ -186,7 +222,7 @@ class PostDetailsController: UIViewController {
         titleLabel.topAnchor.constraint(equalTo: vieww.bottomAnchor, constant: 8).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 8).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8).isActive = true
-        titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
+        titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 30).isActive = true
         
         scrollView.addSubview(descriptionView)
         descriptionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8).isActive = true
@@ -194,11 +230,17 @@ class PostDetailsController: UIViewController {
         descriptionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8).isActive = true
         descriptionView.heightAnchor.constraint(greaterThanOrEqualToConstant: 30).isActive = true
         
+        scrollView.addSubview(priceLabel)
+        priceLabel.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 8).isActive = true
+        priceLabel.leadingAnchor.constraint(equalTo: descriptionView.leadingAnchor).isActive = true
+        priceLabel.trailingAnchor.constraint(equalTo: descriptionView.trailingAnchor).isActive = true
+        priceLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
         if posts.location != nil {
             scrollView.addSubview(locationLabel)
-            locationLabel.topAnchor.constraint(equalTo: descriptionView.bottomAnchor).isActive = true
-            locationLabel.leadingAnchor.constraint(equalTo: descriptionView.leadingAnchor).isActive = true
-            locationLabel.trailingAnchor.constraint(equalTo: descriptionView.trailingAnchor).isActive = true
+            locationLabel.topAnchor.constraint(equalTo: priceLabel.bottomAnchor).isActive = true
+            locationLabel.leadingAnchor.constraint(equalTo: priceLabel.leadingAnchor).isActive = true
+            locationLabel.trailingAnchor.constraint(equalTo: priceLabel.trailingAnchor).isActive = true
             locationLabel.heightAnchor.constraint(equalToConstant: 40).isActive = true
             
             scrollView.addSubview(mapview)
