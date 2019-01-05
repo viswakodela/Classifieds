@@ -13,6 +13,33 @@ class PostDetailsController: UIViewController {
     
     private let imageCellId = "imageCellId"
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        collectionView.register(PostImageCell.self, forCellWithReuseIdentifier: imageCellId)
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        vieww.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.width)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupLayout()
+        setNeedsStatusBarAppearanceUpdate()
+        navigationController?.navigationBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.navigationBar.isHidden = false
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     var posts: Post! {
         didSet {
             if posts.imageUrl1 != nil {
@@ -51,11 +78,7 @@ class PostDetailsController: UIViewController {
             annotation.coordinate = firstLocation.location!.coordinate
             annotation.title = self.posts.location
             self.mapview.addAnnotation(annotation)
-            
-            let center = CLLocationCoordinate2D(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude)
-            let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 500, longitudinalMeters: 500 )
-            self.mapview.setRegion(region, animated: false)
-            
+            self.mapview.showAnnotations(self.mapview.annotations, animated: false)
         }
     }
     
@@ -137,28 +160,6 @@ class PostDetailsController: UIViewController {
         mv.delegate = self
         return mv
     }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-        collectionView.register(PostImageCell.self, forCellWithReuseIdentifier: imageCellId)
-    }
-    
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        vieww.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.width)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupLayout()
-        navigationController?.navigationBar.isHidden = true
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        navigationController?.navigationBar.isHidden = false
-    }
     
     func setupLayout() {
         view.addSubview(scrollView)

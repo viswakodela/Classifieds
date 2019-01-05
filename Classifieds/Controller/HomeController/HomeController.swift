@@ -33,8 +33,16 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         super.viewDidLoad()
         collectionViewSetup()
         navigationControllerSetup()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogOut))
         fetchPostsFromFirebase()
+        navigationItem.leftBarButtonItems = [UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-map-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleMap)), UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogOut))]
+    }
+    
+    @objc func handleMap() {
+        let mapPosts = MapPostsController()
+        postsArray.forEach { (post) in
+            mapPosts.posts.append(post)
+        }
+        present(mapPosts, animated: true, completion: nil)
     }
     
     var users = [User]()
