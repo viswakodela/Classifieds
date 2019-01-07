@@ -27,6 +27,8 @@
 		BD294E1C21D1B60700976663 /* HomeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E1B21D1B60700976663 /* HomeHeader.swift */; };
 		BD294E1E21D1D30200976663 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E1D21D1D30200976663 /* CategoryCell.swift */; };
 		BD294E2121D1F29500976663 /* CategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E2021D1F29500976663 /* CategoryModel.swift */; };
+		BD42D23B21E3DBD7002AC477 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D23A21E3DBD7002AC477 /* Extensions.swift */; };
+		BD42D23D21E3E3B5002AC477 /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D23C21E3E3B5002AC477 /* MenuController.swift */; };
 		BD4D905121E022BA0036D206 /* MapPostsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4D905021E022BA0036D206 /* MapPostsController.swift */; };
 		BD6A524721D400220094D175 /* NewPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6A524621D400220094D175 /* NewPostController.swift */; };
 		BD6A524C21D406A10094D175 /* CustomLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6A524B21D406A10094D175 /* CustomLabel.swift */; };
@@ -70,6 +72,8 @@
 		BD294E1B21D1B60700976663 /* HomeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeader.swift; sourceTree = "<group>"; };
 		BD294E1D21D1D30200976663 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		BD294E2021D1F29500976663 /* CategoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryModel.swift; sourceTree = "<group>"; };
+		BD42D23A21E3DBD7002AC477 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		BD42D23C21E3E3B5002AC477 /* MenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
 		BD4D905021E022BA0036D206 /* MapPostsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPostsController.swift; sourceTree = "<group>"; };
 		BD6A524621D400220094D175 /* NewPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostController.swift; sourceTree = "<group>"; };
 		BD6A524B21D406A10094D175 /* CustomLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLabel.swift; sourceTree = "<group>"; };
@@ -155,6 +159,7 @@
 				BD7F2C1121DD86DF006BBC3E /* CategoryFilterController.swift */,
 				BD7F2C0C21DD594D006BBC3E /* HomeController */,
 				BD6A524821D4020B0094D175 /* NewPost */,
+				BD42D23E21E3E3BE002AC477 /* Menucontroller */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -178,6 +183,14 @@
 				BD235B7C21D6912C00B69689 /* Post.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		BD42D23E21E3E3BE002AC477 /* Menucontroller */ = {
+			isa = PBXGroup;
+			children = (
+				BD42D23C21E3E3B5002AC477 /* MenuController.swift */,
+			);
+			path = Menucontroller;
 			sourceTree = "<group>";
 		};
 		BD6A524821D4020B0094D175 /* NewPost */ = {
@@ -213,6 +226,7 @@
 				BDF88FEC21D2F56A004277E3 /* CustomTextFiels.swift */,
 				BD6A524B21D406A10094D175 /* CustomLabel.swift */,
 				BD235B5221D43E3F00B69689 /* CustomTextView.swift */,
+				BD42D23A21E3DBD7002AC477 /* Extensions.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -385,6 +399,7 @@
 				BDF88FE621D2B9B9004277E3 /* CollectionsCell.swift in Sources */,
 				BD6A524E21D409A50094D175 /* NewPostCell2.swift in Sources */,
 				BD235B5521D543A300B69689 /* NewPostCell3.swift in Sources */,
+				BD42D23D21E3E3B5002AC477 /* MenuController.swift in Sources */,
 				BD04603A21E129360019705D /* ButtomUpController.swift in Sources */,
 				BD9B740021DEA72D00196DB4 /* PostDetailsController.swift in Sources */,
 				BDF88FF121D30619004277E3 /* User.swift in Sources */,
@@ -396,6 +411,7 @@
 				BD294E0021D1A18C00976663 /* AppDelegate.swift in Sources */,
 				BD294E1C21D1B60700976663 /* HomeHeader.swift in Sources */,
 				BD294E1221D1A59100976663 /* HomeController.swift in Sources */,
+				BD42D23B21E3DBD7002AC477 /* Extensions.swift in Sources */,
 				BD294E2121D1F29500976663 /* CategoryModel.swift in Sources */,
 				BDF88FEA21D2F012004277E3 /* RegistrationController.swift in Sources */,
 				BD294E1421D1A94D00976663 /* SearchController.swift in Sources */,

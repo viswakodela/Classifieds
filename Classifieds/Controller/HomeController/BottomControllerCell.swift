@@ -24,12 +24,14 @@ class BottomControllerCell: UITableViewCell {
             guard let imageString = post?.imageUrl1, let url = URL(string: imageString) else {return}
             imageview.sd_setImage(with: url)
             titleLabel.text = post?.title
+            priceLabel.text = "$\(post?.price ?? 0)"
             descriptionView.text = post?.description
         }
     }
     
     let imageview: UIImageView = {
         let iv = UIImageView()
+        iv.layer.cornerRadius = 5
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
@@ -37,9 +39,18 @@ class BottomControllerCell: UITableViewCell {
         return iv
     }()
     
+    let priceLabel : UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 18)
+        label.textColor = UIColor(red: 128/255, green: 128/255, blue: 128/255, alpha: 1)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        return label
+    }()
+    
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.font = UIFont.boldSystemFont(ofSize: 15)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.sizeToFit()
@@ -72,10 +83,16 @@ class BottomControllerCell: UITableViewCell {
         titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
         titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 10).isActive = true
         
+        addSubview(priceLabel)
+        priceLabel.leadingAnchor.constraint(equalTo: imageview.trailingAnchor, constant: 8).isActive = true
+        priceLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
+        priceLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4).isActive = true
+        priceLabel.heightAnchor.constraint(equalToConstant: 15).isActive = true
+        
         addSubview(descriptionView)
-        descriptionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8).isActive = true
-        descriptionView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
-        descriptionView.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
+        descriptionView.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 4).isActive = true
+        descriptionView.leadingAnchor.constraint(equalTo: priceLabel.leadingAnchor).isActive = true
+        descriptionView.trailingAnchor.constraint(equalTo: priceLabel.trailingAnchor).isActive = true
         descriptionView.heightAnchor.constraint(greaterThanOrEqualToConstant: 10).isActive = true
         
     }

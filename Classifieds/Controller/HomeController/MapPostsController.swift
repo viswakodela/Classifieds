@@ -160,7 +160,7 @@ extension MapPostsController {
     @objc func handlePullGesture(gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: view)
         if translation.y < -20 {
-            gesture.isEnabled = false
+//            gesture.isEnabled = false
             pullUp()
         } else {
             pullDown()

@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import Firebase
 
 class PostDetailsController: UIViewController {
     
@@ -61,6 +62,17 @@ class PostDetailsController: UIViewController {
             titleLabel.text = posts.title
             descriptionView.text = posts.description
             self.mapViewAnnotationStuff()
+            
+            guard let uid = posts.uid else {return}
+            
+            Firestore.firestore().collection("users").document(uid).getDocument { (snap, err) in
+                if let error = err {
+                    print(error.localizedDescription)
+                }
+                guard let snapshot = snap?.data() else {return}
+                let user = User(dictionary: snapshot)
+                self.sellerNameLabel.text = user.name
+            }
             collectionView.reloadData()
         }
     }
@@ -134,6 +146,15 @@ class PostDetailsController: UIViewController {
         return label
     }()
     
+    let dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.backgroundColor = .green
+        return label
+    }()
+    
     lazy var priceLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 20)
@@ -142,13 +163,14 @@ class PostDetailsController: UIViewController {
         return label
     }()
     
-    let descriptionView: UILabel = {
-        let tv = UILabel()
+    let descriptionView: UITextView = {
+        let tv = UITextView()
         tv.font = UIFont.systemFont(ofSize: 18)
         tv.sizeToFit()
-        tv.numberOfLines = 0
+        tv.isScrollEnabled = false
         tv.textColor = .gray
         tv.isUserInteractionEnabled = true
+        tv.isEditable = false
         tv.translatesAutoresizingMaskIntoConstraints = false
         return tv
     }()
@@ -168,6 +190,85 @@ class PostDetailsController: UIViewController {
         button.setImage(#imageLiteral(resourceName: "icons8-cancel-100-2").withRenderingMode(.alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(handleDismiss), for: .touchUpInside)
         return button
+    }()
+    
+    let messageButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(#imageLiteral(resourceName: "icons8-speech-bubble-100").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
+        button.layer.shadowOpacity = 1
+        button.layer.shadowRadius = 0
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.masksToBounds = true
+        return button
+    }()
+    
+    let shareButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(#imageLiteral(resourceName: "icons8-forward-arrow-100").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
+        button.layer.shadowOpacity = 1
+        button.layer.shadowRadius = 0
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.masksToBounds = true
+        return button
+    }()
+    
+    let moreButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(#imageLiteral(resourceName: "icons8-more-100").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
+        button.layer.shadowOpacity = 1
+        button.layer.shadowRadius = 0
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.masksToBounds = true
+        return button
+    }()
+    
+    let favoriteButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(#imageLiteral(resourceName: "icons8-heart-100-2").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
+        button.layer.shadowOpacity = 1
+        button.layer.shadowRadius = 0
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.masksToBounds = true
+        return button
+    }()
+    
+    let sellerInformationView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.addBorder(toSide: .Top, withColor: UIColor.gray.cgColor, andThickness: 1)
+        view.addBorder(toSide: .Bottom, withColor: UIColor.gray.cgColor, andThickness: 1)
+//        view.layer.borderColor = UIColor.gray.cgColor
+//        view.layer.borderWidth = 0.2
+//        view.backgroundColor = .lightGray
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    let sellerImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        iv.image = #imageLiteral(resourceName: "furniture")
+        iv.layer.cornerRadius = 25
+        iv.clipsToBounds = true
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        return iv
+    }()
+    
+    let sellerNameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        return label
     }()
     
     @objc func handleDismiss() {
@@ -191,7 +292,7 @@ class PostDetailsController: UIViewController {
         let attributedText = NSMutableAttributedString(string: "Price", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 20)])
         attributedText.append(NSMutableAttributedString(string: String("  $\(posts.price ?? 0)"), attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor : UIColor.gray]))
         priceLabel.attributedText = attributedText
-        
+
         view.addSubview(scrollView)
         scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
@@ -202,8 +303,8 @@ class PostDetailsController: UIViewController {
         
         vieww.addSubview(collectionView)
         collectionView.topAnchor.constraint(equalTo: vieww.topAnchor).isActive = true
-        collectionView.leadingAnchor.constraint(equalTo: vieww.leadingAnchor).isActive = true
-        collectionView.trailingAnchor.constraint(equalTo: vieww.trailingAnchor).isActive = true
+        collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         collectionView.bottomAnchor.constraint(equalTo: vieww.bottomAnchor).isActive = true
         
         vieww.addSubview(dismissButton)
@@ -236,33 +337,80 @@ class PostDetailsController: UIViewController {
         priceLabel.trailingAnchor.constraint(equalTo: descriptionView.trailingAnchor).isActive = true
         priceLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
+        sellorInformationView()
+        
         if posts.location != nil {
             scrollView.addSubview(locationLabel)
-            locationLabel.topAnchor.constraint(equalTo: priceLabel.bottomAnchor).isActive = true
-            locationLabel.leadingAnchor.constraint(equalTo: priceLabel.leadingAnchor).isActive = true
-            locationLabel.trailingAnchor.constraint(equalTo: priceLabel.trailingAnchor).isActive = true
+            locationLabel.topAnchor.constraint(equalTo: sellerInformationView.bottomAnchor).isActive = true
+            locationLabel.leadingAnchor.constraint(equalTo: sellerInformationView.leadingAnchor, constant: 8).isActive = true
+            locationLabel.trailingAnchor.constraint(equalTo: sellerInformationView.trailingAnchor).isActive = true
             locationLabel.heightAnchor.constraint(equalToConstant: 40).isActive = true
             
             scrollView.addSubview(mapview)
             mapview.topAnchor.constraint(equalTo: locationLabel.bottomAnchor).isActive = true
             mapview.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
             mapview.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-            mapview.heightAnchor.constraint(equalToConstant: 200).isActive = true
+            mapview.heightAnchor.constraint(equalToConstant: 150).isActive = true
         }
+    }
+    
+    func sellorInformationView() {
+        
+//        sellerInformationView.addBorder(toSide: .Top, withColor: UIColor.gray.cgColor, andThickness: 1)
+        
+        scrollView.addSubview(sellerInformationView)
+        sellerInformationView.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 8).isActive = true
+        sellerInformationView.leadingAnchor.constraint(equalTo: priceLabel.leadingAnchor).isActive = true
+        sellerInformationView.trailingAnchor.constraint(equalTo: priceLabel.trailingAnchor).isActive = true
+        sellerInformationView.heightAnchor.constraint(equalToConstant: 110).isActive = true
+        
+        let stackView = UIStackView(arrangedSubviews: [messageButton, shareButton, moreButton, favoriteButton])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.spacing = 20
+        
+        sellerInformationView.addSubview(stackView)
+        stackView.bottomAnchor.constraint(equalTo: sellerInformationView.bottomAnchor, constant: -8).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: sellerInformationView.leadingAnchor).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: sellerInformationView.trailingAnchor).isActive = true
+        stackView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        sellerInformationView.addSubview(sellerImageView)
+        sellerImageView.topAnchor.constraint(equalTo: sellerInformationView.topAnchor, constant: 8).isActive = true
+        sellerImageView.leadingAnchor.constraint(equalTo: sellerInformationView.leadingAnchor, constant: 8).isActive = true
+        sellerImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        sellerImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        sellerInformationView.addSubview(sellerNameLabel)
+        sellerNameLabel.topAnchor.constraint(equalTo: sellerImageView.topAnchor, constant: 13).isActive = true
+        sellerNameLabel.leadingAnchor.constraint(equalTo: sellerImageView.trailingAnchor, constant: 8).isActive = true
+        sellerNameLabel.trailingAnchor.constraint(equalTo: sellerInformationView.trailingAnchor, constant: -8).isActive = true
+        sellerNameLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 20).isActive = true
     }
 }
 
 extension PostDetailsController: UIScrollViewDelegate {
     
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+
 //        let changeY = -scrollView.contentOffset.y
 //        var width = view.frame.width + changeY * 2
 //        width = max(width, view.frame.width)
 //
 //        vieww.frame = CGRect(x: 0, y: 0, width: width, height: width)
-//
-//    }
+        
+        let contentOffset = -scrollView.contentOffset.y
+        
+        if contentOffset > 150 {
+            
+            if isOpened {
+                dismiss(animated: true, completion: nil)
+            } else {
+                navigationController?.popViewController(animated: true)
+            }
+        }
+    }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         let x = targetContentOffset.pointee.x
@@ -310,6 +458,5 @@ extension PostDetailsController: MKMapViewDelegate {
             mapItem.openInMaps(launchOptions: options)
         }
     }
-    
 }
 

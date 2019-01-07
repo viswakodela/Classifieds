@@ -8,6 +8,7 @@
 
 import UIKit
 import SDWebImage
+import Firebase
 
 class HomeControllerCell: UICollectionViewCell {
     
@@ -16,8 +17,8 @@ class HomeControllerCell: UICollectionViewCell {
             guard let imageUrl = post.imageUrl1 else {return}
             let url = URL(string: imageUrl)
             imageview.sd_setImage(with: url)
-            categoryLabel.text = post.categoryName
-            titleLabel.text = post.title
+            priceLabel.text = "$ \(post.price ?? 0)"
+            titleLabel.text = "\(self.post.title ?? "")"
         }
     }
     
@@ -31,9 +32,10 @@ class HomeControllerCell: UICollectionViewCell {
         return iv
     }()
     
-    let categoryLabel : UILabel = {
+    let priceLabel : UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.font = UIFont.systemFont(ofSize: 15)
+        label.textColor = .gray
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         return label
@@ -41,7 +43,7 @@ class HomeControllerCell: UICollectionViewCell {
     
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 15)
+        label.font = UIFont.boldSystemFont(ofSize: 15)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         return label
@@ -60,17 +62,19 @@ class HomeControllerCell: UICollectionViewCell {
         imageview.topAnchor.constraint(equalTo: topAnchor).isActive = true
         imageview.heightAnchor.constraint(equalToConstant: 160).isActive = true
         
-        addSubview(categoryLabel)
-        categoryLabel.topAnchor.constraint(equalTo: imageview.bottomAnchor).isActive = true
-        categoryLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        categoryLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        categoryLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
         addSubview(titleLabel)
-        titleLabel.topAnchor.constraint(equalTo: categoryLabel.bottomAnchor).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: imageview.bottomAnchor).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        titleLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        addSubview(priceLabel)
+        priceLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor).isActive = true
+        priceLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        priceLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        priceLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        
         
     }
     
