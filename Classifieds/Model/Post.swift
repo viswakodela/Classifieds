@@ -23,6 +23,7 @@ class Post {
     var imageUrl4: String?
     var imageUrl5: String?
     var imagesArray: [String]?
+    var date: TimeInterval?
     
     init() {
         
@@ -41,6 +42,7 @@ class Post {
         self.imageUrl3 = dictionary["imageUrl3"] as? String
         self.imageUrl4 = dictionary["imageUrl4"] as? String
         self.imageUrl5 = dictionary["imageUrl5"] as? String
+        self.date = dictionary["date"] as? TimeInterval
         
 //        if imageUrl1 != nil {
 //            self.imagesArray?.append(imageUrl1!)

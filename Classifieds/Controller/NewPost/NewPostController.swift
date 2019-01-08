@@ -98,6 +98,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
     @objc func imageButtonsImagePicker(button: UIButton) {
         
         let vc = BSImagePickerViewController()
+        vc.maxNumberOfSelections = 5
         self.bs_presentImagePickerController(vc, animated: true, select: { (PHAsset) in
             
         }, deselect: { (PHAsset) in
@@ -120,23 +121,21 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
                 var thumbnail = UIImage()
                 options.isSynchronous = true
                 
-                manager.requestImage(for: asset, targetSize: CGSize(width: 600, height: 600), contentMode: .aspectFill, options: options) { (image, info) in
+                manager.requestImage(for: asset, targetSize: CGSize(width: 1600, height: 900), contentMode: .aspectFill, options: options) { (image, info) in
                     guard let image = image else {return}
                     thumbnail = image
                 }
-                guard let data = thumbnail.jpegData(compressionQuality: 0.4) else {return}
-                guard let newImage = UIImage(data: data) else {return}
-                self.photosArray.append(newImage)
+//                guard let data = thumbnail.jpegData(compressionQuality: 0.4) else {return}
+//                guard let newImage = UIImage(data: data) else {return}
+                self.photosArray.append(thumbnail)
             }
             
             DispatchQueue.main.async {
                 
-                self.image2Button.isHidden = false
-                self.image3Button.isHidden = false
-                self.image4Button.isHidden = false
-                self.image5Button.isHidden = false
+                
                 
                 var buttonsArray = [self.image1Button, self.image2Button, self.image3Button, self.image4Button, self.image5Button]
+                
                 
                 for image in self.photosArray {
                     for button in buttonsArray {
@@ -145,6 +144,18 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
                             if imageIndex == buttonIndex {
                                 buttonsArray[buttonIndex].setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
                                 
+                                
+                                let count = self.photosArray.count
+                                
+                                for element in 0...count - 1 {
+                                    buttonsArray.forEach({ (but) in
+                                        if element > count {
+                                            return
+                                        }
+                                        buttonsArray[element].isHidden = false
+                                    })
+                                }
+                                
                                 let fileName = UUID().uuidString
                                 let ref = Storage.storage().reference().child("postImages").child(fileName)
                                 
@@ -152,7 +163,13 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
                                 hud.textLabel.text = "Uploading Image"
                                 hud.show(in: self.view)
                                 
-                                guard let uploadData = image.jpegData(compressionQuality: 0.7) else {return}
+                                self.image1Button.isEnabled = false
+                                self.image2Button.isEnabled = false
+                                self.image3Button.isEnabled = false
+                                self.image4Button.isEnabled = false
+                                self.image5Button.isEnabled = false
+                                
+                                guard let uploadData = image.jpegData(compressionQuality: 1) else {return}
                                 
                                 ref.putData(uploadData, metadata: nil, completion: { (metadata, err) in
                                     hud.dismiss()
@@ -185,19 +202,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
                         }
                     }
                 }
-                
-//                self.photosArray.forEach({ (image) in
-//                    let firstImage = image
-//                    self.image1Button.setImage(firstImage.withRenderingMode(.alwaysOriginal), for: .normal)
-//                    let secondImage = image
-//                    self.image2Button.setImage(secondImage.withRenderingMode(.alwaysOriginal), for: .normal)
-//                    let thirdImage = image
-//                    self.image3Button.setImage(thirdImage.withRenderingMode(.alwaysOriginal), for: .normal)
-//                    let fourthImage = image
-//                    self.image3Button.setImage(fourthImage.withRenderingMode(.alwaysOriginal), for: .normal)
-//                })
             }
-            
         }
     }
     
@@ -219,6 +224,10 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
             return
         }
         
+        guard let uid = user?.uid else {return}
+//        let date =
+        self.post?.date = Date().timeIntervalSinceReferenceDate
+        
         let hud = JGProgressHUD(style: .dark)
         hud.textLabel.text = "Posting the ad"
         hud.show(in: self.view)
@@ -234,19 +243,11 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
             "imageUrl2" : self.post?.imageUrl2,
             "imageUrl3" : self.post?.imageUrl3,
             "imageUrl4" : self.post?.imageUrl4,
-            "imageUrl5" : self.post?.imageUrl5
+            "imageUrl5" : self.post?.imageUrl5,
+            "date" : self.post?.date
         ]
         
-        guard let uid = self.user?.uid else {return}
         let postId = UUID().uuidString
-        
-//        Firestore.firestore().collection("posts").document(uid).setData(postData) { (err) in
-//            if let error = err {
-//                self.showProgressHUD(error: error)
-//            }
-//            hud.dismiss(afterDelay: 3, animated: true)
-//            self.dismiss(animated: true, completion: nil)
-//        }
     Firestore.firestore().collection("posts").document(uid).collection("userPosts").document(postId).setData(postData) { (err) in
             if let error = err {
                 print(error)

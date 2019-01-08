@@ -29,8 +29,6 @@ class NewPostCell1: UITableViewCell {
         return tv
     }()
     
-    
-    
     func setupLayout() {
         
         addSubview(containerView)

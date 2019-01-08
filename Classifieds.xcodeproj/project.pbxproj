@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BD04603A21E129360019705D /* ButtomUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD04603921E129360019705D /* ButtomUpController.swift */; };
+		BD04603C21E138DD0019705D /* BottomControllerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD04603B21E138DD0019705D /* BottomControllerCell.swift */; };
 		BD21771021DA89D30021890B /* NewPostCell1.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD21770F21DA89D30021890B /* NewPostCell1.swift */; };
+		BD23388C21E520AC00C3B7D2 /* FilterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD23388B21E520AC00C3B7D2 /* FilterTableViewCell.swift */; };
 		BD235B5321D43E3F00B69689 /* CustomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5221D43E3F00B69689 /* CustomTextView.swift */; };
 		BD235B5521D543A300B69689 /* NewPostCell3.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5421D543A300B69689 /* NewPostCell3.swift */; };
 		BD235B5721D574D200B69689 /* ChooseCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5621D574D200B69689 /* ChooseCategoryController.swift */; };
@@ -25,6 +28,11 @@
 		BD294E1C21D1B60700976663 /* HomeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E1B21D1B60700976663 /* HomeHeader.swift */; };
 		BD294E1E21D1D30200976663 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E1D21D1D30200976663 /* CategoryCell.swift */; };
 		BD294E2121D1F29500976663 /* CategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E2021D1F29500976663 /* CategoryModel.swift */; };
+		BD42D23B21E3DBD7002AC477 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D23A21E3DBD7002AC477 /* Extensions.swift */; };
+		BD42D23D21E3E3B5002AC477 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D23C21E3E3B5002AC477 /* BaseViewController.swift */; };
+		BD42D24021E4028A002AC477 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D23F21E4028A002AC477 /* MenuViewController.swift */; };
+		BD42D24321E42987002AC477 /* FilteredTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D24221E42987002AC477 /* FilteredTableView.swift */; };
+		BD4D905121E022BA0036D206 /* MapPostsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4D905021E022BA0036D206 /* MapPostsController.swift */; };
 		BD6A524721D400220094D175 /* NewPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6A524621D400220094D175 /* NewPostController.swift */; };
 		BD6A524C21D406A10094D175 /* CustomLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6A524B21D406A10094D175 /* CustomLabel.swift */; };
 		BD6A524E21D409A50094D175 /* NewPostCell2.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6A524D21D409A50094D175 /* NewPostCell2.swift */; };
@@ -45,7 +53,10 @@
 /* Begin PBXFileReference section */
 		0ED3886017A114BFA40E5D09 /* Pods-Classifieds.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Classifieds.release.xcconfig"; path = "Pods/Target Support Files/Pods-Classifieds/Pods-Classifieds.release.xcconfig"; sourceTree = "<group>"; };
 		1DCBA56CAD8F8E4F7FF9752A /* Pods_Classifieds.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Classifieds.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD04603921E129360019705D /* ButtomUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtomUpController.swift; sourceTree = "<group>"; };
+		BD04603B21E138DD0019705D /* BottomControllerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomControllerCell.swift; sourceTree = "<group>"; };
 		BD21770F21DA89D30021890B /* NewPostCell1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostCell1.swift; sourceTree = "<group>"; };
+		BD23388B21E520AC00C3B7D2 /* FilterTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTableViewCell.swift; sourceTree = "<group>"; };
 		BD235B5221D43E3F00B69689 /* CustomTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextView.swift; sourceTree = "<group>"; };
 		BD235B5421D543A300B69689 /* NewPostCell3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostCell3.swift; sourceTree = "<group>"; };
 		BD235B5621D574D200B69689 /* ChooseCategoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseCategoryController.swift; sourceTree = "<group>"; };
@@ -65,6 +76,11 @@
 		BD294E1B21D1B60700976663 /* HomeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeader.swift; sourceTree = "<group>"; };
 		BD294E1D21D1D30200976663 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		BD294E2021D1F29500976663 /* CategoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryModel.swift; sourceTree = "<group>"; };
+		BD42D23A21E3DBD7002AC477 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		BD42D23C21E3E3B5002AC477 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		BD42D23F21E4028A002AC477 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		BD42D24221E42987002AC477 /* FilteredTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteredTableView.swift; sourceTree = "<group>"; };
+		BD4D905021E022BA0036D206 /* MapPostsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPostsController.swift; sourceTree = "<group>"; };
 		BD6A524621D400220094D175 /* NewPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostController.swift; sourceTree = "<group>"; };
 		BD6A524B21D406A10094D175 /* CustomLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLabel.swift; sourceTree = "<group>"; };
 		BD6A524D21D409A50094D175 /* NewPostCell2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostCell2.swift; sourceTree = "<group>"; };
@@ -143,12 +159,11 @@
 			children = (
 				BDF88FE921D2F012004277E3 /* RegistrationController.swift */,
 				BDF88FE721D2EED9004277E3 /* LoginController.swift */,
-				BD294E1721D1AFD100976663 /* ColletionsViewController.swift */,
 				BD294E1321D1A94D00976663 /* SearchController.swift */,
 				BD294E1521D1ACD000976663 /* SavedItemsController.swift */,
-				BD7F2C1121DD86DF006BBC3E /* CategoryFilterController.swift */,
 				BD7F2C0C21DD594D006BBC3E /* HomeController */,
 				BD6A524821D4020B0094D175 /* NewPost */,
+				BD42D24121E4291E002AC477 /* Collections */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -159,6 +174,7 @@
 				BD294E1B21D1B60700976663 /* HomeHeader.swift */,
 				BD294E1D21D1D30200976663 /* CategoryCell.swift */,
 				BDF88FE521D2B9B9004277E3 /* CollectionsCell.swift */,
+				BD7F2C1121DD86DF006BBC3E /* CategoryFilterController.swift */,
 				BD7F2C0F21DD5BA0006BBC3E /* CustomCollectionViewHeader.swift */,
 			);
 			path = View;
@@ -172,6 +188,25 @@
 				BD235B7C21D6912C00B69689 /* Post.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		BD42D23E21E3E3BE002AC477 /* Menucontroller */ = {
+			isa = PBXGroup;
+			children = (
+				BD42D23C21E3E3B5002AC477 /* BaseViewController.swift */,
+				BD42D23F21E4028A002AC477 /* MenuViewController.swift */,
+			);
+			path = Menucontroller;
+			sourceTree = "<group>";
+		};
+		BD42D24121E4291E002AC477 /* Collections */ = {
+			isa = PBXGroup;
+			children = (
+				BD294E1721D1AFD100976663 /* ColletionsViewController.swift */,
+				BD42D24221E42987002AC477 /* FilteredTableView.swift */,
+				BD23388B21E520AC00C3B7D2 /* FilterTableViewCell.swift */,
+			);
+			path = Collections;
 			sourceTree = "<group>";
 		};
 		BD6A524821D4020B0094D175 /* NewPost */ = {
@@ -190,10 +225,14 @@
 		BD7F2C0C21DD594D006BBC3E /* HomeController */ = {
 			isa = PBXGroup;
 			children = (
+				BD42D23E21E3E3BE002AC477 /* Menucontroller */,
 				BD294E1121D1A59100976663 /* HomeController.swift */,
 				BD7F2C0D21DD596A006BBC3E /* HomeControllerCell.swift */,
 				BD9B73FF21DEA72D00196DB4 /* PostDetailsController.swift */,
 				BD9B740121DECDDA00196DB4 /* PostImageCell.swift */,
+				BD4D905021E022BA0036D206 /* MapPostsController.swift */,
+				BD04603921E129360019705D /* ButtomUpController.swift */,
+				BD04603B21E138DD0019705D /* BottomControllerCell.swift */,
 			);
 			path = HomeController;
 			sourceTree = "<group>";
@@ -204,6 +243,7 @@
 				BDF88FEC21D2F56A004277E3 /* CustomTextFiels.swift */,
 				BD6A524B21D406A10094D175 /* CustomLabel.swift */,
 				BD235B5221D43E3F00B69689 /* CustomTextView.swift */,
+				BD42D23A21E3DBD7002AC477 /* Extensions.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -298,7 +338,7 @@
 				"${BUILT_PRODUCTS_DIR}/BSImagePicker/BSImagePicker.framework",
 				"${BUILT_PRODUCTS_DIR}/BSImageView/BSImageView.framework",
 				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
-				"${BUILT_PRODUCTS_DIR}/ExpandableLabel/ExpandableLabel.framework",
+				"${BUILT_PRODUCTS_DIR}/FAPanels/FAPanels.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/JGProgressHUD/JGProgressHUD.framework",
@@ -318,7 +358,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BSImagePicker.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BSImageView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ExpandableLabel.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FAPanels.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JGProgressHUD.framework",
@@ -371,21 +411,29 @@
 				BD294E1821D1AFD100976663 /* ColletionsViewController.swift in Sources */,
 				BDF88FED21D2F56A004277E3 /* CustomTextFiels.swift in Sources */,
 				BD7F2C0E21DD596A006BBC3E /* HomeControllerCell.swift in Sources */,
+				BD23388C21E520AC00C3B7D2 /* FilterTableViewCell.swift in Sources */,
 				BD7F2C1021DD5BA0006BBC3E /* CustomCollectionViewHeader.swift in Sources */,
 				BD6A524C21D406A10094D175 /* CustomLabel.swift in Sources */,
+				BD42D24021E4028A002AC477 /* MenuViewController.swift in Sources */,
+				BD04603C21E138DD0019705D /* BottomControllerCell.swift in Sources */,
+				BD4D905121E022BA0036D206 /* MapPostsController.swift in Sources */,
 				BDF88FE621D2B9B9004277E3 /* CollectionsCell.swift in Sources */,
 				BD6A524E21D409A50094D175 /* NewPostCell2.swift in Sources */,
 				BD235B5521D543A300B69689 /* NewPostCell3.swift in Sources */,
+				BD42D23D21E3E3B5002AC477 /* BaseViewController.swift in Sources */,
+				BD04603A21E129360019705D /* ButtomUpController.swift in Sources */,
 				BD9B740021DEA72D00196DB4 /* PostDetailsController.swift in Sources */,
 				BDF88FF121D30619004277E3 /* User.swift in Sources */,
 				BD7F2C1221DD86DF006BBC3E /* CategoryFilterController.swift in Sources */,
 				BD21771021DA89D30021890B /* NewPostCell1.swift in Sources */,
 				BD294E1E21D1D30200976663 /* CategoryCell.swift in Sources */,
 				BD235B5921D5804800B69689 /* MapViewController.swift in Sources */,
+				BD42D24321E42987002AC477 /* FilteredTableView.swift in Sources */,
 				BD6A524721D400220094D175 /* NewPostController.swift in Sources */,
 				BD294E0021D1A18C00976663 /* AppDelegate.swift in Sources */,
 				BD294E1C21D1B60700976663 /* HomeHeader.swift in Sources */,
 				BD294E1221D1A59100976663 /* HomeController.swift in Sources */,
+				BD42D23B21E3DBD7002AC477 /* Extensions.swift in Sources */,
 				BD294E2121D1F29500976663 /* CategoryModel.swift in Sources */,
 				BDF88FEA21D2F012004277E3 /* RegistrationController.swift in Sources */,
 				BD294E1421D1A94D00976663 /* SearchController.swift in Sources */,

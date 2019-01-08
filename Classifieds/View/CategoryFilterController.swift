@@ -30,35 +30,16 @@ class CategoryFilterController: UICollectionViewController {
     }
     
     func fetchDataFromFirebase() {
-//        self.users.forEach { (user) in
-//            guard let uid = user.uid else {return}
             guard let category = category.categoryName else {return}
         
-            posts.forEach({ (post) in
-                if post.categoryName == category {
-                    self.filteredPosts.append(post)
-                    DispatchQueue.main.async {
-                        self.collectionView.reloadData()
-                    }
+        posts.forEach({ (post) in
+            if post.categoryName == category {
+                self.filteredPosts.append(post)
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
                 }
-            })
-//            Firestore.firestore().collection("posts").document(uid).collection("userPosts").whereField("categoryName", isEqualTo: category).getDocuments(completion: { (snap, err) in
-//
-//                if let error = err {
-//                    print(error)
-//                }
-//
-//                guard let snapshot = snap?.documents else {return}
-//                snapshot.forEach({ (postsSnap) in
-//                    let postsDocument = postsSnap.data()
-//                    let posts = Post(dictionary: postsDocument)
-//                    self.posts.append(posts)
-//                    DispatchQueue.main.async {
-//                        self.collectionView.reloadData()
-//                    }
-//                })
-//            })
-//        }
+            }
+        })
     }
 }
 
@@ -88,4 +69,10 @@ extension CategoryFilterController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: 200)
     }
     
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let postDetails = PostDetailsController()
+        let post = self.filteredPosts[indexPath.item]
+        postDetails.post = post
+        navigationController?.pushViewController(postDetails, animated: true)
+    }
 }
