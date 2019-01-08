@@ -40,7 +40,7 @@ extension BottomUpController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let postDetails = PostDetailsController()
-        postDetails.posts = self.post
+        postDetails.post = self.post
         postDetails.isOpened = true
         present(postDetails, animated: true, completion: nil)
     }

@@ -42,28 +42,28 @@ class PostDetailsController: UIViewController {
         return .lightContent
     }
     
-    var posts: Post! {
+    var post: Post! {
         didSet {
-            if posts.imageUrl1 != nil {
-                self.imagesArray.append(posts!.imageUrl1!)
+            if post.imageUrl1 != nil {
+                self.imagesArray.append(post!.imageUrl1!)
             }
-            if posts.imageUrl2 != nil {
-                self.imagesArray.append(posts!.imageUrl2!)
+            if post.imageUrl2 != nil {
+                self.imagesArray.append(post!.imageUrl2!)
             }
-            if posts.imageUrl3 != nil {
-                self.imagesArray.append(posts!.imageUrl3!)
+            if post.imageUrl3 != nil {
+                self.imagesArray.append(post!.imageUrl3!)
             }
-            if posts.imageUrl4 != nil {
-                self.imagesArray.append(posts!.imageUrl4!)
+            if post.imageUrl4 != nil {
+                self.imagesArray.append(post!.imageUrl4!)
             }
-            if posts.imageUrl5 != nil {
-                self.imagesArray.append(posts!.imageUrl5!)
+            if post.imageUrl5 != nil {
+                self.imagesArray.append(post!.imageUrl5!)
             }
-            titleLabel.text = posts.title
-            descriptionView.text = posts.description
+            titleLabel.text = post.title
+            descriptionView.text = post.description
             self.mapViewAnnotationStuff()
             
-            guard let uid = posts.uid else {return}
+            guard let uid = post.uid else {return}
             
             Firestore.firestore().collection("users").document(uid).getDocument { (snap, err) in
                 if let error = err {
@@ -72,6 +72,13 @@ class PostDetailsController: UIViewController {
                 guard let snapshot = snap?.data() else {return}
                 let user = User(dictionary: snapshot)
                 self.sellerNameLabel.text = user.name
+                
+                if user.profileImage == nil {
+                    self.sellerImageView.image = #imageLiteral(resourceName: "icons8-account-100")
+                } else {
+                    guard let image = user.profileImage, let url = URL(string: image) else {return}
+                    self.sellerImageView.sd_setImage(with: url)
+                }
             }
             collectionView.reloadData()
         }
@@ -80,7 +87,7 @@ class PostDetailsController: UIViewController {
     func mapViewAnnotationStuff() {
         
         let geoCoder = CLGeocoder()
-        guard let location = posts.location else {return}
+        guard let location = post.location else {return}
         geoCoder.geocodeAddressString(location) { (placemarks, err) in
             if let error = err {
                 print(error.localizedDescription)
@@ -89,7 +96,7 @@ class PostDetailsController: UIViewController {
             
             let annotation = MKPointAnnotation()
             annotation.coordinate = firstLocation.location!.coordinate
-            annotation.title = self.posts.location
+            annotation.title = self.post.location
             self.mapview.addAnnotation(annotation)
             self.mapview.showAnnotations(self.mapview.annotations, animated: false)
         }
@@ -290,7 +297,7 @@ class PostDetailsController: UIViewController {
     func setupLayout() {
         
         let attributedText = NSMutableAttributedString(string: "Price", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 20)])
-        attributedText.append(NSMutableAttributedString(string: String("  $\(posts.price ?? 0)"), attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor : UIColor.gray]))
+        attributedText.append(NSMutableAttributedString(string: String("  $\(post.price ?? 0)"), attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor : UIColor.gray]))
         priceLabel.attributedText = attributedText
 
         view.addSubview(scrollView)
@@ -337,13 +344,12 @@ class PostDetailsController: UIViewController {
         priceLabel.trailingAnchor.constraint(equalTo: descriptionView.trailingAnchor).isActive = true
         priceLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
-        sellorInformationView()
         
-        if posts.location != nil {
+        if post.location != nil {
             scrollView.addSubview(locationLabel)
-            locationLabel.topAnchor.constraint(equalTo: sellerInformationView.bottomAnchor).isActive = true
-            locationLabel.leadingAnchor.constraint(equalTo: sellerInformationView.leadingAnchor, constant: 8).isActive = true
-            locationLabel.trailingAnchor.constraint(equalTo: sellerInformationView.trailingAnchor).isActive = true
+            locationLabel.topAnchor.constraint(equalTo: priceLabel.bottomAnchor).isActive = true
+            locationLabel.leadingAnchor.constraint(equalTo: priceLabel.leadingAnchor).isActive = true
+            locationLabel.trailingAnchor.constraint(equalTo: priceLabel.trailingAnchor).isActive = true
             locationLabel.heightAnchor.constraint(equalToConstant: 40).isActive = true
             
             scrollView.addSubview(mapview)
@@ -351,6 +357,8 @@ class PostDetailsController: UIViewController {
             mapview.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
             mapview.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
             mapview.heightAnchor.constraint(equalToConstant: 150).isActive = true
+            
+            sellorInformationView()
         }
     }
     
@@ -359,7 +367,7 @@ class PostDetailsController: UIViewController {
 //        sellerInformationView.addBorder(toSide: .Top, withColor: UIColor.gray.cgColor, andThickness: 1)
         
         scrollView.addSubview(sellerInformationView)
-        sellerInformationView.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 8).isActive = true
+        sellerInformationView.topAnchor.constraint(equalTo: mapview.bottomAnchor, constant: 8).isActive = true
         sellerInformationView.leadingAnchor.constraint(equalTo: priceLabel.leadingAnchor).isActive = true
         sellerInformationView.trailingAnchor.constraint(equalTo: priceLabel.trailingAnchor).isActive = true
         sellerInformationView.heightAnchor.constraint(equalToConstant: 110).isActive = true
@@ -403,7 +411,6 @@ extension PostDetailsController: UIScrollViewDelegate {
         let contentOffset = -scrollView.contentOffset.y
         
         if contentOffset > 150 {
-            
             if isOpened {
                 dismiss(animated: true, completion: nil)
             } else {
@@ -413,6 +420,14 @@ extension PostDetailsController: UIScrollViewDelegate {
     }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+//        
+//        if velocity.y > -4 {
+//            if isOpened {
+//                dismiss(animated: true, completion: nil)
+//            } else {
+//                navigationController?.popViewController(animated: true)
+//            }
+//        }
         let x = targetContentOffset.pointee.x
         pageControl.currentPage = Int(x / view.frame.width)
     }

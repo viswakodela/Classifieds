@@ -132,10 +132,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
             
             DispatchQueue.main.async {
                 
-//                self.image2Button.isHidden = false
-//                self.image3Button.isHidden = false
-//                self.image4Button.isHidden = false
-//                self.image5Button.isHidden = false
+                
                 
                 var buttonsArray = [self.image1Button, self.image2Button, self.image3Button, self.image4Button, self.image5Button]
                 
@@ -165,6 +162,12 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
                                 let hud = JGProgressHUD(style: .dark)
                                 hud.textLabel.text = "Uploading Image"
                                 hud.show(in: self.view)
+                                
+                                self.image1Button.isEnabled = false
+                                self.image2Button.isEnabled = false
+                                self.image3Button.isEnabled = false
+                                self.image4Button.isEnabled = false
+                                self.image5Button.isEnabled = false
                                 
                                 guard let uploadData = image.jpegData(compressionQuality: 1) else {return}
                                 
@@ -222,8 +225,8 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         }
         
         guard let uid = user?.uid else {return}
-        let date = Date().timeIntervalSinceReferenceDate
-        self.post?.date = date
+//        let date =
+        self.post?.date = Date().timeIntervalSinceReferenceDate
         
         let hud = JGProgressHUD(style: .dark)
         hud.textLabel.text = "Posting the ad"
