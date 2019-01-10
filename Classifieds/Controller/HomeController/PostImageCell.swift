@@ -29,6 +29,7 @@ class PostImageCell: UICollectionViewCell {
         iv.clipsToBounds = true
         iv.layer.cornerRadius = 5
         iv.clipsToBounds = true
+        iv.isUserInteractionEnabled = true
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
     }()

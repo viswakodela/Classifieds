@@ -163,7 +163,7 @@ extension HomeController {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return section == 0 ? CGSize(width: view.frame.width, height: 200) : CGSize(width: view.frame.width, height: 60)
+        return section == 0 ? CGSize(width: view.frame.width, height: 150) : CGSize(width: view.frame.width, height: 30)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -213,6 +213,7 @@ extension HomeController {
         let postdetails = PostDetailsController()
         let posts = self.postsArray[indexPath.item]
         postdetails.post = posts
+        postdetails.posts = self.postsArray
         navigationController?.pushViewController(postdetails, animated: true)
     } 
 }

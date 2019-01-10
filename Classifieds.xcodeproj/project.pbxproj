@@ -16,6 +16,9 @@
 		BD235B5721D574D200B69689 /* ChooseCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5621D574D200B69689 /* ChooseCategoryController.swift */; };
 		BD235B5921D5804800B69689 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5821D5804800B69689 /* MapViewController.swift */; };
 		BD235B7D21D6912C00B69689 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B7C21D6912C00B69689 /* Post.swift */; };
+		BD26C18521E67E45003FFDDD /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD26C18421E67E45003FFDDD /* NewMessageController.swift */; };
+		BD26C18821E68A94003FFDDD /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD26C18721E68A94003FFDDD /* MessageCell.swift */; };
+		BD26C18A21E68C10003FFDDD /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD26C18921E68C10003FFDDD /* Message.swift */; };
 		BD294E0021D1A18C00976663 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294DFF21D1A18C00976663 /* AppDelegate.swift */; };
 		BD294E0221D1A18C00976663 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E0121D1A18C00976663 /* TabBarController.swift */; };
 		BD294E0521D1A18C00976663 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD294E0321D1A18C00976663 /* Main.storyboard */; };
@@ -62,6 +65,9 @@
 		BD235B5621D574D200B69689 /* ChooseCategoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseCategoryController.swift; sourceTree = "<group>"; };
 		BD235B5821D5804800B69689 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		BD235B7C21D6912C00B69689 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		BD26C18421E67E45003FFDDD /* NewMessageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
+		BD26C18721E68A94003FFDDD /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MessageCell.swift; path = "/Users/viswakodela/Desktop/STUDIES/iOS Development/Classifieds/Classifieds/Controller/HomeController/Messaging/MessageCell.swift"; sourceTree = "<absolute>"; };
+		BD26C18921E68C10003FFDDD /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		BD294DFC21D1A18C00976663 /* Classifieds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Classifieds.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD294DFF21D1A18C00976663 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BD294E0121D1A18C00976663 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -118,6 +124,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		BD26C18621E68A39003FFDDD /* Messaging */ = {
+			isa = PBXGroup;
+			children = (
+				BD26C18421E67E45003FFDDD /* NewMessageController.swift */,
+				BD26C18721E68A94003FFDDD /* MessageCell.swift */,
+			);
+			path = Messaging;
+			sourceTree = "<group>";
+		};
 		BD294DF321D1A18C00976663 = {
 			isa = PBXGroup;
 			children = (
@@ -172,10 +187,9 @@
 			isa = PBXGroup;
 			children = (
 				BD294E1B21D1B60700976663 /* HomeHeader.swift */,
-				BD294E1D21D1D30200976663 /* CategoryCell.swift */,
-				BDF88FE521D2B9B9004277E3 /* CollectionsCell.swift */,
-				BD7F2C1121DD86DF006BBC3E /* CategoryFilterController.swift */,
 				BD7F2C0F21DD5BA0006BBC3E /* CustomCollectionViewHeader.swift */,
+				BD294E1D21D1D30200976663 /* CategoryCell.swift */,
+				BD7F2C1121DD86DF006BBC3E /* CategoryFilterController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -186,6 +200,7 @@
 				BD294E2021D1F29500976663 /* CategoryModel.swift */,
 				BDF88FF021D30619004277E3 /* User.swift */,
 				BD235B7C21D6912C00B69689 /* Post.swift */,
+				BD26C18921E68C10003FFDDD /* Message.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -203,6 +218,7 @@
 			isa = PBXGroup;
 			children = (
 				BD294E1721D1AFD100976663 /* ColletionsViewController.swift */,
+				BDF88FE521D2B9B9004277E3 /* CollectionsCell.swift */,
 				BD42D24221E42987002AC477 /* FilteredTableView.swift */,
 				BD23388B21E520AC00C3B7D2 /* FilterTableViewCell.swift */,
 			);
@@ -225,6 +241,7 @@
 		BD7F2C0C21DD594D006BBC3E /* HomeController */ = {
 			isa = PBXGroup;
 			children = (
+				BD26C18621E68A39003FFDDD /* Messaging */,
 				BD42D23E21E3E3BE002AC477 /* Menucontroller */,
 				BD294E1121D1A59100976663 /* HomeController.swift */,
 				BD7F2C0D21DD596A006BBC3E /* HomeControllerCell.swift */,
@@ -338,9 +355,9 @@
 				"${BUILT_PRODUCTS_DIR}/BSImagePicker/BSImagePicker.framework",
 				"${BUILT_PRODUCTS_DIR}/BSImageView/BSImageView.framework",
 				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
-				"${BUILT_PRODUCTS_DIR}/FAPanels/FAPanels.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/JGProgressHUD/JGProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
@@ -358,9 +375,9 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BSImagePicker.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BSImageView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FAPanels.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IQKeyboardManagerSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JGProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
@@ -411,6 +428,7 @@
 				BD294E1821D1AFD100976663 /* ColletionsViewController.swift in Sources */,
 				BDF88FED21D2F56A004277E3 /* CustomTextFiels.swift in Sources */,
 				BD7F2C0E21DD596A006BBC3E /* HomeControllerCell.swift in Sources */,
+				BD26C18A21E68C10003FFDDD /* Message.swift in Sources */,
 				BD23388C21E520AC00C3B7D2 /* FilterTableViewCell.swift in Sources */,
 				BD7F2C1021DD5BA0006BBC3E /* CustomCollectionViewHeader.swift in Sources */,
 				BD6A524C21D406A10094D175 /* CustomLabel.swift in Sources */,
@@ -422,6 +440,7 @@
 				BD235B5521D543A300B69689 /* NewPostCell3.swift in Sources */,
 				BD42D23D21E3E3B5002AC477 /* BaseViewController.swift in Sources */,
 				BD04603A21E129360019705D /* ButtomUpController.swift in Sources */,
+				BD26C18521E67E45003FFDDD /* NewMessageController.swift in Sources */,
 				BD9B740021DEA72D00196DB4 /* PostDetailsController.swift in Sources */,
 				BDF88FF121D30619004277E3 /* User.swift in Sources */,
 				BD7F2C1221DD86DF006BBC3E /* CategoryFilterController.swift in Sources */,
@@ -430,6 +449,7 @@
 				BD235B5921D5804800B69689 /* MapViewController.swift in Sources */,
 				BD42D24321E42987002AC477 /* FilteredTableView.swift in Sources */,
 				BD6A524721D400220094D175 /* NewPostController.swift in Sources */,
+				BD26C18821E68A94003FFDDD /* MessageCell.swift in Sources */,
 				BD294E0021D1A18C00976663 /* AppDelegate.swift in Sources */,
 				BD294E1C21D1B60700976663 /* HomeHeader.swift in Sources */,
 				BD294E1221D1A59100976663 /* HomeController.swift in Sources */,

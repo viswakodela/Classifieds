@@ -76,6 +76,7 @@ class FilterTableViewCell: UITableViewCell {
     func setupLayout() {
         
         backgroundColor = .white
+        clipsToBounds = true
         addSubview(imageview)
         imageview.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
         imageview.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true

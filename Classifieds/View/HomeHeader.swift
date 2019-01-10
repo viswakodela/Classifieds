@@ -58,7 +58,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         stackView.spacing = 4
         
         addSubview(stackView)
-        
+        categoryLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
         stackView.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
         stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
@@ -77,7 +77,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 150, height: 150)
+        return CGSize(width: 150, height: 130)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
