@@ -44,12 +44,16 @@ class TabBarControllr: UITabBarController {
         let searchController = SearchController()
         let searchNavController = self.navBarController(image: #imageLiteral(resourceName: "search_unselected"), title: "Search", rootViewController: searchController)
         
+        let messageController = MessagesTableController()
+        let messagesNavController = self.navBarController(image: #imageLiteral(resourceName: "icons8-chat-bubble-100"), title: "Messages", rootViewController: messageController)
+        
         
         
         viewControllers = [baseNavController,
                            collectionsNavController,
                            savedNavController,
-                            searchNavController
+                            searchNavController,
+                            messagesNavController
             ]
         
         tabBarItem.imageInsets = UIEdgeInsets(top: -4, left: -4, bottom: 4, right: 4)

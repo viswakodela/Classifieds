@@ -17,7 +17,8 @@ class MessageCell: UITableViewCell {
     
     var message: Message! {
         didSet {
-            let id = message.chatPartnerId()
+            
+            guard let id = Auth.auth().currentUser?.uid else {return}
             setupNameAndImage(userId: id)
         }
     }
@@ -72,7 +73,7 @@ class MessageCell: UITableViewCell {
     let bubbleView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .green
+        view.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
         view.layer.cornerRadius = 20
         view.clipsToBounds = true
         return view

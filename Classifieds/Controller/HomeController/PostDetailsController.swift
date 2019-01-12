@@ -43,17 +43,6 @@ class PostDetailsController: UIViewController {
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setNeedsStatusBarAppearanceUpdate()
-//        navigationController?.navigationBar.isHidden = true
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-//        navigationController?.navigationBar.isHidden = false
-    }
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
@@ -76,6 +65,7 @@ class PostDetailsController: UIViewController {
     
     var post: Post! {
         didSet {
+            navigationItem.title = post.title
             if post.imageUrl1 != nil {
                 self.imagesArray.append(post!.imageUrl1!)
             }
@@ -242,17 +232,6 @@ class PostDetailsController: UIViewController {
     @objc func handleMessage() {
         let newMessage = NewMessageController()
         newMessage.post = self.post
-        
-        guard let sellerId = post.uid else {return}
-        Firestore.firestore().collection("users").document(sellerId).getDocument { (snap, err) in
-            if let error = err {
-                print(error.localizedDescription)
-            }
-            guard let snapshotData = snap?.data() else {return}
-            let user = User(dictionary: snapshotData)
-            newMessage.user = user
-        }
-        
         newMessage.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(newMessage, animated: true)
     }

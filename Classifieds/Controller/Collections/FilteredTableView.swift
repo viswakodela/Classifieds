@@ -34,6 +34,7 @@ class FilteredTableView: UITableViewController {
         super.viewDidLoad()
         
         tableView.separatorStyle = .none
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.isTranslucent = true
         navigationController?.view.backgroundColor = .clear
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-back-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleBack))

@@ -44,6 +44,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         collectionViewSetup()
         navigationControllerSetup()
         fetchPostsFromFirebase()
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.leftBarButtonItems = [UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-map-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleMap)), UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogOut))]
         
     }

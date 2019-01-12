@@ -15,12 +15,14 @@ class Message {
     var fromId: String?
     var toId: String?
     var timeStamp: TimeInterval?
+    var postID: String?
     
     init(dictionary: [String : Any]) {
         self.messageText = dictionary["messageText"] as? String
         self.fromId = dictionary["fromId"] as? String
         self.toId = dictionary["toId"] as? String
         self.timeStamp = dictionary["timeStamp"] as? TimeInterval
+        self.postID = dictionary["postID"] as? String
     }
     
     func chatPartnerId() -> String {
@@ -29,9 +31,9 @@ class Message {
         //        return fromId == Auth.auth().currentUser?.uid ? toId : fromId
         
         if fromId == Auth.auth().currentUser?.uid {
-            chatPartnerId = fromId
-        }else {
             chatPartnerId = toId
+        } else {
+            chatPartnerId = fromId
         }
         return chatPartnerId!
     }

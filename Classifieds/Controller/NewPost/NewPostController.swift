@@ -227,6 +227,8 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         guard let uid = user?.uid else {return}
 //        let date =
         self.post?.date = Date().timeIntervalSinceReferenceDate
+        let postId = UUID().uuidString
+        self.post?.postId = postId
         
         let hud = JGProgressHUD(style: .dark)
         hud.textLabel.text = "Posting the ad"
@@ -244,10 +246,11 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
             "imageUrl3" : self.post?.imageUrl3,
             "imageUrl4" : self.post?.imageUrl4,
             "imageUrl5" : self.post?.imageUrl5,
-            "date" : self.post?.date
+            "date" : self.post?.date,
+            "postId" : self.post?.postId
         ]
         
-        let postId = UUID().uuidString
+//        Database.database().reference().child("posts").child(postId).updateChildValues(postData)
     Firestore.firestore().collection("posts").document(uid).collection("userPosts").document(postId).setData(postData) { (err) in
             if let error = err {
                 print(error)

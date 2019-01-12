@@ -20,6 +20,12 @@ class MapPostsController: UIViewController {
         setupLayout()
         checkLocatinServices()
         displayAnnotationsForPosts()
+        navigationItem.title = "Map View"
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = false
     }
     
     func setupLocation() {
@@ -105,7 +111,7 @@ class MapPostsController: UIViewController {
         mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         view.addSubview(bottomView)
-        self.bottomViewTopAnchor = bottomView.topAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+        self.bottomViewTopAnchor = bottomView.topAnchor.constraint(equalTo: view.bottomAnchor, constant: 8)
         bottomViewTopAnchor.isActive = true
         bottomView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         bottomView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
@@ -124,7 +130,7 @@ class MapPostsController: UIViewController {
         postView.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
         
         bottomView.addSubview(postView)
-        postView.topAnchor.constraint(equalTo: bottomView.topAnchor).isActive = true
+        postView.topAnchor.constraint(equalTo: bottomView.topAnchor, constant: 8).isActive = true
         postView.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor).isActive = true
         postView.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor).isActive = true
         postView.bottomAnchor.constraint(equalTo: bottomView.bottomAnchor).isActive = true
@@ -168,7 +174,7 @@ extension MapPostsController {
     }
     
     func pullUp() {
-        self.bottomViewTopAnchor.constant = -320
+        self.bottomViewTopAnchor.constant = -240
         performAnimation()
     }
     

@@ -19,6 +19,8 @@
 		BD26C18521E67E45003FFDDD /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD26C18421E67E45003FFDDD /* NewMessageController.swift */; };
 		BD26C18821E68A94003FFDDD /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD26C18721E68A94003FFDDD /* MessageCell.swift */; };
 		BD26C18A21E68C10003FFDDD /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD26C18921E68C10003FFDDD /* Message.swift */; };
+		BD26C18C21E7C332003FFDDD /* MessagesTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD26C18B21E7C332003FFDDD /* MessagesTableController.swift */; };
+		BD26C18E21E7EEE0003FFDDD /* MessagesControllerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD26C18D21E7EEE0003FFDDD /* MessagesControllerCell.swift */; };
 		BD294E0021D1A18C00976663 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294DFF21D1A18C00976663 /* AppDelegate.swift */; };
 		BD294E0221D1A18C00976663 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E0121D1A18C00976663 /* TabBarController.swift */; };
 		BD294E0521D1A18C00976663 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD294E0321D1A18C00976663 /* Main.storyboard */; };
@@ -68,6 +70,8 @@
 		BD26C18421E67E45003FFDDD /* NewMessageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
 		BD26C18721E68A94003FFDDD /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MessageCell.swift; path = "/Users/viswakodela/Desktop/STUDIES/iOS Development/Classifieds/Classifieds/Controller/HomeController/Messaging/MessageCell.swift"; sourceTree = "<absolute>"; };
 		BD26C18921E68C10003FFDDD /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		BD26C18B21E7C332003FFDDD /* MessagesTableController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesTableController.swift; sourceTree = "<group>"; };
+		BD26C18D21E7EEE0003FFDDD /* MessagesControllerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesControllerCell.swift; sourceTree = "<group>"; };
 		BD294DFC21D1A18C00976663 /* Classifieds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Classifieds.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD294DFF21D1A18C00976663 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BD294E0121D1A18C00976663 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -129,6 +133,8 @@
 			children = (
 				BD26C18421E67E45003FFDDD /* NewMessageController.swift */,
 				BD26C18721E68A94003FFDDD /* MessageCell.swift */,
+				BD26C18B21E7C332003FFDDD /* MessagesTableController.swift */,
+				BD26C18D21E7EEE0003FFDDD /* MessagesControllerCell.swift */,
 			);
 			path = Messaging;
 			sourceTree = "<group>";
@@ -431,6 +437,7 @@
 				BD26C18A21E68C10003FFDDD /* Message.swift in Sources */,
 				BD23388C21E520AC00C3B7D2 /* FilterTableViewCell.swift in Sources */,
 				BD7F2C1021DD5BA0006BBC3E /* CustomCollectionViewHeader.swift in Sources */,
+				BD26C18C21E7C332003FFDDD /* MessagesTableController.swift in Sources */,
 				BD6A524C21D406A10094D175 /* CustomLabel.swift in Sources */,
 				BD42D24021E4028A002AC477 /* MenuViewController.swift in Sources */,
 				BD04603C21E138DD0019705D /* BottomControllerCell.swift in Sources */,
@@ -453,6 +460,7 @@
 				BD294E0021D1A18C00976663 /* AppDelegate.swift in Sources */,
 				BD294E1C21D1B60700976663 /* HomeHeader.swift in Sources */,
 				BD294E1221D1A59100976663 /* HomeController.swift in Sources */,
+				BD26C18E21E7EEE0003FFDDD /* MessagesControllerCell.swift in Sources */,
 				BD42D23B21E3DBD7002AC477 /* Extensions.swift in Sources */,
 				BD294E2121D1F29500976663 /* CategoryModel.swift in Sources */,
 				BDF88FEA21D2F012004277E3 /* RegistrationController.swift in Sources */,

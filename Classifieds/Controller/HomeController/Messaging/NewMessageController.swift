@@ -13,16 +13,22 @@ class NewMessageController: UIViewController {
     
     private let messageCell = "messageCell"
     
-    var post: Post! {
+    var post: Post? {
         didSet {
-            
-            
+            navigationItem.title = post?.title
+            observeMessages(post: post, user: self.user)
         }
     }
     
-    var user: User! {
+    var user: User? {
         didSet {
-            observeMessages()
+            print(user?.uid)
+            observeMessages(post: self.post, user: user)
+        }
+    }
+    
+    var message: Message? {
+        didSet {
         }
     }
     
@@ -39,7 +45,6 @@ class NewMessageController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableView.backgroundColor = .white
         tableView.register(MessageCell.self, forCellReuseIdentifier: messageCell)
         tableView.separatorStyle = .none
@@ -47,25 +52,28 @@ class NewMessageController: UIViewController {
         settingLayout()
     }
     
-    func observeMessages() {
-        navigationItem.title = self.user.name
-        guard let fromId = Auth.auth().currentUser?.uid else {return}
-        guard let toId = self.user?.uid else {return}
+    func observeMessages(post: Post?, user: User?) {
         
-        let usermessagesRef = Database.database().reference().child("userMessages").child(fromId).child(toId)
-        usermessagesRef.observe(.childAdded) { (snap) in
+        guard let postID = self.post?.postId else {return}
+        guard let fromID = Auth.auth().currentUser?.uid else {return}
+        guard let toID = self.post?.uid else {return}
+        
+        let postMesageRef = Database.database().reference().child("post-messages").child(postID).child(fromID).child(toID)
+        postMesageRef.observe(.childAdded) { (snap) in
+            print(snap.key)
             let messageId = snap.key
             
-            let messageRef = Database.database().reference().child("messages").child(messageId)
-            messageRef.observe(.value, with: { (snap) in
-                let message = Message(dictionary: snap.value as! [String : Any])
+            let messagesRef = Database.database().reference().child("messages").child(messageId)
+            messagesRef.observe(.value, with: { (snap) in
+                guard let messageDictionary = snap.value as? [String : Any] else {return}
+                let message = Message(dictionary: messageDictionary)
                 self.messages.append(message)
+                
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
             })
         }
-        
     }
     
     lazy var tableView: UITableView = {
@@ -96,32 +104,33 @@ class NewMessageController: UIViewController {
     @objc func handleSend() {
         print("Sending")
         
-        guard let fromId = Auth.auth().currentUser?.uid else {return}
-        guard let text = messageTextField.text else {return}
         if messageTextField.text == "" {
             return
         }
-        guard let toId = self.user?.uid else {return}
-        let timeStamp = Int(Date().timeIntervalSinceReferenceDate)
-        let values: [String : Any] = ["messageText" : text, "fromId" : fromId, "toId" : toId, "timeStamp" : timeStamp]
+        guard let postID = post?.postId else {return}
+        guard let messageText = messageTextField.text else {return}
+        guard let fromID = Auth.auth().currentUser?.uid else {return}
+        guard let toID = post?.uid else {return}
+        let timeStamp = Date.timeIntervalSinceReferenceDate
+        let values = ["messageText" : messageText, "fromId" : fromID, "toId" : toID, "timeStamp" : timeStamp] as [String : Any]
         
-        let databaseref = Database.database().reference().child("messages")
-        let childRef = databaseref.childByAutoId()
+        let messageRef = Database.database().reference().child("messages")
+        let childRef = messageRef.childByAutoId()
         
-        childRef.updateChildValues(values) { (err, ref) in
-            self.messageTextField.text = nil
-            if let error = err {
-                print(error.localizedDescription)
-            }
-            let messageRef = Database.database().reference().child("userMessages").child(fromId).child(toId)
-            let messageId = childRef.key
-            let value = [messageId : 1]
-            messageRef.updateChildValues(value, withCompletionBlock: { (err, _) in
-                if let error = err {
-                    print(error.localizedDescription)
-                }
-            })
-        }
+        childRef.updateChildValues(values)
+        
+        let postMessagesRef = Database.database().reference().child("post-messages")
+        guard let messageID = childRef.key else {return}
+        let childValue = [messageID : 1]
+        postMessagesRef.child(postID).child(fromID).child(toID).updateChildValues(childValue)
+        
+        postMessagesRef.child(postID).child(toID).child(fromID).updateChildValues(childValue)
+        
+        self.messageTextField.text = nil
+        
+        
+        
+        
     }
     
     func settingLayout() {

@@ -93,49 +93,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         }
     }
     
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//
-//        let request = MKLocalSearch.Request()
-//        request.naturalLanguageQuery = searchText
-//        request.region = mapView.region
-//
-//        let search = MKLocalSearch(request: request)
-//        search.start { (resp, err) in
-//            if let error = err {
-//                print(error.localizedDescription)
-//            }
-//            guard let response = resp else{return}
-//            let set = Set(response.mapItems)
-//            let setArray = Array(set)
-//
-//            for item in setArray {
-//
-//                self.matchingItems.insert(item, at: 0)
-//
-//                guard let firstItem = setArray.first else {return}
-//
-//                let annotations = MKPointAnnotation()
-//                annotations.coordinate = firstItem.placemark.coordinate
-//                guard let title = firstItem.name else {return}
-//                annotations.title = title
-//                annotations.subtitle = firstItem.placemark.locality
-//                self.mapView.addAnnotation(annotations)
-//                let center = CLLocationCoordinate2D(latitude: annotations.coordinate.latitude, longitude: annotations.coordinate.longitude)
-//                let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 10000, longitudinalMeters: 10000)
-//                self.mapView.setRegion(region, animated: true)
-//            }
-//            DispatchQueue.main.async {
-//                self.tableView.reloadData()
-//            }
-//        }
-//
-//        guard let text = searchBar.text else {return}
-//        if text.isEmpty {
-//            self.matchingItems.removeAll()
-//            tableView.reloadData()
-//        }
-//    }
-    
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         self.mapView.annotations.forEach { (annotation) in
@@ -200,7 +157,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         view.addSubview(mapView)
         mapView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
