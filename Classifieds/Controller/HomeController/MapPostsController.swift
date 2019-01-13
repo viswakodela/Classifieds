@@ -157,7 +157,6 @@ extension MapPostsController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         self.checkLocationAuthorization()
     }
-    
 }
 
 //MARK:- Handling Pan Gesture
@@ -165,8 +164,8 @@ extension MapPostsController {
     
     @objc func handlePullGesture(gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: view)
-        if translation.y < -20 {
-//            gesture.isEnabled = false
+        
+        if translation.y < -80 {
             pullUp()
         } else {
             pullDown()

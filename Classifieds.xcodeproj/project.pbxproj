@@ -16,6 +16,12 @@
 		BD235B5721D574D200B69689 /* ChooseCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5621D574D200B69689 /* ChooseCategoryController.swift */; };
 		BD235B5921D5804800B69689 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5821D5804800B69689 /* MapViewController.swift */; };
 		BD235B7D21D6912C00B69689 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B7C21D6912C00B69689 /* Post.swift */; };
+		BD25630721EA9CD100647358 /* FirstTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD25630621EA9CD100647358 /* FirstTableViewCell.swift */; };
+		BD25630921EAAAC100647358 /* SecondTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD25630821EAAAC100647358 /* SecondTableViewCell.swift */; };
+		BD25630B21EAB76E00647358 /* ThirdTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD25630A21EAB76E00647358 /* ThirdTableViewCell.swift */; };
+		BD25630D21EAC03300647358 /* FourthTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD25630C21EAC03300647358 /* FourthTableCell.swift */; };
+		BD25630F21EAC27700647358 /* FifthTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD25630E21EAC27700647358 /* FifthTableCell.swift */; };
+		BD25631121EAC70800647358 /* SixthTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD25631021EAC70800647358 /* SixthTableCell.swift */; };
 		BD26C18521E67E45003FFDDD /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD26C18421E67E45003FFDDD /* NewMessageController.swift */; };
 		BD26C18821E68A94003FFDDD /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD26C18721E68A94003FFDDD /* MessageCell.swift */; };
 		BD26C18A21E68C10003FFDDD /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD26C18921E68C10003FFDDD /* Message.swift */; };
@@ -67,6 +73,12 @@
 		BD235B5621D574D200B69689 /* ChooseCategoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseCategoryController.swift; sourceTree = "<group>"; };
 		BD235B5821D5804800B69689 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		BD235B7C21D6912C00B69689 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		BD25630621EA9CD100647358 /* FirstTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstTableViewCell.swift; sourceTree = "<group>"; };
+		BD25630821EAAAC100647358 /* SecondTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondTableViewCell.swift; sourceTree = "<group>"; };
+		BD25630A21EAB76E00647358 /* ThirdTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdTableViewCell.swift; sourceTree = "<group>"; };
+		BD25630C21EAC03300647358 /* FourthTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourthTableCell.swift; sourceTree = "<group>"; };
+		BD25630E21EAC27700647358 /* FifthTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FifthTableCell.swift; sourceTree = "<group>"; };
+		BD25631021EAC70800647358 /* SixthTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SixthTableCell.swift; sourceTree = "<group>"; };
 		BD26C18421E67E45003FFDDD /* NewMessageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
 		BD26C18721E68A94003FFDDD /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MessageCell.swift; path = "/Users/viswakodela/Desktop/STUDIES/iOS Development/Classifieds/Classifieds/Controller/HomeController/Messaging/MessageCell.swift"; sourceTree = "<absolute>"; };
 		BD26C18921E68C10003FFDDD /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
@@ -128,6 +140,21 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		BD25630521EA9BED00647358 /* Post Details  */ = {
+			isa = PBXGroup;
+			children = (
+				BD9B73FF21DEA72D00196DB4 /* PostDetailsController.swift */,
+				BD25630621EA9CD100647358 /* FirstTableViewCell.swift */,
+				BD9B740121DECDDA00196DB4 /* PostImageCell.swift */,
+				BD25630821EAAAC100647358 /* SecondTableViewCell.swift */,
+				BD25630A21EAB76E00647358 /* ThirdTableViewCell.swift */,
+				BD25630C21EAC03300647358 /* FourthTableCell.swift */,
+				BD25630E21EAC27700647358 /* FifthTableCell.swift */,
+				BD25631021EAC70800647358 /* SixthTableCell.swift */,
+			);
+			path = "Post Details ";
+			sourceTree = "<group>";
+		};
 		BD26C18621E68A39003FFDDD /* Messaging */ = {
 			isa = PBXGroup;
 			children = (
@@ -183,6 +210,7 @@
 				BD294E1321D1A94D00976663 /* SearchController.swift */,
 				BD294E1521D1ACD000976663 /* SavedItemsController.swift */,
 				BD7F2C0C21DD594D006BBC3E /* HomeController */,
+				BD25630521EA9BED00647358 /* Post Details  */,
 				BD6A524821D4020B0094D175 /* NewPost */,
 				BD42D24121E4291E002AC477 /* Collections */,
 			);
@@ -251,8 +279,6 @@
 				BD42D23E21E3E3BE002AC477 /* Menucontroller */,
 				BD294E1121D1A59100976663 /* HomeController.swift */,
 				BD7F2C0D21DD596A006BBC3E /* HomeControllerCell.swift */,
-				BD9B73FF21DEA72D00196DB4 /* PostDetailsController.swift */,
-				BD9B740121DECDDA00196DB4 /* PostImageCell.swift */,
 				BD4D905021E022BA0036D206 /* MapPostsController.swift */,
 				BD04603921E129360019705D /* ButtomUpController.swift */,
 				BD04603B21E138DD0019705D /* BottomControllerCell.swift */,
@@ -431,12 +457,15 @@
 				BD235B5321D43E3F00B69689 /* CustomTextView.swift in Sources */,
 				BD294E1621D1ACD000976663 /* SavedItemsController.swift in Sources */,
 				BD235B5721D574D200B69689 /* ChooseCategoryController.swift in Sources */,
+				BD25630721EA9CD100647358 /* FirstTableViewCell.swift in Sources */,
 				BD294E1821D1AFD100976663 /* ColletionsViewController.swift in Sources */,
 				BDF88FED21D2F56A004277E3 /* CustomTextFiels.swift in Sources */,
+				BD25630D21EAC03300647358 /* FourthTableCell.swift in Sources */,
 				BD7F2C0E21DD596A006BBC3E /* HomeControllerCell.swift in Sources */,
 				BD26C18A21E68C10003FFDDD /* Message.swift in Sources */,
 				BD23388C21E520AC00C3B7D2 /* FilterTableViewCell.swift in Sources */,
 				BD7F2C1021DD5BA0006BBC3E /* CustomCollectionViewHeader.swift in Sources */,
+				BD25630921EAAAC100647358 /* SecondTableViewCell.swift in Sources */,
 				BD26C18C21E7C332003FFDDD /* MessagesTableController.swift in Sources */,
 				BD6A524C21D406A10094D175 /* CustomLabel.swift in Sources */,
 				BD42D24021E4028A002AC477 /* MenuViewController.swift in Sources */,
@@ -448,6 +477,7 @@
 				BD42D23D21E3E3B5002AC477 /* BaseViewController.swift in Sources */,
 				BD04603A21E129360019705D /* ButtomUpController.swift in Sources */,
 				BD26C18521E67E45003FFDDD /* NewMessageController.swift in Sources */,
+				BD25630B21EAB76E00647358 /* ThirdTableViewCell.swift in Sources */,
 				BD9B740021DEA72D00196DB4 /* PostDetailsController.swift in Sources */,
 				BDF88FF121D30619004277E3 /* User.swift in Sources */,
 				BD7F2C1221DD86DF006BBC3E /* CategoryFilterController.swift in Sources */,
@@ -455,6 +485,7 @@
 				BD294E1E21D1D30200976663 /* CategoryCell.swift in Sources */,
 				BD235B5921D5804800B69689 /* MapViewController.swift in Sources */,
 				BD42D24321E42987002AC477 /* FilteredTableView.swift in Sources */,
+				BD25630F21EAC27700647358 /* FifthTableCell.swift in Sources */,
 				BD6A524721D400220094D175 /* NewPostController.swift in Sources */,
 				BD26C18821E68A94003FFDDD /* MessageCell.swift in Sources */,
 				BD294E0021D1A18C00976663 /* AppDelegate.swift in Sources */,
@@ -466,6 +497,7 @@
 				BDF88FEA21D2F012004277E3 /* RegistrationController.swift in Sources */,
 				BD294E1421D1A94D00976663 /* SearchController.swift in Sources */,
 				BD9B740221DECDDA00196DB4 /* PostImageCell.swift in Sources */,
+				BD25631121EAC70800647358 /* SixthTableCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

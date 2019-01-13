@@ -12,7 +12,6 @@ import Firebase
 class CategoryFilterController: UICollectionViewController {
     
     private let filteredCell = "filteredCell"
-    var users = [User]()
     var posts = [Post]()
     var filteredPosts = [Post]()
     var category: CategoryModel! {
@@ -30,7 +29,7 @@ class CategoryFilterController: UICollectionViewController {
     }
     
     func fetchDataFromFirebase() {
-            guard let category = category.categoryName else {return}
+        guard let category = category.categoryName else {return}
         
         posts.forEach({ (post) in
             if post.categoryName == category {

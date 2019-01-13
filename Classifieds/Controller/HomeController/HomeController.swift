@@ -204,7 +204,6 @@ extension HomeController {
     
     func showHomeHeaderPush(catergory: CategoryModel) {
         let filteredCategoryCellController = CategoryFilterController(collectionViewLayout: UICollectionViewFlowLayout())
-        filteredCategoryCellController.users = users
         filteredCategoryCellController.posts = postsArray
         filteredCategoryCellController.category = catergory
         navigationController?.pushViewController(filteredCategoryCellController, animated: true)

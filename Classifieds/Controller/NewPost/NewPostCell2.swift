@@ -25,7 +25,7 @@ class NewPostCell2: UITableViewCell {
     
     lazy var textView: UITextView = {
         let tv = UITextView()
-        tv.text = "Start Typing.."
+        tv.text = "Description"
         tv.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
         tv.textColor = .lightGray
         tv.font = UIFont.systemFont(ofSize: 18)

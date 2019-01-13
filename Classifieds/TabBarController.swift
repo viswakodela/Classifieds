@@ -12,10 +12,10 @@ import JGProgressHUD
 
 class TabBarControllr: UITabBarController {
 
-    var baseScreenController: BaseScreenViewController?
+    var homeController: HomeController?
     override func viewDidLoad() {
         super.viewDidLoad()
-//        fetchCurrentUserfromFirebase()
+        fetchCurrentUserfromFirebase()
         // Do any additional setup after loading the view, typically from a nib.
         tabBar.tintColor = .black
         
@@ -27,13 +27,13 @@ class TabBarControllr: UITabBarController {
             return
         }
         
-//        self.homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
-//        guard let home = self.homeController else {return}
-//        let homeNavController = self.navBarController(image: #imageLiteral(resourceName: "home_unselected"), title: "Home", rootViewController: home)
+        self.homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
+        guard let home = self.homeController else {return}
+        let homeNavController = self.navBarController(image: #imageLiteral(resourceName: "home_unselected"), title: "Home", rootViewController: home)
         
-        self.baseScreenController = BaseScreenViewController()
-        guard let baseController = self.baseScreenController else {return}
-        let baseNavController = baseController
+//        self.baseScreenController = BaseScreenViewController()
+//        guard let baseController = self.baseScreenController else {return}
+//        let baseNavController = baseController
         
         let collections = ColletionsViewController(collectionViewLayout: UICollectionViewFlowLayout())
         let collectionsNavController = self.navBarController(image: #imageLiteral(resourceName: "collection"), title: "Collections", rootViewController: collections)
@@ -49,7 +49,7 @@ class TabBarControllr: UITabBarController {
         
         
         
-        viewControllers = [baseNavController,
+        viewControllers = [homeNavController,
                            collectionsNavController,
                            savedNavController,
                             searchNavController,
@@ -60,17 +60,17 @@ class TabBarControllr: UITabBarController {
         
     }
     
-//    func fetchCurrentUserfromFirebase() {
-//        guard let uid = Auth.auth().currentUser?.uid else {return}
-//        Firestore.firestore().collection("users").document(uid).getDocument { [unowned self] (snapshot, err) in
-//            if let error = err {
-//                print(error)
-//            }
-//            guard let userDictionary = snapshot?.data() else {return}
-//            let user = User(dictionary: userDictionary)
-//            self.baseScreenController?.user = user
-//        }
-//    }
+    func fetchCurrentUserfromFirebase() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        Firestore.firestore().collection("users").document(uid).getDocument { [unowned self] (snapshot, err) in
+            if let error = err {
+                print(error)
+            }
+            guard let userDictionary = snapshot?.data() else {return}
+            let user = User(dictionary: userDictionary)
+            self.homeController?.user = user
+        }
+    }
     
     func navBarController(image: UIImage, title: String, rootViewController: UIViewController = UIViewController()) -> UINavigationController {
         
