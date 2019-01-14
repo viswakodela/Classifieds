@@ -15,10 +15,11 @@ class TabBarControllr: UITabBarController {
     var homeController: HomeController?
     override func viewDidLoad() {
         super.viewDidLoad()
-        fetchCurrentUserfromFirebase()
-        // Do any additional setup after loading the view, typically from a nib.
-        tabBar.tintColor = .black
         
+        self.delegate = self
+        fetchCurrentUserfromFirebase()
+        
+        tabBar.tintColor = .black
         DispatchQueue.main.async {
             if Auth.auth().currentUser?.uid == nil {
                 let navRegController = UINavigationController(rootViewController: RegistrationController())
@@ -29,7 +30,7 @@ class TabBarControllr: UITabBarController {
         
         self.homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
         guard let home = self.homeController else {return}
-        let homeNavController = self.navBarController(image: #imageLiteral(resourceName: "home_unselected"), title: "Home", rootViewController: home)
+        let homeNavController = self.navBarController(image: #imageLiteral(resourceName: "home-1"), title: "Home", rootViewController: home)
         
 //        self.baseScreenController = BaseScreenViewController()
 //        guard let baseController = self.baseScreenController else {return}
@@ -38,11 +39,16 @@ class TabBarControllr: UITabBarController {
         let collections = ColletionsViewController(collectionViewLayout: UICollectionViewFlowLayout())
         let collectionsNavController = self.navBarController(image: #imageLiteral(resourceName: "collection"), title: "Collections", rootViewController: collections)
         
-        let saveItemController = SavedItemsController(collectionViewLayout: UICollectionViewFlowLayout())
-        let savedNavController =  self.navBarController(image: #imageLiteral(resourceName: "heart"), title: "Save", rootViewController: saveItemController)
+        
         
         let searchController = SearchController()
         let searchNavController = self.navBarController(image: #imageLiteral(resourceName: "search_unselected"), title: "Search", rootViewController: searchController)
+        
+        let newPostController = NewPostController()
+        let newPoatNavController = self.navBarController(image: #imageLiteral(resourceName: "icons8-add-90"), title: "Post", rootViewController: newPostController)
+        
+        let saveItemController = FavoritesController(collectionViewLayout: UICollectionViewFlowLayout())
+        let favoriteNavController =  self.navBarController(image: #imageLiteral(resourceName: "icons8-star-filled-100"), title: "Save", rootViewController: saveItemController)
         
         let messageController = MessagesTableController()
         let messagesNavController = self.navBarController(image: #imageLiteral(resourceName: "icons8-chat-bubble-100"), title: "Messages", rootViewController: messageController)
@@ -50,9 +56,9 @@ class TabBarControllr: UITabBarController {
         
         
         viewControllers = [homeNavController,
-                           collectionsNavController,
-                           savedNavController,
-                            searchNavController,
+                           searchNavController,
+                           newPoatNavController,
+                           favoriteNavController,
                             messagesNavController
             ]
         
@@ -84,3 +90,18 @@ class TabBarControllr: UITabBarController {
 
 }
 
+extension TabBarControllr: UITabBarControllerDelegate {
+    
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        let index = viewControllers?.firstIndex(of: viewController)
+        
+        if index == 2 {
+            let newPost = NewPostController()
+            let newPostNav = UINavigationController(rootViewController: newPost)
+            present(newPostNav, animated: true, completion: nil)
+            return false
+        }
+        return true
+    }
+    
+}

@@ -24,7 +24,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IQKeyboardManager.shared.keyboardAppearance = .dark
         IQKeyboardManager.shared.keyboardDistanceFromTextField = 0
         window = UIWindow()
-//        let tabController = UINavigationController(rootViewController: RegistrationController())
         let tabBarController = TabBarControllr()
         window?.rootViewController = tabBarController
         

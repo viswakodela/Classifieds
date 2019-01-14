@@ -40,8 +40,8 @@ class ThirdTableViewCell: UITableViewCell {
     
     let sellerImageView: UIImageView = {
         let iv = UIImageView()
-        iv.contentMode = .scaleAspectFit
-        iv.layer.cornerRadius = 25
+        iv.contentMode = .scaleAspectFill
+        iv.layer.cornerRadius = 10
         iv.clipsToBounds = true
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
@@ -49,7 +49,7 @@ class ThirdTableViewCell: UITableViewCell {
     
     let sellerNameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         return label
@@ -58,16 +58,16 @@ class ThirdTableViewCell: UITableViewCell {
     func setupLayout() {
         
         addSubview(sellerImageView)
-        sellerImageView.leadingAnchor.constraint(lessThanOrEqualTo: leadingAnchor, constant: 16).isActive = true
+        sellerImageView.leadingAnchor.constraint(lessThanOrEqualTo: leadingAnchor, constant: 8).isActive = true
         sellerImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         sellerImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         sellerImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
         
         addSubview(sellerNameLabel)
-        sellerNameLabel.leadingAnchor.constraint(lessThanOrEqualTo: sellerImageView.trailingAnchor, constant: 8).isActive = true
+        sellerNameLabel.leadingAnchor.constraint(equalTo: sellerImageView.trailingAnchor, constant: 8).isActive = true
         sellerNameLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -8).isActive = true
-        sellerNameLabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        sellerImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 8).isActive = true
+        sellerNameLabel.centerYAnchor.constraint(equalTo: sellerImageView.centerYAnchor).isActive = true
+        sellerNameLabel.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
     }
     

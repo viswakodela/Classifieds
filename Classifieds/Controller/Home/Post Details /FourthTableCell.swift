@@ -23,7 +23,7 @@ class FourthTableCell: UITableViewCell {
     
     let descriptionView: UITextView = {
         let tv = UITextView()
-        tv.font = UIFont.systemFont(ofSize: 16)
+        tv.font = UIFont.systemFont(ofSize: 18)
         //        tv.sizeToFit()
         tv.isScrollEnabled = false
         tv.textColor = .gray
@@ -35,9 +35,9 @@ class FourthTableCell: UITableViewCell {
     
     func setupLayout() {
         addSubview(descriptionView)
-        descriptionView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        descriptionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16).isActive = true
-        descriptionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16).isActive = true
+        descriptionView.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
+        descriptionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
+        descriptionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
         descriptionView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
     

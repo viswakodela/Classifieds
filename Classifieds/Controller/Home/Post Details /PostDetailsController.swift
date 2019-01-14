@@ -19,6 +19,7 @@ class PostDetailsController: UIViewController {
     private let tableViewCell4 = "tableViewCell4"
     private let tableViewCell5 = "tableViewCell5"
     private let tableViewCell6 = "tableViewCell6"
+    private let priceLabelCell = "priceLabelCell"
     var otherPostsFromSameUser = [Post]()
     
     var posts = [Post]() {
@@ -42,10 +43,9 @@ class PostDetailsController: UIViewController {
         setupLayout()
         view.backgroundColor = .white
         
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 60
         
         tableView.separatorStyle = .none
+        navigationController?.navigationBar.prefersLargeTitles = false
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: normalCell)
         tableView.register(FirstTableViewCell.self, forCellReuseIdentifier: tableViewCell1)
@@ -54,8 +54,12 @@ class PostDetailsController: UIViewController {
         tableView.register(FourthTableCell.self, forCellReuseIdentifier: tableViewCell4)
         tableView.register(FifthTableCell.self, forCellReuseIdentifier: tableViewCell5)
         tableView.register(SixthTableCell.self, forCellReuseIdentifier: tableViewCell6)
-    }
-    
+        tableView.register(PriceLabelCell.self, forCellReuseIdentifier: priceLabelCell)
+        
+//        tableView.rowHeight = UITableView.automaticDimension
+//        tableView.estimatedRowHeight = 600
+
+    }    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
@@ -129,21 +133,6 @@ class PostDetailsController: UIViewController {
         iv.backgroundColor = .green
         return iv
     }()
-    
-//    lazy var collectionView: UICollectionView = {
-//        let layout = UICollectionViewFlowLayout()
-//        layout.scrollDirection = .horizontal
-//        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-//        collectionView.backgroundColor = .white
-//        collectionView.clipsToBounds = true
-//        collectionView.delegate = self
-//        collectionView.dataSource = self
-//        collectionView.isPagingEnabled = true
-//        collectionView.showsHorizontalScrollIndicator = false
-//        collectionView.translatesAutoresizingMaskIntoConstraints = false
-//        collectionView.alwaysBounceHorizontal = true
-//        return collectionView
-//    }()
     
     let blackBackground: UIView = {
         let view = UIView()
@@ -266,158 +255,7 @@ class PostDetailsController: UIViewController {
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
-    
-//    lazy var header: UIView = {
-//        let headerView = UIView()
-////        headerView.translatesAutoresizingMaskIntoConstraints = false
-//
-//        headerView.addSubview(vieww)
-//        vieww.topAnchor.constraint(equalTo: headerView.topAnchor).isActive = true
-//        vieww.leadingAnchor.constraint(equalTo: headerView.leadingAnchor).isActive = true
-//        vieww.trailingAnchor.constraint(equalTo: headerView.trailingAnchor).isActive = true
-//        vieww.heightAnchor.constraint(equalToConstant: view.frame.width).isActive = true
-//
-//        vieww.addSubview(collectionView)
-//        collectionView.topAnchor.constraint(equalTo: vieww.topAnchor).isActive = true
-//        collectionView.leadingAnchor.constraint(equalTo: vieww.leadingAnchor).isActive = true
-//        collectionView.trailingAnchor.constraint(equalTo: vieww.trailingAnchor).isActive = true
-//        collectionView.bottomAnchor.constraint(equalTo: vieww.bottomAnchor).isActive = true
-//
-//        vieww.addSubview(pageControl)
-//        pageControl.leadingAnchor.constraint(equalTo: vieww.leadingAnchor).isActive = true
-//        pageControl.trailingAnchor.constraint(equalTo: vieww.trailingAnchor).isActive = true
-//        pageControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
-//        pageControl.bottomAnchor.constraint(equalTo: vieww.bottomAnchor, constant: -10).isActive = true
-//
-//        headerView.addSubview(titleLabel)
-//        titleLabel.topAnchor.constraint(equalTo: vieww.bottomAnchor, constant: 8).isActive = true
-//        titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 8).isActive = true
-//        titleLabel.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -8).isActive = true
-//        titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 30).isActive = true
-//
-//        headerView.addSubview(descriptionView)
-//        descriptionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4).isActive = true
-//        descriptionView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 8).isActive = true
-//        descriptionView.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -8).isActive = true
-//        descriptionView.heightAnchor.constraint(greaterThanOrEqualToConstant: 30).isActive = true
-//
-//        headerView.addSubview(priceLabel)
-//        priceLabel.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 8).isActive = true
-//        priceLabel.leadingAnchor.constraint(equalTo: descriptionView.leadingAnchor).isActive = true
-//        priceLabel.trailingAnchor.constraint(equalTo: descriptionView.trailingAnchor).isActive = true
-//        priceLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-//
-//        let attributedText = NSMutableAttributedString(string: "Price", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 20)])
-//        attributedText.append(NSMutableAttributedString(string: String("  $\(post.price ?? 0)"), attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16), NSAttributedString.Key.foregroundColor : UIColor.gray]))
-//        priceLabel.attributedText = attributedText
-//
-//        headerView.addSubview(sellerInformationView)
-//        sellerInformationView.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 4).isActive = true
-//        sellerInformationView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 8).isActive = true
-//        sellerInformationView.trailingAnchor.constraint(equalTo: headerView.trailingAnchor).isActive = true
-//        sellerInformationView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-//
-//        sellerInformationView.addSubview(sellerImageView)
-//        sellerImageView.topAnchor.constraint(equalTo: sellerInformationView.topAnchor).isActive = true
-//        sellerImageView.leadingAnchor.constraint(equalTo: sellerInformationView.leadingAnchor).isActive = true
-//        sellerImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
-//        sellerImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-//
-//        sellerInformationView.addSubview(sellerNameLabel)
-//        sellerNameLabel.topAnchor.constraint(equalTo: sellerInformationView.topAnchor).isActive = true
-//        sellerNameLabel.leadingAnchor.constraint(equalTo: sellerImageView.trailingAnchor, constant: 4).isActive = true
-//        sellerNameLabel.trailingAnchor.constraint(equalTo: sellerInformationView.trailingAnchor).isActive = true
-//        sellerNameLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
-//
-//        let stackView = UIStackView(arrangedSubviews: [messageButton, shareButton, moreButton, favoriteButton])
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        stackView.axis = .horizontal
-//        stackView.distribution = .fillEqually
-//        stackView.spacing = 20
-//        stackView.backgroundColor = .blue
-//
-//        sellerInformationView.addSubview(stackView)
-//        stackView.topAnchor.constraint(equalTo: sellerImageView.bottomAnchor).isActive = true
-//        stackView.leadingAnchor.constraint(equalTo: sellerInformationView.leadingAnchor).isActive = true
-//        stackView.trailingAnchor.constraint(equalTo: sellerInformationView.trailingAnchor).isActive = true
-//        stackView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-//
-//        headerView.addSubview(mapview)
-//        mapview.topAnchor.constraint(equalTo: sellerInformationView.bottomAnchor, constant: 4).isActive = true
-//        mapview.leadingAnchor.constraint(equalTo: headerView.leadingAnchor).isActive = true
-//        mapview.trailingAnchor.constraint(equalTo: headerView.trailingAnchor).isActive = true
-//        mapview.heightAnchor.constraint(equalToConstant: 150).isActive = true
-//
-//
-//        return headerView
-//    }()
 }
-
-//extension PostDetailsController: UIScrollViewDelegate {
-//
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//
-////        let changeY = -scrollView.contentOffset.y
-////        var width = view.frame.width + changeY * 2
-////        width = max(width, view.frame.width)
-////
-////        vieww.frame = CGRect(x: 0, y: 0, width: width, height: width)
-//
-//        let contentOffset = -scrollView.contentOffset.y
-//
-////        if contentOffset > 150 {
-////            if isOpened {
-////                dismiss(animated: true, completion: nil)
-////            } else {
-////                navigationController?.popViewController(animated: true)
-////            }
-////        }
-//    }
-//
-//    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-//        let x = targetContentOffset.pointee.x
-//        pageControl.currentPage = Int(x / view.frame.width)
-//    }
-//}
-
-
-
-//
-//extension PostDetailsController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-//
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return imagesArray.count
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-//        return 0
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: imageCellId, for: indexPath) as! PostImageCell
-//        let image = imagesArray[indexPath.item]
-//        cell.image = image
-//        cell.imageview.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(handlePinch)))
-//        return cell
-//    }
-//
-//    @objc func handlePinch(gesture: UIPinchGestureRecognizer) {
-//
-//        if gesture.state == .changed {
-//            gesture.view?.transform = CGAffineTransform(scaleX: gesture.scale, y: gesture.scale)
-//        }
-//
-//        if gesture.state == .ended {
-//            UIView.animate(withDuration: 0.5) {
-//                gesture.view?.transform = .identity
-//            }
-//        }
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: view.frame.width, height: view.frame.width)
-//    }
-//}
 
 extension PostDetailsController: MKMapViewDelegate {
 
@@ -454,8 +292,10 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
             return view.frame.width
-        } else if indexPath.section == 5 {
-            return 110
+        }  else if indexPath.section == 3 { // SellerInformation Cell
+            return 70
+        } else if indexPath.section == 5  { // MapView Cell
+            return 194
         } else  if indexPath.section == 6 {
             return 140
         }
@@ -477,6 +317,11 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
             secondTableViewCell.post = self.post
             return secondTableViewCell
             
+        } else  if indexPath.section == 2 {
+            
+            let priceCell = tableView.dequeueReusableCell(withIdentifier: priceLabelCell, for: indexPath    ) as! PriceLabelCell
+            priceCell.post = self.post
+            return priceCell
         } else if indexPath.section == 3 {
             
             let thirdTableViewCell = tableView.dequeueReusableCell(withIdentifier: tableViewCell3, for: indexPath) as! ThirdTableViewCell
@@ -504,8 +349,7 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: normalCell, for: indexPath)
-        let attributedText = NSMutableAttributedString(string: "Price", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 20)])
-        attributedText.append(NSMutableAttributedString(string: String("  $\(post.price ?? 0)"), attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16), NSAttributedString.Key.foregroundColor : UIColor.gray]))
+        let attributedText = NSMutableAttributedString(string: String("  $\(post.price ?? 0)"), attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor : UIColor(red: 65/255, green: 165/255, blue: 122/255, alpha: 1)])
         cell.textLabel?.attributedText = attributedText
         return cell
     }
@@ -522,36 +366,5 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
             tableView.allowsSelection = true
         }
     }
-
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return section == 0 ? 0 : otherPostsFromSameUser.count
-//    }
-//
-//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//        if section == 0 {
-//            return 1000
-//        } else {
-//            return 0
-//        }
-//    }
-//
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 116
-//    }
-//
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: tableCell, for: indexPath) as! FilterTableViewCell
-//        let post = otherPostsFromSameUser[indexPath.row]
-//        cell.post = post
-//        return cell
-//    }
-//
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let post = otherPostsFromSameUser[indexPath.row]
-//        let navPush = PostDetailsController()
-//        navPush.post = post
-//        navPush.posts = self.posts
-//        navigationController?.pushViewController(navPush, animated: true)
-//    }
 }
 

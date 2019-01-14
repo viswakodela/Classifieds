@@ -123,21 +123,10 @@ extension FirstTableViewCell: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-//        let changeY = -scrollView.contentOffset.y
-//        var width = view.frame.width + changeY * 2
-//        width = max(width, view.frame.width)
-//
-//        vieww.frame = CGRect(x: 0, y: 0, width: width, height: width)
-
-//        let contentOffset = -scrollView.contentOffset.y
-
-//        if contentOffset > 150 {
-//            if isOpened {
-//                dismiss(animated: true, completion: nil)
-//            } else {
-//                navigationController?.popViewController(animated: true)
-//            }
-//        }
+        let changeY = -scrollView.contentOffset.y
+        var width = collectionView.frame.width + changeY * 2
+        width = max(width, collectionView.frame.width)
+        collectionView.frame = CGRect(x: 0, y: 0, width: width, height: width)
     }
 
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {

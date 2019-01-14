@@ -82,7 +82,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         return sC
     }()
     var searchResults = [MKLocalSearchCompletion]()
-    var realResults = [MKMapItem]()
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if !searchText.isEmpty {
@@ -213,7 +212,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
         
         let searchRequest = MKLocalSearch.Request()
         let searchText = searchResults[indexPath.row]
-        searchRequest.naturalLanguageQuery = searchText.subtitle
+        searchRequest.naturalLanguageQuery = searchText.title
         searchRequest.region = mapView.region
         
         
@@ -225,7 +224,6 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
         guard let response = resp?.mapItems else{return}
             
             for item in response {
-                
                 let annotations = MKPointAnnotation()
                 annotations.coordinate = item.placemark.coordinate
                 guard let title = item.name else {return}

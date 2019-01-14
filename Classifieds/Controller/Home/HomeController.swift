@@ -10,13 +10,9 @@ import UIKit
 import Firebase
 import JGProgressHUD
 
-class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, NewPostRefreshControlDelegate {
+class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
-    
-    func didFinishPosting() {
-        self.handleRefresh()
-    }
-    
+
     var panGesture: UIPanGestureRecognizer?
     private let cellId = "cellId"
     private let headerId = "headerId"
@@ -30,6 +26,14 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
+    func addNotificationObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateNewPost), name: NewPostController.newPostUpdateNotification, object: nil)
+    }
+    
+    @objc func handleUpdateNewPost() {
+        self.handleRefresh()
+    }
+    
     let menuView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -41,12 +45,16 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        addNotificationObservers()
         collectionViewSetup()
         navigationControllerSetup()
         fetchPostsFromFirebase()
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.leftBarButtonItems = [UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-map-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleMap)), UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogOut))]
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.handleRefresh()
     }
     
     @objc func handleMap() {
@@ -109,17 +117,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     fileprivate func navigationControllerSetup() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-edit-property-filled-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleNewPost))
-    }
-    
-    @objc func handleNewPost() {
-        
-        print("Hnadling new Post")
-        let newPostController = NewPostController()
-        newPostController.delegate = self
-        newPostController.user = self.user
-        let navController = UINavigationController(rootViewController: newPostController)
-        present(navController, animated: true, completion: nil)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "LogOut", style: .plain, target: self, action: #selector(handleLogOut))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-map-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleMap))
     }
     
     func showProgressHUD(error: Error) {
@@ -203,7 +202,7 @@ extension HomeController {
     }
     
     func showHomeHeaderPush(catergory: CategoryModel) {
-        let filteredCategoryCellController = CategoryFilterController(collectionViewLayout: UICollectionViewFlowLayout())
+        let filteredCategoryCellController = FilteredTableView()
         filteredCategoryCellController.posts = postsArray
         filteredCategoryCellController.category = catergory
         navigationController?.pushViewController(filteredCategoryCellController, animated: true)

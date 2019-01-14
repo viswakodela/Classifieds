@@ -22,6 +22,14 @@ class FifthTableCell: UITableViewCell {
         }
     }
     
+    let locationLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Location"
+        label.font = UIFont.boldSystemFont(ofSize: 18)
+        return label
+    }()
+    
     lazy var mapview: MKMapView = {
         let mv = MKMapView()
         mv.translatesAutoresizingMaskIntoConstraints = false
@@ -32,11 +40,17 @@ class FifthTableCell: UITableViewCell {
     
     func setupLayout() {
         
+        addSubview(locationLabel)
+        locationLabel.topAnchor.constraint(equalTo: topAnchor,constant: 10).isActive = true
+        locationLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
+        locationLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        locationLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
         addSubview(mapview)
-        mapview.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        mapview.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 4).isActive = true
         mapview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         mapview.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        mapview.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        mapview.heightAnchor.constraint(equalToConstant: 150).isActive = true
         
     }
     

@@ -1,5 +1,5 @@
 //
-//  SearchController.swift
+//  SavedItemsController.swift
 //  Classifieds
 //
 //  Created by Viswa Kodela on 12/24/18.
@@ -8,13 +8,13 @@
 
 import UIKit
 
-class SearchController: UITableViewController {
+private let reuseIdentifier = "Cell"
+
+class FavoritesController: UICollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = .red
-        
+        collectionView.backgroundColor = .blue
     }
 
 }

@@ -13,17 +13,11 @@ import BSImagePicker
 import Photos
 
 
-protocol NewPostRefreshControlDelegate: class {
-    func didFinishPosting()
-}
-
 class CustiomeImagePicker: UIImagePickerController {
     var button: UIButton?
 }
 
 class NewPostController: UITableViewController, ChooseCategoryDelegate, MapControllerDelegate {
-    
-    weak var delegate: NewPostRefreshControlDelegate?
     
     
     var imageAssets = [PHAsset]()
@@ -42,8 +36,19 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         super.viewDidLoad()
         setupLayout()
         self.post = Post()
-        post?.uid = user?.uid
+        fetchUser()
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(savePostToFirebase))
+    }
+    
+    func fetchUser() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        Firestore.firestore().collection("users").document(uid).getDocument { (snap, err) in
+            guard let userDictionary = snap?.data() else {return}
+            self.user = User(dictionary: userDictionary)
+//            guard let uid = Auth.auth().currentUser?.uid else {return}
+            self.post?.uid = self.user?.uid
+        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -214,6 +219,8 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         hud.dismiss(afterDelay: 4)
     }
     
+    static let newPostUpdateNotification = Notification.Name("newPostUpdate")
+    
     @objc fileprivate func savePostToFirebase() {
         
         if post?.title == nil && post?.description == nil && post?.location == nil {
@@ -225,7 +232,6 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         }
         
         guard let uid = user?.uid else {return}
-//        let date =
         self.post?.date = Date().timeIntervalSinceReferenceDate
         let postId = UUID().uuidString
         self.post?.postId = postId
@@ -256,9 +262,10 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
                 print(error)
             }
         hud.dismiss(afterDelay: 3, animated: true)
-        self.dismiss(animated: true, completion: nil)
         }
-        delegate?.didFinishPosting()
+        self.dismiss(animated: true) {
+            NotificationCenter.default.post(name: NewPostController.newPostUpdateNotification, object: nil)
+        }
     }
     
     fileprivate func setupLayout() {

@@ -1,8 +1,9 @@
 //
 //  MessageCell.swift
-//  
+//  Classifieds
 //
-//  Created by Viswa Kodela on 1/9/19.
+//  Created by Viswa Kodela on 1/13/19.
+//  Copyright © 2019 Viswa Kodela. All rights reserved.
 //
 
 import UIKit
@@ -111,7 +112,7 @@ class MessageCell: UITableViewCell {
         messageTextLabel.trailingAnchor.constraint(equalTo: userNameLabel.trailingAnchor, constant: -8).isActive = true
         messageTextLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -8).isActive = true
         
-//        self.sendSubviewToBack(bubbleView)
+        //        self.sendSubviewToBack(bubbleView)
         
     }
     
