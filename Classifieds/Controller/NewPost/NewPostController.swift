@@ -11,19 +11,14 @@ import Firebase
 import JGProgressHUD
 import BSImagePicker
 import Photos
+import MapKit
 
-
-protocol NewPostRefreshControlDelegate: class {
-    func didFinishPosting()
-}
 
 class CustiomeImagePicker: UIImagePickerController {
     var button: UIButton?
 }
 
 class NewPostController: UITableViewController, ChooseCategoryDelegate, MapControllerDelegate {
-    
-    weak var delegate: NewPostRefreshControlDelegate?
     
     
     var imageAssets = [PHAsset]()
@@ -32,6 +27,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
     var post: Post?
     var cell: NewPostCell3?
     var user: User?
+    let locationManager = CLLocationManager()
     
     private let cellId = "cellId"
     private let newPost1CellId = "newPost1CellId"
@@ -42,8 +38,20 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         super.viewDidLoad()
         setupLayout()
         self.post = Post()
-        post?.uid = user?.uid
+        fetchUser()
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(savePostToFirebase))
+        locationManager.delegate = self
+        checkPermission()
+    }
+    
+    func fetchUser() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        Firestore.firestore().collection("users").document(uid).getDocument { (snap, err) in
+            guard let userDictionary = snap?.data() else {return}
+            self.user = User(dictionary: userDictionary)
+            self.post?.uid = self.user?.uid
+        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -132,8 +140,6 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
             
             DispatchQueue.main.async {
                 
-                
-                
                 var buttonsArray = [self.image1Button, self.image2Button, self.image3Button, self.image4Button, self.image5Button]
                 
                 
@@ -214,9 +220,13 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         hud.dismiss(afterDelay: 4)
     }
     
+    static let newPostUpdateNotification = Notification.Name("newPostUpdate")
+    
+    var currentLocation: String?
+    
     @objc fileprivate func savePostToFirebase() {
         
-        if post?.title == nil && post?.description == nil && post?.location == nil {
+        if post?.title == nil || post?.description == nil || post?.location == nil {
             let hud = JGProgressHUD(style: .dark)
             hud.textLabel.text = "Some fields are empty, Please check your entries"
             hud.show(in: self.view)
@@ -225,8 +235,9 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         }
         
         guard let uid = user?.uid else {return}
-//        let date =
         self.post?.date = Date().timeIntervalSinceReferenceDate
+        let postId = UUID().uuidString
+        self.post?.postId = postId
         
         let hud = JGProgressHUD(style: .dark)
         hud.textLabel.text = "Posting the ad"
@@ -244,18 +255,21 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
             "imageUrl3" : self.post?.imageUrl3,
             "imageUrl4" : self.post?.imageUrl4,
             "imageUrl5" : self.post?.imageUrl5,
-            "date" : self.post?.date
+            "date" : self.post?.date,
+            "postId" : self.post?.postId
         ]
         
-        let postId = UUID().uuidString
+        guard let currentLocation = currentLocation else {return}
+        Firestore.firestore().collection("location-filter").document(currentLocation).collection("current-location").document(postId).setData(postData)
     Firestore.firestore().collection("posts").document(uid).collection("userPosts").document(postId).setData(postData) { (err) in
             if let error = err {
                 print(error)
             }
         hud.dismiss(afterDelay: 3, animated: true)
-        self.dismiss(animated: true, completion: nil)
         }
-        delegate?.didFinishPosting()
+        self.dismiss(animated: true) {
+            NotificationCenter.default.post(name: NewPostController.newPostUpdateNotification, object: nil)
+        }
     }
     
     fileprivate func setupLayout() {
@@ -443,6 +457,51 @@ extension NewPostController: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         self.post?.description = textView.text
+    }
+}
+
+
+extension NewPostController: CLLocationManagerDelegate {
+    
+    func checkPermission() {
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            checkLocationAuthorization()
+            locationManager.startUpdatingLocation()
+        } else {
+            print("Check the location Services")
+        }
+    }
+    
+    func checkLocationAuthorization() {
+        switch CLLocationManager.authorizationStatus() {
+        case .authorizedAlways:
+            break
+        case .authorizedWhenInUse:
+            // DO Map Stuff
+            //            mapView.showsUserLocation = true
+            break
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+            break
+        case .denied:
+            break
+        default:
+            break
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.first else {return}
+        let geoCoder = CLGeocoder()
+        geoCoder.reverseGeocodeLocation(location) { (placemarks, err) in
+            self.currentLocation = placemarks?.first?.locality
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        self.checkLocationAuthorization()
     }
 }
 

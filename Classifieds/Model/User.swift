@@ -14,6 +14,11 @@ class User {
     var email: String?
     var uid: String?
     var profileImage: String?
+    var recentSearchedCities: [String]?
+    
+    init() {
+        
+    }
     
     init(dictionary: [String : Any]) {
         self.name = dictionary["fullName"] as? String

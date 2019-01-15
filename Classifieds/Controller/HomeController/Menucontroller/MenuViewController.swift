@@ -23,7 +23,7 @@ class MenuViewController: UIViewController {
             self.userNameLabel.text = user?.name
             self.userEmailLabel.text = user?.email
             if user?.profileImage == nil {
-                userImageView.image = #imageLiteral(resourceName: "icons8-account-100")
+                userImageView.image = #imageLiteral(resourceName: "icons8-account-filled-100")
             } else {
                 guard let url = user?.profileImage, let imageUrl = URL(string: url) else {return}
                 userImageView.sd_setImage(with: imageUrl)

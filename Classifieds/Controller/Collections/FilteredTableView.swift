@@ -20,6 +20,7 @@ class FilteredTableView: UITableViewController {
             posts.forEach { (post) in
                 if post.categoryName == category?.categoryName {
                     self.filteredPosts.append(post)
+                    self.tableView.reloadData()
                 }
             }
         }
@@ -34,11 +35,12 @@ class FilteredTableView: UITableViewController {
         super.viewDidLoad()
         
         tableView.separatorStyle = .none
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.isTranslucent = true
         navigationController?.view.backgroundColor = .clear
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-back-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleBack))
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-back-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleBack))
         tableView.register(FilterTableViewCell.self, forCellReuseIdentifier: tableCell)
-        fetchPosts()
+//        fetchPosts()
     }
     
     @objc func handleBack() {

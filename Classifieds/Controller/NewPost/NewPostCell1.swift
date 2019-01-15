@@ -24,7 +24,7 @@ class NewPostCell1: UITableViewCell {
     lazy var textField: CustomTextField = {
         let tv = CustomTextField(padding: 10)
         tv.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
-        tv.placeholder = "Start Typing.."
+        tv.placeholder = "ex. iPhone 7 128GB"
         tv.translatesAutoresizingMaskIntoConstraints = false
         return tv
     }()
