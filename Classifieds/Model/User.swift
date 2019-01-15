@@ -14,6 +14,7 @@ class User {
     var email: String?
     var uid: String?
     var profileImage: String?
+    var recentSearchedCities: [String]?
     
     init() {
         

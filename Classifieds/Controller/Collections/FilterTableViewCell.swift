@@ -70,6 +70,7 @@ class FilterTableViewCell: UITableViewCell {
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
+        label.textAlignment = .right
         return label
     }()
     
@@ -95,17 +96,18 @@ class FilterTableViewCell: UITableViewCell {
         dateLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
         dateLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
+        addSubview(priceLabel)
+        priceLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
+        priceLabel.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        priceLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -6).isActive = true
+        priceLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
         addSubview(locationLabel)
         locationLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 6).isActive = true
         locationLabel.leadingAnchor.constraint(equalTo: dateLabel.leadingAnchor).isActive = true
-        locationLabel.trailingAnchor.constraint(equalTo: dateLabel.trailingAnchor, constant: -80).isActive = true
+        locationLabel.trailingAnchor.constraint(equalTo: priceLabel.leadingAnchor).isActive = true
         locationLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
-        addSubview(priceLabel)
-        priceLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 2).isActive = true
-        priceLabel.leadingAnchor.constraint(equalTo: locationLabel.trailingAnchor).isActive = true
-        priceLabel.bottomAnchor.constraint(equalTo: locationLabel.bottomAnchor).isActive = true
-        priceLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {

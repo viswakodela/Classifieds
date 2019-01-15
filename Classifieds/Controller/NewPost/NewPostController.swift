@@ -223,7 +223,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
     
     @objc fileprivate func savePostToFirebase() {
         
-        if post?.title == nil && post?.description == nil && post?.location == nil {
+        if post?.title == nil || post?.description == nil || post?.location == nil {
             let hud = JGProgressHUD(style: .dark)
             hud.textLabel.text = "Some fields are empty, Please check your entries"
             hud.show(in: self.view)

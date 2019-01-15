@@ -49,12 +49,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         collectionViewSetup()
         navigationControllerSetup()
         fetchPostsFromFirebase()
+        collectionView.isSpringLoaded = true
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.handleRefresh()
     }
     
     @objc func handleMap() {
@@ -89,7 +89,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                     snapshot.documents.forEach({ (snapshot) in
                         let postDictionbary = snapshot.data()
                         let post = Post(dictionary: postDictionbary)
-//                        print(post.imageUrl1, post.imageUrl2, post.imageUrl3, post.imageUrl4, post.imageUrl5)
                         
                         self.postsArray.append(post)
                         DispatchQueue.main.async {
@@ -216,57 +215,3 @@ extension HomeController {
         navigationController?.pushViewController(postdetails, animated: true)
     } 
 }
-
-
-////MARK:- Sliding Menu Extension
-//extension HomeController: UIGestureRecognizerDelegate {
-//
-//    func setupMenu() {
-//
-//        view.addSubview(menuView)
-//
-//        menuView.frame = CGRect(x: -300, y: 0, width: menuWidth, height: view.frame.height)
-//
-//        panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
-//        collectionView.addGestureRecognizer(panGesture!)
-//        panGesture!.delegate = self
-////        menuView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-////        menuView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-////        menuView.trailingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-////        menuView.widthAnchor.constraint(equalToConstant: menuWidth).isActive = true
-//
-//    }
-//
-//    @objc func handlePan(gesture: UIPanGestureRecognizer) {
-//        let translation = gesture.translation(in: view)
-//        var x = translation.x
-//        x = max(menuWidth, x)
-//
-//        menuView.transform = CGAffineTransform(translationX: translation.x, y: 0)
-//        if translation.x < 50 {
-//            closeMenu()
-//        } else {
-//            openMenu()
-//        }
-//    }
-//
-//    func closeMenu() {
-//        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-//            self.menuView.frame = CGRect(x: -300, y: 0, width: 300, height: self.view.frame.height)
-//            self.menuView.layoutIfNeeded()
-//        }, completion: nil)
-//    }
-//
-//    func openMenu() {
-//        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-//            self.menuView.frame = CGRect(x: 0, y: 0, width: 300, height: self.view.frame.height)
-//            self.menuView.layoutIfNeeded()
-//        }, completion: nil)
-//    }
-//
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        return panGesture!.translation(in: view).x > threshold ? true : false
-//    }
-//
-//
-//}
