@@ -15,6 +15,7 @@ class SearchController: UITableViewController {
     private let searchCellID = "searchCellID"
     var searchController = UISearchController(searchResultsController: nil)
     var refreshControle = UIRefreshControl()
+    var cityFiler: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +29,15 @@ class SearchController: UITableViewController {
         refreshControle.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         tableView.refreshControl = refreshControle
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if cityFiler != nil {
+            posts.removeAll()
+            fetchPostsfromFirebase()
+        }
+    }
+    
     
     func tableViewSetup() {
         self.definesPresentationContext = true
@@ -59,38 +69,25 @@ class SearchController: UITableViewController {
     @objc func handleSegmentedControl(segmentControl: UISegmentedControl) {
         
         if segmentControl.selectedSegmentIndex == 0 {
-            if locationFilterdPosts.isEmpty {
                 
-                self.filteredposts.sort { (p1, p2) -> Bool in
-                    return p1.date! > p2.date!
-                }
-            } else {
-                self.locationFilterdPosts.sort { (p1, p2) -> Bool in
-                    return p1.date! > p2.date!
-                }
+            self.filteredposts.sort { (p1, p2) -> Bool in
+                return p1.date! > p2.date!
             }
         } else {
-            if locationFilterdPosts.isEmpty {
                 
-                self.filteredposts.sort { (p1, p2) -> Bool in
-                    return p1.price! < p2.price!
-                }
-            } else {
-                
-                self.locationFilterdPosts.sort { (p1, p2) -> Bool in
-                    return p1.price! < p2.price!
-                }
+            self.filteredposts.sort { (p1, p2) -> Bool in
+                return p1.price! < p2.price!
             }
         }
         
         DispatchQueue.main.async {
-//            var indexPathToAnimate = [IndexPath]()
-//            for (index, _) in self.filteredposts.enumerated() {
-//                let indexPath = IndexPath(row: index, section: 0)
-//                indexPathToAnimate.append(indexPath)
-//            }
-//            self.tableView.reloadRows(at: indexPathToAnimate, with: .fade)
-            self.tableView.reloadData()
+            var indexPathToAnimate = [IndexPath]()
+            for (index, _) in self.filteredposts.enumerated() {
+                let indexPath = IndexPath(row: index, section: 0)
+                indexPathToAnimate.append(indexPath)
+            }
+            self.tableView.reloadRows(at: indexPathToAnimate, with: .fade)
+//            self.tableView.reloadData()
         }
     }
     
@@ -114,38 +111,47 @@ class SearchController: UITableViewController {
     
     func fetchPostsfromFirebase() {
         
-        guard let currentUID = Auth.auth().currentUser?.uid else {return}
-        Firestore.firestore().collection("users").getDocuments { (snap, err) in
-            snap?.documents.forEach({ (snap) in
-                let userDictionary = snap.data()
-                let user = User(dictionary: userDictionary)
-                
-//                if user.uid == currentUID {
-//                    return
-//                } else {
-//                    self.users.append(user)
-//                }
-                
-                guard let uid = user.uid else {return}
-                Firestore.firestore().collection("posts").document(uid).collection("userPosts").getDocuments(completion: { (snap, err) in
-                    snap?.documents.forEach({ (snap) in
-                        let postDictionary = snap.data()
-                        let post = Post(dictionary: postDictionary)
-                        self.posts.append(post)
+        if cityFiler == nil {
+            
+            Firestore.firestore().collection("users").getDocuments { (snap, err) in
+                snap?.documents.forEach({ (snap) in
+                    let userDictionary = snap.data()
+                    let user = User(dictionary: userDictionary)
+                    guard let uid = user.uid else {return}
+                    Firestore.firestore().collection("posts").document(uid).collection("userPosts").getDocuments(completion: { (snap, err) in
+                        snap?.documents.forEach({ (snap) in
+                            let postDictionary = snap.data()
+                            let post = Post(dictionary: postDictionary)
+                            self.posts.append(post)
+                        })
+                        
+                        self.posts.sort(by: { (p1, p2) -> Bool in
+                            let firstPost = Int(p1.date ?? 0)
+                            let secondPost = Int(p2.date ?? 0)
+                            return firstPost > secondPost
+                        })
+                        
+                        self.filteredposts = self.posts
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                        }
                     })
-                    
-                    self.posts.sort(by: { (p1, p2) -> Bool in
-                        let firstPost = Int(p1.date ?? 0)
-                        let secondPost = Int(p2.date ?? 0)
-                        return firstPost > secondPost
-                    })
-                    
-                    self.filteredposts = self.posts
+                })
+            }
+        } else {
+            self.posts.removeAll()
+            self.filteredposts.removeAll()
+            guard let cityFilter = self.cityFiler else {return}
+            Firestore.firestore().collection("location-filter").document(cityFilter).collection("current-location").getDocuments { (snap, err) in
+                snap?.documents.forEach({ (snapshot) in
+                    let post = Post(dictionary: snapshot.data())
+                    self.posts.append(post)
+                    self.filteredposts.append(post)
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                     }
                 })
-            })
+            }
         }
     }
     
@@ -165,34 +171,17 @@ extension SearchController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         if searchText.isEmpty {
-            if locationFilterdPosts.isEmpty {
-                filteredposts = posts
-            } else {
-                locationFilterdPosts = posts
-            }
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+            filteredposts = posts
         } else {
-            
-            if locationFilterdPosts.isEmpty {
-                filteredposts = posts.filter({ (post) -> Bool in
-                    if let title = post.title {
-                        return title.lowercased().contains(searchText.lowercased())
-                    }
-                    return true
-                })
-            } else {
-                locationFilterdPosts = locationFilterdPosts.filter({ (post) -> Bool in
-                    if let title = post.title {
-                        return title.lowercased().contains(searchText.lowercased())
-                    }
-                    return true
-                })
-            }
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+            filteredposts = posts.filter({ (post) -> Bool in
+                if let title = post.title {
+                    return title.lowercased().contains(searchText.lowercased())
+                }
+                return true
+            })
+        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
         }
     }
 }
@@ -251,32 +240,7 @@ extension SearchController: SearchLocationFilterDelegate {
     
     func cityLocation(of city: String) {
         
-        locationFilterdPosts.removeAll()
+        self.cityFiler = city
         
-        self.posts.forEach { (post) in
-            
-            guard let postLocation = post.location else {return}
-            
-            let searchRequest = MKLocalSearch.Request()
-            searchRequest.naturalLanguageQuery = postLocation
-            
-            let search = MKLocalSearch(request: searchRequest)
-            search.start(completionHandler: { (resp, err) in
-                if let error = err {
-                    print(error.localizedDescription)
-                }
-                
-                guard let mapItems = resp?.mapItems else {return}
-                guard let postsLocality = mapItems.first?.placemark.locality else {return}
-                
-                if postsLocality == city {
-                    self.locationFilterdPosts.append(post)
-                }
-                
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            })
-        }
     }
 }

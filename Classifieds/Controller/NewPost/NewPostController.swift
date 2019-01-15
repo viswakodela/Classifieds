@@ -11,6 +11,7 @@ import Firebase
 import JGProgressHUD
 import BSImagePicker
 import Photos
+import MapKit
 
 
 class CustiomeImagePicker: UIImagePickerController {
@@ -26,6 +27,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
     var post: Post?
     var cell: NewPostCell3?
     var user: User?
+    let locationManager = CLLocationManager()
     
     private let cellId = "cellId"
     private let newPost1CellId = "newPost1CellId"
@@ -38,6 +40,8 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         self.post = Post()
         fetchUser()
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(savePostToFirebase))
+        locationManager.delegate = self
+        checkPermission()
     }
     
     func fetchUser() {
@@ -45,7 +49,6 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         Firestore.firestore().collection("users").document(uid).getDocument { (snap, err) in
             guard let userDictionary = snap?.data() else {return}
             self.user = User(dictionary: userDictionary)
-//            guard let uid = Auth.auth().currentUser?.uid else {return}
             self.post?.uid = self.user?.uid
         }
         
@@ -137,8 +140,6 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
             
             DispatchQueue.main.async {
                 
-                
-                
                 var buttonsArray = [self.image1Button, self.image2Button, self.image3Button, self.image4Button, self.image5Button]
                 
                 
@@ -221,6 +222,8 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
     
     static let newPostUpdateNotification = Notification.Name("newPostUpdate")
     
+    var currentLocation: String?
+    
     @objc fileprivate func savePostToFirebase() {
         
         if post?.title == nil || post?.description == nil || post?.location == nil {
@@ -256,7 +259,8 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
             "postId" : self.post?.postId
         ]
         
-//        Database.database().reference().child("posts").child(postId).updateChildValues(postData)
+        guard let currentLocation = currentLocation else {return}
+        Firestore.firestore().collection("location-filter").document(currentLocation).collection("current-location").document(postId).setData(postData)
     Firestore.firestore().collection("posts").document(uid).collection("userPosts").document(postId).setData(postData) { (err) in
             if let error = err {
                 print(error)
@@ -453,6 +457,51 @@ extension NewPostController: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         self.post?.description = textView.text
+    }
+}
+
+
+extension NewPostController: CLLocationManagerDelegate {
+    
+    func checkPermission() {
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            checkLocationAuthorization()
+            locationManager.startUpdatingLocation()
+        } else {
+            print("Check the location Services")
+        }
+    }
+    
+    func checkLocationAuthorization() {
+        switch CLLocationManager.authorizationStatus() {
+        case .authorizedAlways:
+            break
+        case .authorizedWhenInUse:
+            // DO Map Stuff
+            //            mapView.showsUserLocation = true
+            break
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+            break
+        case .denied:
+            break
+        default:
+            break
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.first else {return}
+        let geoCoder = CLGeocoder()
+        geoCoder.reverseGeocodeLocation(location) { (placemarks, err) in
+            self.currentLocation = placemarks?.first?.locality
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        self.checkLocationAuthorization()
     }
 }
 

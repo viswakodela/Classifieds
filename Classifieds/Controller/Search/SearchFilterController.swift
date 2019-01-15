@@ -24,6 +24,7 @@ class SearchFilterController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.title = "Location Filter"
         searchController()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: searchCell)
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(handleCancel))
@@ -134,11 +135,13 @@ extension SearchFilterController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if indexPath.section == 0 {
-            return
-        }
+        var location: String
         
-        let location = searchResults[indexPath.row].title
+        if indexPath.section == 0 {
+            location = recentCities[indexPath.row]
+        } else {
+            location = searchResults[indexPath.row].title
+        }
         
         let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = location
@@ -160,9 +163,8 @@ extension SearchFilterController {
             
             Firestore.firestore().collection("recent-citysearch").document(uid).setData(recentSearchData)
             
-            self.dismiss(animated: true, completion: {
-                self.delegate?.cityLocation(of: city)
-            })
+            self.delegate?.cityLocation(of: city)
+            self.dismiss(animated: true)
         }
     }
 }
