@@ -37,7 +37,7 @@ class TabBarControllr: UITabBarController {
 //        let baseNavController = baseController
         
         let collections = ColletionsViewController(collectionViewLayout: UICollectionViewFlowLayout())
-        let collectionsNavController = self.navBarController(image: #imageLiteral(resourceName: "collection"), title: "Collections", rootViewController: collections)
+//        let collectionsNavController = self.navBarController(image: #imageLiteral(resourceName: "collection"), title: "Collections", rootViewController: collections)
         
         
         

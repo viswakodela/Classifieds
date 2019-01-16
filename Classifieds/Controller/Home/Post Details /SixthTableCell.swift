@@ -24,6 +24,7 @@ class SixthTableCell: UITableViewCell {
     
     var post: Post! {
         didSet {
+//            guard let sellerID = post.uid else {return}
             guard let sellerID = post.uid else {return}
             Firestore.firestore().collection("posts").document(sellerID).collection("userPosts").getDocuments { (snap, err) in
                 snap?.documents.forEach({ (snapshot) in

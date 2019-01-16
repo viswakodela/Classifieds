@@ -11,6 +11,7 @@ import UIKit
 class Post {
     
     var title: String?
+//    var user: User?
     var uid: String?
     var description: String?
     var postId: String?
@@ -26,8 +27,12 @@ class Post {
     var date: TimeInterval?
     
     init() {
-        
+//        date2 = Date()
     }
+    
+//    func renewPost() {
+//        date2 = Date()
+//    }
     
     init(dictionary: [String : Any]) {
         self.postId = dictionary["postId"] as? String
@@ -43,6 +48,21 @@ class Post {
         self.imageUrl4 = dictionary["imageUrl4"] as? String
         self.imageUrl5 = dictionary["imageUrl5"] as? String
         self.date = dictionary["date"] as? TimeInterval
+        //self.date2 = dictionary["date"] as? Date
     }
+    
+//    init?(firebaseDictionary dictionary: [String : Any]) {
+//        // guard on mandatory
+//        guard let postId = dictionary["postId"] as? String,
+//            let price = dictionary["price"] as? Int else {
+//            return nil
+//        }
+//
+//        // let my non-mandatory / non-required values be (Swift)optional
+//        self.location = dictionary["location"] as? String
+//
+//        self.postId = postId
+//        self.price = price
+//    }
 }
 

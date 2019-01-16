@@ -2,48 +2,55 @@
 //  NewPostCell1.swift
 //  Classifieds
 //
-//  Created by Viswa Kodela on 12/31/18.
+//  Created by Viswa Kodela on 12/26/18.
 //  Copyright © 2018 Viswa Kodela. All rights reserved.
 //
 
 import UIKit
 
-class NewPostCell1: UITableViewCell {
+class TextViewCell: UITableViewCell {
     
+    //MARK: - Cell Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupLayout()
     }
     
+    //MARK: -  Layout Properties
     let containerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    lazy var textField: CustomTextField = {
-        let tv = CustomTextField(padding: 10)
+    lazy var textView: UITextView = {
+        let tv = UITextView()
+        tv.text = "Description"
         tv.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
-        tv.placeholder = "ex. iPhone 7 128GB"
+        tv.textColor = .lightGray
+        tv.font = UIFont.systemFont(ofSize: 18)
         tv.translatesAutoresizingMaskIntoConstraints = false
         return tv
     }()
     
+    //MARK: - Methods
     func setupLayout() {
         
+        layer.borderColor = UIColor.lightGray.cgColor
+        layer.borderWidth = 0.4
         addSubview(containerView)
         containerView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         containerView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         containerView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         containerView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
-        addSubview(textField)
+        addSubview(textView)
         
-        containerView.addSubview(textField)
-        textField.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        textField.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        textField.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        textField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        containerView.addSubview(textView)
+        textView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        textView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        textView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        textView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {

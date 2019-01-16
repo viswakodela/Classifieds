@@ -11,18 +11,29 @@ import MapKit
 import CoreLocation
 
 
+//MARK: -  Protocol
 protocol MapControllerDelegate: class {
     func didTapRow(title: String, subtitle: String)
 }
 
 
-class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
+class MapViewController: UIViewController, MKMapViewDelegate {
     
+    //MARK: - Cell Identifiers
+    private static let locationSearchCellId = "locationSearchCellId"
+    let locationManager = CLLocationManager()
     
+    //MARk: - Variables
     weak var delegate: MapControllerDelegate?
     var resultsSearchController: UISearchController?
-    private let locationSearchCellId = "locationSearchCellId"
+    var searchResults = [MKLocalSearchCompletion]()
+    lazy var searchCompleter: MKLocalSearchCompleter = {
+        let sC = MKLocalSearchCompleter()
+        sC.delegate = self
+        return sC
+    }()
     
+    //MARK: - Layout Properties
     lazy var mapView: MKMapView = {
         let mv = MKMapView()
         mv.translatesAutoresizingMaskIntoConstraints = false
@@ -40,26 +51,60 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         return tablevie
     }()
     
-    let locationManager = CLLocationManager()
+    //MARK: - Controller Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         checkPermission()
         setupLocationSearchController()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: locationSearchCellId)
+        tableViewSetup()
+        navigationSetUp()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupLayout()
+    }
+    
+    //MARK:- Methods
+    func setupLayout() {
+        view.addSubview(mapView)
+        mapView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        mapView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5).isActive = true
+        
+        view.addSubview(tableView)
+        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        tableView.topAnchor.constraint(equalTo: mapView.bottomAnchor).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+    }
+    
+    func checkPermission() {
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            checkLocationAuthorization()
+            locationManager.startUpdatingLocation()
+        } else {
+            print("Check the location Services")
+        }
+    }
+    
+    func tableViewSetup() {
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: MapViewController.locationSearchCellId)
         tableView.keyboardDismissMode = .onDrag
         tableView.layer.borderColor = UIColor.gray.cgColor
         tableView.layer.borderWidth = 2
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(handleCancel))
+        view.backgroundColor = .white
     }
     
-    @objc func handleCancel() {
-        dismiss(animated: true, completion: nil)
+    func navigationSetUp() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(handleCancel))
     }
     
     func setupLocationSearchController() {
         resultsSearchController = UISearchController(searchResultsController: resultsSearchController)
-        
         guard let resultsController = resultsSearchController else {return}
         resultsController.dimsBackgroundDuringPresentation = false
         resultsController.hidesNavigationBarDuringPresentation = false
@@ -73,23 +118,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         
         guard let searchText = resultsController.searchBar.text else {return}
         searchCompleter.queryFragment = searchText
-    }
-    
-//    var matchingItems = [MKMapItem]()
-    lazy var searchCompleter: MKLocalSearchCompleter = {
-        let sC = MKLocalSearchCompleter()
-        sC.delegate = self
-        return sC
-    }()
-    var searchResults = [MKLocalSearchCompletion]()
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if !searchText.isEmpty {
-            searchCompleter.queryFragment = searchText
-        } else {
-            searchResults.removeAll()
-            self.tableView.reloadData()
-        }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -125,17 +153,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         return addressLine
     }
     
-    func checkPermission() {
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            checkLocationAuthorization()
-            locationManager.startUpdatingLocation()
-        } else {
-            print("Check the location Services")
-        }
-    }
-    
     func checkLocationAuthorization() {
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways:
@@ -154,23 +171,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        view.addSubview(mapView)
-        mapView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        mapView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5).isActive = true
-        
-        view.addSubview(tableView)
-        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        tableView.topAnchor.constraint(equalTo: mapView.bottomAnchor).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+    @objc func handleCancel() {
+        dismiss(animated: true, completion: nil)
     }
 }
 
 
+//MARK: - Location Manager Delegate
 extension MapViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -178,6 +185,7 @@ extension MapViewController: CLLocationManagerDelegate {
     }
 }
 
+//MARK: - Table View Delegate Methods
 extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -185,7 +193,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: locationSearchCellId, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: MapViewController.locationSearchCellId, for: indexPath)
         let selectedItem = searchResults[indexPath.row]
         cell.textLabel?.text = "\(selectedItem.title), \(selectedItem.subtitle)"
 //        cell.textLabel?.text = "\(parseAddress(selectedItem: selectedItem))"
@@ -243,6 +251,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+//MARK: -  MapView Search Compleater Delegate
 extension MapViewController: MKLocalSearchCompleterDelegate {
     
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
@@ -250,4 +259,17 @@ extension MapViewController: MKLocalSearchCompleterDelegate {
         self.tableView.reloadData()
     }
     
+}
+
+//MARK: -  Search Bar Delegate
+extension MapViewController: UISearchBarDelegate {
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if !searchText.isEmpty {
+            searchCompleter.queryFragment = searchText
+        } else {
+            searchResults.removeAll()
+            self.tableView.reloadData()
+        }
+    }
 }

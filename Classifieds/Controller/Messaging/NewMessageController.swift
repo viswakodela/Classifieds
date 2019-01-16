@@ -97,41 +97,38 @@ class NewMessageController: UIViewController {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "icons8-send-letter-100").withRenderingMode(.alwaysOriginal), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
+//        button.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
         return button
     }()
     
-    @objc func handleSend() {
-        print("Sending")
+//    @objc func handleSend() {
+//        print("Sending")
+//
+//        if messageTextField.text == "" {
+//            return
+//        }
+//        guard let postID = post?.postId else {return}
+//        guard let messageText = messageTextField.text else {return}
+//        guard let fromID = Auth.auth().currentUser?.uid else {return}
+////        guard let toID = post?.uid else {return} // issue arised when i changed the uid to User
+//        let timeStamp = Date.timeIntervalSinceReferenceDate
+//        let values = ["messageText" : messageText, "fromId" : fromID, "toId" : toID, "timeStamp" : timeStamp] as [String : Any]
+//
+//        let messageRef = Database.database().reference().child("messages")
+//        let childRef = messageRef.childByAutoId()
+//
+//        childRef.updateChildValues(values)
+//
+//        let postMessagesRef = Database.database().reference().child("post-messages")
+//        guard let messageID = childRef.key else {return}
+//        let childValue = [messageID : 1]
+//        postMessagesRef.child(postID).child(fromID).child(toID).updateChildValues(childValue)
+//
+//        postMessagesRef.child(postID).child(toID).child(fromID).updateChildValues(childValue)
+//
+//        self.messageTextField.text = nil
         
-        if messageTextField.text == "" {
-            return
-        }
-        guard let postID = post?.postId else {return}
-        guard let messageText = messageTextField.text else {return}
-        guard let fromID = Auth.auth().currentUser?.uid else {return}
-        guard let toID = post?.uid else {return}
-        let timeStamp = Date.timeIntervalSinceReferenceDate
-        let values = ["messageText" : messageText, "fromId" : fromID, "toId" : toID, "timeStamp" : timeStamp] as [String : Any]
-        
-        let messageRef = Database.database().reference().child("messages")
-        let childRef = messageRef.childByAutoId()
-        
-        childRef.updateChildValues(values)
-        
-        let postMessagesRef = Database.database().reference().child("post-messages")
-        guard let messageID = childRef.key else {return}
-        let childValue = [messageID : 1]
-        postMessagesRef.child(postID).child(fromID).child(toID).updateChildValues(childValue)
-        
-        postMessagesRef.child(postID).child(toID).child(fromID).updateChildValues(childValue)
-        
-        self.messageTextField.text = nil
-        
-        
-        
-        
-    }
+//    }
     
     func settingLayout() {
         view.addSubview(tableView)

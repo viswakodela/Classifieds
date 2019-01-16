@@ -18,58 +18,14 @@ class CustiomeImagePicker: UIImagePickerController {
     var button: UIButton?
 }
 
-class NewPostController: UITableViewController, ChooseCategoryDelegate, MapControllerDelegate {
+class NewPostController: UITableViewController {
     
-    
-    var imageAssets = [PHAsset]()
-    var photosArray = [UIImage]()
-    
-    var post: Post?
-    var cell: NewPostCell3?
-    var user: User?
-    let locationManager = CLLocationManager()
-    
-    private let cellId = "cellId"
-    private let newPost1CellId = "newPost1CellId"
-    private let newPost2CellId = "newPost2CellId"
-    private let newPost3CellId = "newPost3CellId"
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupLayout()
-        self.post = Post()
-        fetchUser()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(savePostToFirebase))
-        locationManager.delegate = self
-        checkPermission()
-    }
-    
-    func fetchUser() {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        Firestore.firestore().collection("users").document(uid).getDocument { (snap, err) in
-            guard let userDictionary = snap?.data() else {return}
-            self.user = User(dictionary: userDictionary)
-            self.post?.uid = self.user?.uid
-        }
-        
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.navigationBar.isHidden = false
-    }
-    
-    func createButton(selector: Selector) -> UIButton {
-        let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "icons8-google-images-100").withRenderingMode(.alwaysOriginal), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 4
-        button.clipsToBounds = true
-        button.imageView?.contentMode = .scaleAspectFill
-        button.backgroundColor = .white
-        button.addTarget(self, action: selector, for: .touchUpInside)
-        return button
-    }
+    //MARK: - Cell Identifiers
+    private static let titleCell = "titleCell"
+    private static let textViewCell = "textViewCell"
+    private static let newPostPriceCategoryImagesCellId = "newPostPriceCategoryImagesCellId"
+    private let locationManager = CLLocationManager()
+    static let newPostUpdateNotification = Notification.Name("newPostUpdate")
     
     lazy var image1Button = createButton(selector: #selector(imageButtonsImagePicker))
     lazy var image2Button = createButton(selector: #selector(imageButtonsImagePicker))
@@ -77,10 +33,32 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
     lazy var image4Button = createButton(selector: #selector(imageButtonsImagePicker))
     lazy var image5Button = createButton(selector: #selector(imageButtonsImagePicker))
     
+    //MARK: - Variables
+    var imageAssets = [PHAsset]()
+    var photosArray = [UIImage]()
+    var post = Post()
+    var cell: NewpostPriceCategoryLocationCell?
+    var user: User?
+    var currentLocation: String?
+    
+    //MARk: -  Controller Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupLayout()
+        fetchUser()
+        navigationBarSetup()
+        checkPermission()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = false
+    }
+    
+    //MARK: -  Layout Properties
     lazy var footer: UIView = {
         let footer = UIView()
         footer.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
-//        footer.translatesAutoresizingMaskIntoConstraints = false
         
         let stackView = UIStackView(arrangedSubviews: [image1Button, image2Button, image3Button, image4Button, image5Button])
         image2Button.isHidden = true
@@ -93,7 +71,7 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         stackView.distribution = .fillEqually
         stackView.spacing = 8
         stackView.translatesAutoresizingMaskIntoConstraints = false
-
+        
         footer.addSubview(stackView)
         stackView.topAnchor.constraint(equalTo: footer.topAnchor, constant: 8).isActive = true
         stackView.leadingAnchor.constraint(equalTo: footer.leadingAnchor, constant: 8).isActive = true
@@ -103,22 +81,31 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         return footer
     }()
     
-    @objc func imageButtonsImagePicker(button: UIButton) {
-        
-        let vc = BSImagePickerViewController()
-        vc.maxNumberOfSelections = 5
-        self.bs_presentImagePickerController(vc, animated: true, select: { (PHAsset) in
-            
-        }, deselect: { (PHAsset) in
-            
-        }, cancel: { ([PHAsset]) in
-            
-        }, finish: { (assets) in
-            for i in 0..<assets.count {
-                self.imageAssets.append(assets[i])
-            }
-            self.convertAssetsintoImages()
-        }, completion: nil)
+    
+    //MARK: -  Methods
+    func fetchUser() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        Firestore.firestore().collection("users").document(uid).getDocument { (snap, err) in
+            guard let userDictionary = snap?.data() else {return}
+            self.user = User(dictionary: userDictionary)
+            self.post.uid = self.user?.uid
+        }
+    }
+    
+    func navigationBarSetup() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(savePostToFirebase))
+    }
+    
+    func createButton(selector: Selector) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "icons8-google-images-100").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 4
+        button.clipsToBounds = true
+        button.imageView?.contentMode = .scaleAspectFill
+        button.backgroundColor = .white
+        button.addTarget(self, action: selector, for: .touchUpInside)
+        return button
     }
     
     func convertAssetsintoImages() {
@@ -149,7 +136,6 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
                             
                             if imageIndex == buttonIndex {
                                 buttonsArray[buttonIndex].setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
-                                
                                 
                                 let count = self.photosArray.count
                                 
@@ -191,17 +177,16 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
                                         }
                                         
                                         if button == self.image1Button {
-                                            self.post?.imageUrl1 = url?.absoluteString
+                                            self.post.imageUrl1 = url?.absoluteString
                                         } else if button == self.image2Button {
-                                            self.post?.imageUrl2 = url?.absoluteString
+                                            self.post.imageUrl2 = url?.absoluteString
                                         } else if button == self.image3Button {
-                                            self.post?.imageUrl3 = url?.absoluteString
+                                            self.post.imageUrl3 = url?.absoluteString
                                         } else if button == self.image4Button {
-                                            self.post?.imageUrl4 = url?.absoluteString
+                                            self.post.imageUrl4 = url?.absoluteString
                                         } else {
-                                            self.post?.imageUrl5 = url?.absoluteString
+                                            self.post.imageUrl5 = url?.absoluteString
                                         }
-                                        
                                     })
                                 })
                             }
@@ -220,13 +205,9 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         hud.dismiss(afterDelay: 4)
     }
     
-    static let newPostUpdateNotification = Notification.Name("newPostUpdate")
-    
-    var currentLocation: String?
-    
     @objc fileprivate func savePostToFirebase() {
         
-        if post?.title == nil || post?.description == nil || post?.location == nil {
+        if post.title == nil || post.description == nil || post.location == nil {
             let hud = JGProgressHUD(style: .dark)
             hud.textLabel.text = "Some fields are empty, Please check your entries"
             hud.show(in: self.view)
@@ -235,40 +216,56 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         }
         
         guard let uid = user?.uid else {return}
-        self.post?.date = Date().timeIntervalSinceReferenceDate
+        self.post.date = Date().timeIntervalSinceReferenceDate
         let postId = UUID().uuidString
-        self.post?.postId = postId
+        self.post.postId = postId
         
         let hud = JGProgressHUD(style: .dark)
         hud.textLabel.text = "Posting the ad"
         hud.show(in: self.view)
         
         let postData: [String : Any] = [
-            "title" : self.post?.title,
-            "description" : self.post?.description,
-            "price" : self.post?.price,
-            "categoryName" : self.post?.categoryName,
-            "location" : self.post?.location,
-            "uid" : self.post?.uid,
-            "imageUrl1" : self.post?.imageUrl1,
-            "imageUrl2" : self.post?.imageUrl2,
-            "imageUrl3" : self.post?.imageUrl3,
-            "imageUrl4" : self.post?.imageUrl4,
-            "imageUrl5" : self.post?.imageUrl5,
-            "date" : self.post?.date,
-            "postId" : self.post?.postId
+            "title" : self.post.title ?? "No Title",
+            "description" : self.post.description ?? "No Description",
+            "price" : self.post.price ?? 0,
+            "categoryName" : self.post.categoryName ?? "No Category",
+            "location" : self.post.location ?? "No Location",
+            "uid" : self.post.uid ?? "",
+            "imageUrl1" : self.post.imageUrl1,
+            "imageUrl2" : self.post.imageUrl2,
+            "imageUrl3" : self.post.imageUrl3,
+            "imageUrl4" : self.post.imageUrl4,
+            "imageUrl5" : self.post.imageUrl5,
+            "date" : self.post.date ?? "",
+            "postId" : self.post.postId ?? ""
         ]
         
-        guard let currentLocation = currentLocation else {return}
-        Firestore.firestore().collection("location-filter").document(currentLocation).collection("current-location").document(postId).setData(postData)
-    Firestore.firestore().collection("posts").document(uid).collection("userPosts").document(postId).setData(postData) { (err) in
+        guard let postLocation = post.location else {return}
+        
+//        guard let location = MapSearchHelper.searchText(search: postLocation) else {return}
+        
+        // searchRequest is to get the location of the Post
+        let searchRequest = MKLocalSearch.Request()
+        searchRequest.naturalLanguageQuery = postLocation
+        
+        let search = MKLocalSearch(request: searchRequest)
+        search.start { (resp, err) in
             if let error = err {
-                print(error)
+                print(error.localizedDescription)
             }
-        hud.dismiss(afterDelay: 3, animated: true)
-        }
-        self.dismiss(animated: true) {
-            NotificationCenter.default.post(name: NewPostController.newPostUpdateNotification, object: nil)
+            guard let response = resp?.mapItems else{return}
+            guard let city = response.first?.placemark.locality else {return}
+            DispatchQueue.main.async {
+        Database.database().reference().child("cities").child(city).child(postId).updateChildValues(postData)
+            }
+            
+            Database.database().reference().child("posts").child(postId).updateChildValues(postData)
+            
+            // Firestore is for getting the user's own posts in his Profile
+            Firestore.firestore().collection("posts").document(uid).collection("userPosts").document(postId).setData(postData)
+            self.dismiss(animated: true) {
+                NotificationCenter.default.post(name: NewPostController.newPostUpdateNotification, object: nil)
+            }
         }
     }
     
@@ -277,85 +274,14 @@ class NewPostController: UITableViewController, ChooseCategoryDelegate, MapContr
         navigationItem.title = "Add Listing"
         navigationController?.navigationBar.tintColor = .black
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(handleCancel))
-        tableView.register(NewPostCell1.self, forCellReuseIdentifier: newPost1CellId)
-        tableView.register(NewPostCell2.self, forCellReuseIdentifier: newPost2CellId)
-        tableView.register(NewPostCell3.self, forCellReuseIdentifier: newPost3CellId)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-    }
-    
-    @objc func handleCancel() {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    @objc func handleTitleChange(textField: UITextField) {
-        self.post?.title = textField.text
-    }
-    
-    @objc func handlePriceButton() {
-        var textFild = UITextField()
-        let alert = UIAlertController(title: "Enter Price (e.g. $150)", message: "", preferredStyle: .alert)
-        let cancelaction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
-        alert.addTextField { (textField) in
-            textField.placeholder = "Enter"
-            textFild = textField
-        }
-        
-        let okAction = UIAlertAction(title: "Ok", style: .default) { (action) in
-            guard let text = textFild.text else {return}
-            let priceText = Int(text)
-            let indexPath = IndexPath(row: 0, section: 2)
-            self.cell = self.tableView.cellForRow(at: indexPath) as? NewPostCell3
-
-            if priceText == nil {
-                self.cell?.textField.text = nil
-            } else {
-                self.cell?.textField.text = "$\(text)"
-                self.tableView.reloadData()
-            }
-            self.post?.price = priceText
-        }
-        alert.addAction(cancelaction)
-        alert.addAction(okAction)
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    @objc func handleCategoryButton() {
-        let chooseCategoryController = ChooseCategoryController()
-        chooseCategoryController.delegate = self
-        let navBarChooseController = UINavigationController(rootViewController: chooseCategoryController)
-        present(navBarChooseController, animated: true, completion: nil)
-    }
-    
-    func didChooseCategory(categoryName: String) {
-        let indexPath = IndexPath(row: 0, section: 3)
-        self.cell = self.tableView.cellForRow(at: indexPath) as? NewPostCell3
-        cell?.textField.text = categoryName
-        self.post?.categoryName = categoryName
-        self.tableView.reloadData()
-    }
-
-    
-    @objc func handleLocationButton() {
-        let mapController = MapViewController()
-        mapController.delegate = self
-        let navController = UINavigationController(rootViewController: mapController)
-        present(navController, animated: true)
-    }
-    
-    func didTapRow(title: String, subtitle: String) {
-        let indexPath = IndexPath(row: 0, section: 4)
-        self.cell = self.tableView.cellForRow(at: indexPath) as? NewPostCell3
-        cell?.textField.text = "\(title) \(subtitle)"
-        self.post?.location = "\(title) \(subtitle)"
-        self.tableView.reloadData()
+        tableView.register(TitleTextFieldCell.self, forCellReuseIdentifier: NewPostController.titleCell)
+        tableView.register(TextViewCell.self, forCellReuseIdentifier: NewPostController.textViewCell)
+        tableView.register(NewpostPriceCategoryLocationCell.self, forCellReuseIdentifier: NewPostController.newPostPriceCategoryImagesCellId)
     }
 }
 
+
+//MARK: - TableView Delegate methods
 extension NewPostController {
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -423,29 +349,30 @@ extension NewPostController {
         
         switch indexPath.section {
         case 0:
-            let cell = tableView.dequeueReusableCell(withIdentifier: newPost1CellId, for: indexPath) as! NewPostCell1
+            let cell = tableView.dequeueReusableCell(withIdentifier: NewPostController.titleCell, for: indexPath) as! TitleTextFieldCell
             cell.textField.addTarget(self, action: #selector(handleTitleChange), for: .editingChanged)
             return cell
         case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: newPost2CellId, for: indexPath) as! NewPostCell2
+            let cell = tableView.dequeueReusableCell(withIdentifier: NewPostController.textViewCell, for: indexPath) as! TextViewCell
             cell.textView.delegate = self
             return cell
         case 2:
-            let cell = tableView.dequeueReusableCell(withIdentifier: newPost3CellId, for: indexPath) as! NewPostCell3
+            let cell = tableView.dequeueReusableCell(withIdentifier: NewPostController.newPostPriceCategoryImagesCellId, for: indexPath) as! NewpostPriceCategoryLocationCell
             cell.textField.addTarget(self, action: #selector(handlePriceButton), for: .allEvents)
             return cell
         case 3:
-            let cell = tableView.dequeueReusableCell(withIdentifier: newPost3CellId, for: indexPath) as! NewPostCell3
+            let cell = tableView.dequeueReusableCell(withIdentifier: NewPostController.newPostPriceCategoryImagesCellId, for: indexPath) as! NewpostPriceCategoryLocationCell
             cell.textField.addTarget(self, action: #selector(handleCategoryButton), for: .allEvents) 
             return cell
         default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: newPost3CellId, for: indexPath) as! NewPostCell3
+            let cell = tableView.dequeueReusableCell(withIdentifier: NewPostController.newPostPriceCategoryImagesCellId, for: indexPath) as! NewpostPriceCategoryLocationCell
             cell.textField.addTarget(self, action: #selector(handleLocationButton), for: .allEvents)
             return cell
         }
     }
 }
 
+//MARK: - TextViewDelegate Methods
 extension NewPostController: UITextViewDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -456,11 +383,12 @@ extension NewPostController: UITextViewDelegate {
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        self.post?.description = textView.text
+        self.post.description = textView.text
     }
 }
 
 
+//MARK: - LocationManager Delegate MNethods
 extension NewPostController: CLLocationManagerDelegate {
     
     func checkPermission() {
@@ -480,7 +408,6 @@ extension NewPostController: CLLocationManagerDelegate {
             break
         case .authorizedWhenInUse:
             // DO Map Stuff
-            //            mapView.showsUserLocation = true
             break
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
@@ -505,52 +432,105 @@ extension NewPostController: CLLocationManagerDelegate {
     }
 }
 
-//extension NewPostController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-//
-//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-//
-//
-//
-//        let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage
-//        let imageButton = (picker as? CustiomeImagePicker)?.button
-//        imageButton?.setImage(editedImage?.withRenderingMode(.alwaysOriginal), for: .normal)
-//        self.dismiss(animated: true, completion: nil)
-//
-//        let fileName = UUID().uuidString
-//        let ref = Storage.storage().reference().child("postImages").child(fileName)
-//
-//        let hud = JGProgressHUD(style: .dark)
-//        hud.textLabel.text = "Uploading Image"
-//        hud.show(in: view)
-//
-//        guard let uploadData = editedImage?.jpegData(compressionQuality: 0.8) else {return}
-//
-//        ref.putData(uploadData, metadata: nil) { (data, err) in
-//            hud.dismiss()
-//            if let error = err {
-//                self.showProgressHUD(error: error)
-//                return
-//            }
-//            print("Finish uploading the Image")
-//
-//            ref.downloadURL { (url, err) in
-//                if let error = err {
-//                    self.showProgressHUD(error: error)
-//                    return
-//                }
-//
-//                if imageButton == self.image1Button {
-//                    self.post.imageUrl1 = url?.absoluteString
-//                } else if imageButton == self.image2Button {
-//                    self.post.imageUrl2 = url?.absoluteString
-//                } else if imageButton == self.image3Button {
-//                    self.post.imageUrl3 = url?.absoluteString
-//                } else if imageButton == self.image4Button {
-//                    self.post.imageUrl4 = url?.absoluteString
-//                } else {
-//                    self.post.imageUrl5 = url?.absoluteString
-//                }
-//            }
-//        }
-//    }
-//}
+//MARK: - Selector objective Functions
+extension NewPostController {
+    
+    
+    //For title change
+    @objc func handleTitleChange(textField: UITextField) {
+        self.post.title = textField.text
+    }
+    
+    //For Category Change
+    @objc func handleCategoryButton() {
+        let chooseCategoryController = ChooseCategoryController()
+        chooseCategoryController.delegate = self
+        let navBarChooseController = UINavigationController(rootViewController: chooseCategoryController)
+        present(navBarChooseController, animated: true, completion: nil)
+    }
+    
+    //For price Change
+    @objc func handlePriceButton() {
+        var textFild = UITextField()
+        let alert = UIAlertController(title: "Enter Price (e.g. $150)", message: "", preferredStyle: .alert)
+        let cancelaction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alert.addTextField { (textField) in
+            textField.placeholder = "Enter"
+            textFild = textField
+        }
+        
+        let okAction = UIAlertAction(title: "Ok", style: .default) { (action) in
+            guard let text = textFild.text else {return}
+            let priceText = Int(text)
+            let indexPath = IndexPath(row: 0, section: 2)
+            self.cell = self.tableView.cellForRow(at: indexPath) as? NewpostPriceCategoryLocationCell
+            
+            if priceText == nil {
+                self.cell?.textField.text = nil
+            } else {
+                self.cell?.textField.text = "$\(text)"
+                self.tableView.reloadData()
+            }
+            self.post.price = priceText
+        }
+        alert.addAction(cancelaction)
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    //For Location Change
+    @objc func handleLocationButton() {
+        let mapController = MapViewController()
+        mapController.delegate = self
+        let navController = UINavigationController(rootViewController: mapController)
+        present(navController, animated: true)
+    }
+    
+    //For Images
+    @objc func imageButtonsImagePicker(button: UIButton) {
+        
+        let vc = BSImagePickerViewController()
+        vc.maxNumberOfSelections = 5
+        self.bs_presentImagePickerController(vc, animated: true, select: { (PHAsset) in
+            
+        }, deselect: { (PHAsset) in
+            
+        }, cancel: { ([PHAsset]) in
+            
+        }, finish: { (assets) in
+            for i in 0..<assets.count {
+                self.imageAssets.append(assets[i])
+            }
+            self.convertAssetsintoImages()
+        }, completion: nil)
+    }
+    
+    @objc func handleCancel() {
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+//MARK: - Choose Category Delegate
+extension NewPostController: ChooseCategoryDelegate {
+    
+    func didChooseCategory(categoryName: String) {
+        let indexPath = IndexPath(row: 0, section: 3)
+        self.cell = self.tableView.cellForRow(at: indexPath) as? NewpostPriceCategoryLocationCell
+        cell?.textField.text = categoryName
+        self.post.categoryName = categoryName
+        self.tableView.reloadData()
+    }
+}
+
+//MARK: - MApController Delegate Methods
+extension NewPostController: MapControllerDelegate {
+    
+    func didTapRow(title: String, subtitle: String) {
+        let indexPath = IndexPath(row: 0, section: 4)
+        self.cell = self.tableView.cellForRow(at: indexPath) as? NewpostPriceCategoryLocationCell
+        cell?.textField.text = "\(title) \(subtitle)"
+        self.post.location = "\(title) \(subtitle)"
+        self.tableView.reloadData()
+    }
+}

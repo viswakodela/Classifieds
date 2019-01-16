@@ -12,7 +12,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     
     
     var homeController: HomeController?
-    private let popularCategoryCell = "popularCategoryCell"
+    private static let popularCategoryCell = "popularCategoryCell"
     
     let categoriesArray = [CategoryModel(image: #imageLiteral(resourceName: "phones"), categoryName: "Phones & Tablets"),
                            CategoryModel(image: #imageLiteral(resourceName: "rooms"), categoryName: "Roomes/Beds"),
@@ -46,9 +46,14 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        collectionVie.contentInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        collectionVie.register(CategoryCell.self, forCellWithReuseIdentifier: popularCategoryCell)
         setupView()
+        collectionViewSetup()
+    }
+    
+    func collectionViewSetup() {
+        
+        collectionVie.contentInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        collectionVie.register(CategoryCell.self, forCellWithReuseIdentifier: HomeHeader.popularCategoryCell)
     }
     
     fileprivate func setupView() {
@@ -71,7 +76,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: popularCategoryCell, for: indexPath) as! CategoryCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeHeader.popularCategoryCell, for: indexPath) as! CategoryCell
         cell.categoryModel = categoriesArray[indexPath.item]
         return cell
     }

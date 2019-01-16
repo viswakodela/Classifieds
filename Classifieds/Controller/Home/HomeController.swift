@@ -9,16 +9,19 @@
 import UIKit
 import Firebase
 import JGProgressHUD
+import MapKit
 
 class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+    // MARK: - Static constants
     
-
-    var panGesture: UIPanGestureRecognizer?
-    private let cellId = "cellId"
-    private let headerId = "headerId"
-    private let customCollectionViewHeader = "customCollectionViewHeader"
-    let menuWidth: CGFloat = 300
-    let threshold: CGFloat = 60
+    private static let cellId = "cellId"
+    private static let headerId = "headerId"
+    private static let customCollectionViewHeader = "customCollectionViewHeader"
+    private let refreshControl = UIRefreshControl()
+    let locationManager = CLLocationManager()
+    var currentLocation: String?
+    
+    // MARK: - State
     
     var user: User? {
         didSet {
@@ -30,10 +33,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateNewPost), name: NewPostController.newPostUpdateNotification, object: nil)
     }
     
-    @objc func handleUpdateNewPost() {
-        self.handleRefresh()
-    }
-    
     let menuView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -43,61 +42,84 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     var postsArray = [Post]()
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        addNotificationObservers()
+        
         collectionViewSetup()
+        checkLocatinServices()
+        addNotificationObservers()
         navigationControllerSetup()
         fetchPostsFromFirebase()
-        collectionView.isSpringLoaded = true
-        navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        handleRefresh()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
     }
     
-    @objc func handleMap() {
-        let mapPosts = MapPostsController()
-        postsArray.forEach { (post) in
-            mapPosts.posts.append(post)
-        }
-        navigationController?.pushViewController(mapPosts, animated: true)
-    }
     
+    // MARK: - UI and Fetch Methods
     var users = [User]()
     func fetchPostsFromFirebase() {
         
-        let query = Firestore.firestore().collection("users")
-        query.getDocuments { (snap, err) in
-            if let error = err {
-                self.showProgressHUD(error: error)
-                return
-            }
-            guard let snapshot = snap else {return}
-            
-            snapshot.documents.forEach({ (snapshot) in
-                let userDictionary = snapshot.data()
-                let user = User(dictionary: userDictionary)
-                self.users.append(user)
-                guard let uid = user.uid else {return}
-                Firestore.firestore().collection("posts").document(uid).collection("userPosts").getDocuments(completion: { (snap, err) in
-                    if let error = err {
-                        self.showProgressHUD(error: error)
-                    }
-                    guard let snapshot = snap else {return}
-                    snapshot.documents.forEach({ (snapshot) in
-                        let postDictionbary = snapshot.data()
-                        let post = Post(dictionary: postDictionbary)
-                        
-                        self.postsArray.append(post)
-                        DispatchQueue.main.async {
-                            self.collectionView.reloadData()
-                        }
-                    })
-                })
+        var posts = [Post]()
+        guard let location = self.currentLocation else {return}
+        Database.database().reference().child("cities").child(location).observeSingleEvent(of: .value) { (snap) in
+            guard let postDictionary = snap.value as? [String : Any] else {return}
+            postDictionary.forEach({ (key, value) in
+                guard let dictionary = value as? [String : Any] else {return}
+                let post = Post(dictionary: dictionary)
+                posts.append(post)
             })
+            DispatchQueue.main.async {
+                self.postsArray = posts
+                self.collectionView.reloadData()
+            }
         }
+    }
+    
+    
+    
+    fileprivate func navigationControllerSetup() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "LogOut", style: .plain, target: self, action: #selector(handleLogOut))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-map-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleMap))
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    func showProgressHUD(error: Error) {
+        let hud = JGProgressHUD(style: .dark)
+        hud.textLabel.text = "Registration Failed"
+        hud.detailTextLabel.text = error.localizedDescription
+        hud.show(in: self.view)
+        hud.dismiss(afterDelay: 4)
+    }
+    
+    
+    fileprivate func collectionViewSetup() {
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
+        collectionView?.backgroundColor = .white
+        collectionView.alwaysBounceVertical = true
+        collectionView.register(HomeHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HomeController.headerId)
+        collectionView.register(HomeControllerCell.self, forCellWithReuseIdentifier: HomeController.cellId)
+        collectionView.register(CustomCollectionViewHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader.self, withReuseIdentifier: HomeController.customCollectionViewHeader)
+    }
+}
+
+
+// MARK: - selector action Methods
+
+extension HomeController {
+    
+    @objc func handleUpdateNewPost() {
+        self.handleRefresh()
     }
     
     @objc func handleLogOut() {
@@ -112,32 +134,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
         let navRegControleller = UINavigationController(rootViewController: RegistrationController())
         present(navRegControleller, animated: true, completion: nil)
-        
-    }
-    
-    fileprivate func navigationControllerSetup() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "LogOut", style: .plain, target: self, action: #selector(handleLogOut))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-map-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleMap))
-    }
-    
-    func showProgressHUD(error: Error) {
-        let hud = JGProgressHUD(style: .dark)
-        hud.textLabel.text = "Registration Failed"
-        hud.detailTextLabel.text = error.localizedDescription
-        hud.show(in: self.view)
-        hud.dismiss(afterDelay: 4)
-    }
-    
-    let refreshControl = UIRefreshControl()
-    
-    fileprivate func collectionViewSetup() {
-        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
-        collectionView.refreshControl = refreshControl
-        collectionView?.backgroundColor = .white
-        collectionView.alwaysBounceVertical = true
-        collectionView.register(HomeHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
-        collectionView.register(HomeControllerCell.self, forCellWithReuseIdentifier: cellId)
-        collectionView.register(CustomCollectionViewHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader.self, withReuseIdentifier: customCollectionViewHeader)
     }
     
     @objc func handleRefresh() {
@@ -146,18 +142,26 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         fetchPostsFromFirebase()
         collectionView.refreshControl?.endRefreshing()
     }
+    
+    @objc func handleMap() {
+        let mapPosts = MapPostsController()
+        mapPosts.posts = postsArray
+        navigationController?.pushViewController(mapPosts, animated: true)
+    }
 }
 
+
+// MARK: - CollectionView Delegaete, DataScource and UICOllectionViewDelegateFlowLayout Methods
 extension HomeController {
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         if indexPath.section == 0 {
-            let headerCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! HomeHeader
+            let headerCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HomeController.headerId, for: indexPath) as! HomeHeader
             headerCell.homeController = self
             return headerCell
         }
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: customCollectionViewHeader, for: indexPath) as! CustomCollectionViewHeader
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HomeController.customCollectionViewHeader, for: indexPath) as! CustomCollectionViewHeader
         return view
     }
     
@@ -178,7 +182,7 @@ extension HomeController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! HomeControllerCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeController.cellId, for: indexPath) as! HomeControllerCell
         
         if postsArray.count == 0 {
             print("No posts available")
@@ -211,7 +215,61 @@ extension HomeController {
         let postdetails = PostDetailsController()
         let posts = self.postsArray[indexPath.item]
         postdetails.post = posts
-        postdetails.posts = self.postsArray
         navigationController?.pushViewController(postdetails, animated: true)
-    } 
+    }
+}
+
+
+extension HomeController: CLLocationManagerDelegate {
+    
+    func checkLocatinServices() {
+        if CLLocationManager.locationServicesEnabled() {
+            setupLocation()
+            checkPermission()
+        }
+    }
+    
+    func setupLocation() {
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+    }
+    
+    func checkPermission() {
+        if CLLocationManager.locationServicesEnabled() {
+            checkLocationAuthorization()
+            locationManager.startUpdatingLocation()
+        } else {
+            print("Check the location Services")
+        }
+    }
+    
+    func checkLocationAuthorization() {
+        switch CLLocationManager.authorizationStatus() {
+        case .authorizedAlways:
+            break
+        case .authorizedWhenInUse:
+            // DO Map Stuff
+            //            mapView.showsUserLocation = true
+            break
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+            break
+        case .denied:
+            break
+        default:
+            break
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.first else {return}
+        let geoCoder = CLGeocoder()
+        geoCoder.reverseGeocodeLocation(location) { (placemarks, err) in
+            self.currentLocation = placemarks?.first?.locality
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        self.checkLocationAuthorization()
+    }
 }

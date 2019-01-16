@@ -12,22 +12,23 @@ import MapKit
 
 class SearchController: UITableViewController {
     
-    private let searchCellID = "searchCellID"
+    //MARK: - TableView Cell Identifiers
+    private static let searchCellID = "searchCellID"
+    
+    //MARK: - variables
+    var posts = [Post]()
+    var filteredposts = [Post]()
     var searchController = UISearchController(searchResultsController: nil)
     var refreshControle = UIRefreshControl()
     var cityFiler: String?
     
+    //MARK: - Controller LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         fetchPostsfromFirebase()
         tableViewSetup()
-        navigationItem.searchController = searchController
-        searchController.dimsBackgroundDuringPresentation = true
-        searchController.searchBar.delegate = self
-        navigationItem.hidesSearchBarWhenScrolling = false
-        refreshControle.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
-        tableView.refreshControl = refreshControle
+        navigationBarSetup()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -38,20 +39,7 @@ class SearchController: UITableViewController {
         }
     }
     
-    
-    func tableViewSetup() {
-        self.definesPresentationContext = true
-        tableView.keyboardDismissMode = .onDrag
-        tableView.register(FilterTableViewCell.self, forCellReuseIdentifier: searchCellID)
-        tableView.separatorStyle = .none
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-filter-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleFilter))
-    }
-    
-    @objc func handleRefresh() {
-        self.posts.removeAll()
-        fetchPostsfromFirebase()
-        tableView.refreshControl?.endRefreshing()
-    }
+    //MARK: - Layout Properties
     
     let datePriceSegmentedControl: UISegmentedControl = {
         let sc = UISegmentedControl(items: ["Date", "Price"])
@@ -66,31 +54,6 @@ class SearchController: UITableViewController {
         return sc
     }()
     
-    @objc func handleSegmentedControl(segmentControl: UISegmentedControl) {
-        
-        if segmentControl.selectedSegmentIndex == 0 {
-                
-            self.filteredposts.sort { (p1, p2) -> Bool in
-                return p1.date! > p2.date!
-            }
-        } else {
-                
-            self.filteredposts.sort { (p1, p2) -> Bool in
-                return p1.price! < p2.price!
-            }
-        }
-        
-        DispatchQueue.main.async {
-            var indexPathToAnimate = [IndexPath]()
-            for (index, _) in self.filteredposts.enumerated() {
-                let indexPath = IndexPath(row: index, section: 0)
-                indexPathToAnimate.append(indexPath)
-            }
-            self.tableView.reloadRows(at: indexPathToAnimate, with: .fade)
-//            self.tableView.reloadData()
-        }
-    }
-    
     lazy var headerView: UIView = {
         let header = UIView()
         header.translatesAutoresizingMaskIntoConstraints = false
@@ -103,11 +66,27 @@ class SearchController: UITableViewController {
         return header
     }()
     
+    //MARK: -  Methods
     
-    var posts = [Post]()
-    var users = [User]()
-    var filteredposts = [Post]()
-    var locationFilterdPosts = [Post]()
+    func navigationBarSetup() {
+        
+        navigationItem.searchController = searchController
+        searchController.dimsBackgroundDuringPresentation = true
+        searchController.searchBar.delegate = self
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-filter-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleFilter))
+    }
+    
+    func tableViewSetup() {
+        self.definesPresentationContext = true
+        tableView.keyboardDismissMode = .onDrag
+        
+        refreshControle.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        tableView.refreshControl = refreshControle
+        tableView.register(FilterTableViewCell.self, forCellReuseIdentifier: SearchController.searchCellID)
+        tableView.separatorStyle = .none
+    }
+    
     
     func fetchPostsfromFirebase() {
         
@@ -154,18 +133,9 @@ class SearchController: UITableViewController {
             }
         }
     }
-    
-    @objc func handleFilter() {
-        
-        let searchFilter = SearchFilterController()
-        searchFilter.delegate = self
-        let navBar = UINavigationController(rootViewController: searchFilter)
-        present(navBar, animated: true, completion: nil)
-        
-    }
 }
 
-
+//MARK: -  UISearchBarDelegate Methods
 extension SearchController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -186,6 +156,7 @@ extension SearchController: UISearchBarDelegate {
     }
 }
 
+//MARK:- TableView Delegate Methods
 extension SearchController {
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -203,7 +174,7 @@ extension SearchController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return locationFilterdPosts.isEmpty ? filteredposts.count : locationFilterdPosts.count
+        return filteredposts.count
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -211,36 +182,68 @@ extension SearchController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: searchCellID, for: indexPath) as! FilterTableViewCell
-        if locationFilterdPosts.isEmpty {
-            let post = self.filteredposts[indexPath.row]
-            cell.post = post
-        } else {
-            let post = self.locationFilterdPosts[indexPath.row]
-            cell.post = post
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: SearchController.searchCellID, for: indexPath) as! FilterTableViewCell
+        let post = self.filteredposts[indexPath.row]
+        cell.post = post
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let postDetails = PostDetailsController()
-        
-        if locationFilterdPosts.isEmpty {
-            let post = filteredposts[indexPath.row]
-            postDetails.post = post
-        } else{
-            let post = locationFilterdPosts[indexPath.row]
-            postDetails.post = post
-        }
+        let post = filteredposts[indexPath.row]
+        postDetails.post = post
         navigationController?.pushViewController(postDetails, animated: true)
     }
 }
 
+
+//MARK:- SearchLocationFilter Delegate Methods
 extension SearchController: SearchLocationFilterDelegate {
     
     func cityLocation(of city: String) {
-        
         self.cityFiler = city
+    }
+}
+
+//MARK: - Selector objective Methods
+extension SearchController {
+    
+    @objc func handleRefresh() {
+        self.posts.removeAll()
+        fetchPostsfromFirebase()
+        tableView.refreshControl?.endRefreshing()
+    }
+    
+    @objc func handleFilter() {
         
+        let searchFilter = SearchFilterController()
+        searchFilter.delegate = self
+        let navBar = UINavigationController(rootViewController: searchFilter)
+        present(navBar, animated: true, completion: nil)
+        
+    }
+    
+    @objc func handleSegmentedControl(segmentControl: UISegmentedControl) {
+        
+        if segmentControl.selectedSegmentIndex == 0 {
+            
+            self.filteredposts.sort { (p1, p2) -> Bool in
+                return p1.date! > p2.date!
+            }
+        } else {
+            
+            self.filteredposts.sort { (p1, p2) -> Bool in
+                return p1.price! < p2.price!
+            }
+        }
+        
+        DispatchQueue.main.async {
+            var indexPathToAnimate = [IndexPath]()
+            for (index, _) in self.filteredposts.enumerated() {
+                let indexPath = IndexPath(row: index, section: 0)
+                indexPathToAnimate.append(indexPath)
+            }
+            self.tableView.reloadRows(at: indexPathToAnimate, with: .fade)
+        }
     }
 }

@@ -12,6 +12,7 @@ import Firebase
 
 class HomeControllerCell: UICollectionViewCell {
     
+    //MARK: - Property Observer
     var post: Post! {
         didSet {
             guard let imageUrl = post.imageUrl1 else {return}
@@ -22,6 +23,13 @@ class HomeControllerCell: UICollectionViewCell {
         }
     }
     
+    //MARK: - Cell Initialization
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupLayout()
+    }
+    
+    //MARK:- Layout Properties
     let imageview: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
@@ -49,11 +57,7 @@ class HomeControllerCell: UICollectionViewCell {
         return label
     }()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupLayout()
-    }
-    
+    //MARK: - Contraiant Methods
     func setupLayout() {
         
         addSubview(imageview)
@@ -73,8 +77,6 @@ class HomeControllerCell: UICollectionViewCell {
         priceLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         priceLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         priceLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        
         
     }
     

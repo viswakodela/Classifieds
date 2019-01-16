@@ -8,10 +8,10 @@
 
 import UIKit
 
-class NewPostCell3: UITableViewCell {
+class NewpostPriceCategoryLocationCell: UITableViewCell {
     
-    
-    class NewPostCell2TextField: UITextField {
+    //MARK: - Custom textField Class
+    class CustomizedTextField: UITextField {
         override var intrinsicContentSize: CGSize {
             return CGSize(width: 0, height: 44)
         }
@@ -23,14 +23,15 @@ class NewPostCell3: UITableViewCell {
         }
     }
     
-    let newPostController = NewPostController()
+    //MARK: - Table view Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupLayout()
     }
     
-    let textField: NewPostCell2TextField = {
-        let tf = NewPostCell2TextField()
+    //MARK: - LAyout Properties
+    let textField: CustomizedTextField = {
+        let tf = CustomizedTextField()
         tf.translatesAutoresizingMaskIntoConstraints = false
         tf.placeholder = "Enter.."
         tf.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
@@ -43,6 +44,7 @@ class NewPostCell3: UITableViewCell {
         return view
     }()
     
+    //MARK: - Methods
     func setupLayout() {
         
         addSubview(containerView)
