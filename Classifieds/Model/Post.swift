@@ -26,13 +26,10 @@ class Post {
     var imagesArray: [String]?
     var date: TimeInterval?
     
-    init() {
-//        date2 = Date()
-    }
+    var isFavorited: Bool = false
     
-//    func renewPost() {
-//        date2 = Date()
-//    }
+    init() {
+    }
     
     init(dictionary: [String : Any]) {
         self.postId = dictionary["postId"] as? String
@@ -48,9 +45,9 @@ class Post {
         self.imageUrl4 = dictionary["imageUrl4"] as? String
         self.imageUrl5 = dictionary["imageUrl5"] as? String
         self.date = dictionary["date"] as? TimeInterval
-        //self.date2 = dictionary["date"] as? Date
     }
-    
+}
+
 //    init?(firebaseDictionary dictionary: [String : Any]) {
 //        // guard on mandatory
 //        guard let postId = dictionary["postId"] as? String,
@@ -64,5 +61,3 @@ class Post {
 //        self.postId = postId
 //        self.price = price
 //    }
-}
-

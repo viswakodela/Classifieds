@@ -38,14 +38,13 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     let categoryLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Popular Categories"
+        label.text = "  Popular Categories"
         label.font = UIFont.boldSystemFont(ofSize: 24)
         return label
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         setupView()
         collectionViewSetup()
     }
@@ -63,9 +62,9 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         stackView.spacing = 4
         
         addSubview(stackView)
-        categoryLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        stackView.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+        categoryLabel.heightAnchor.constraint(equalToConstant: 26).isActive = true
+        stackView.topAnchor.constraint(equalTo: topAnchor, constant: 0).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0).isActive = true
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
@@ -82,7 +81,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 150, height: 130)
+        return CGSize(width: 130, height: 120)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

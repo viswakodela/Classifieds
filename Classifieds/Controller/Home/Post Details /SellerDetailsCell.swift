@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class ThirdTableViewCell: UITableViewCell {
+class SellerDetailsCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

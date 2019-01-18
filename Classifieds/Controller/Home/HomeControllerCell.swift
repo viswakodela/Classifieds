@@ -10,7 +10,16 @@ import UIKit
 import SDWebImage
 import Firebase
 
+    //MARK: - Protol
+protocol HomeCellDelegate: class {
+//    func didTapFavorite(cell: HomeControllerCell)
+    func didTapFavorite(post: Post)
+}
+
 class HomeControllerCell: UICollectionViewCell {
+    
+    //MARK: - Variables
+    weak var delegate: HomeCellDelegate?
     
     //MARK: - Property Observer
     var post: Post! {
@@ -20,6 +29,12 @@ class HomeControllerCell: UICollectionViewCell {
             imageview.sd_setImage(with: url)
             priceLabel.text = "$ \(post.price ?? 0)"
             titleLabel.text = "\(self.post.title ?? "")"
+            
+            if post.isFavorited == true {
+                favoriteButton.setImage(#imageLiteral(resourceName: "icons8-heart-100").withRenderingMode(.alwaysOriginal), for: .normal)
+            } else {
+                favoriteButton.setImage(#imageLiteral(resourceName: "heart").withRenderingMode(.alwaysOriginal), for: .normal)
+            }
         }
     }
     
@@ -36,8 +51,25 @@ class HomeControllerCell: UICollectionViewCell {
         iv.clipsToBounds = true
         iv.layer.cornerRadius = 5
         iv.clipsToBounds = true
+        iv.isUserInteractionEnabled = true
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
+    }()
+    
+    let containerViewForHeart: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(white: 1, alpha: 0.5)
+        view.layer.cornerRadius = 20
+        return view
+    }()
+    
+    lazy var favoriteButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(#imageLiteral(resourceName: "heart").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(handleFavorite), for: .touchUpInside)
+        return button
     }()
     
     let priceLabel : UILabel = {
@@ -66,6 +98,16 @@ class HomeControllerCell: UICollectionViewCell {
         imageview.topAnchor.constraint(equalTo: topAnchor).isActive = true
         imageview.heightAnchor.constraint(equalToConstant: 160).isActive = true
         
+        imageview.addSubview(containerViewForHeart)
+        containerViewForHeart.topAnchor.constraint(equalTo: imageview.topAnchor, constant: 8).isActive = true
+        containerViewForHeart.trailingAnchor.constraint(equalTo: imageview.trailingAnchor, constant: -8).isActive = true
+        containerViewForHeart.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        containerViewForHeart.heightAnchor.constraint(equalToConstant: 40).isActive = true
+
+        containerViewForHeart.addSubview(favoriteButton)
+        favoriteButton.centerXAnchor.constraint(equalTo: containerViewForHeart.centerXAnchor).isActive = true
+        favoriteButton.centerYAnchor.constraint(equalTo: containerViewForHeart.centerYAnchor).isActive = true
+
         addSubview(titleLabel)
         titleLabel.topAnchor.constraint(equalTo: imageview.bottomAnchor).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
@@ -78,6 +120,13 @@ class HomeControllerCell: UICollectionViewCell {
         priceLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         priceLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
+        imageview.bringSubviewToFront(favoriteButton)
+        
+    }
+    
+    @objc func handleFavorite() {
+        print("Favorited")
+        delegate?.didTapFavorite(post: post)
     }
     
     required init?(coder aDecoder: NSCoder) {

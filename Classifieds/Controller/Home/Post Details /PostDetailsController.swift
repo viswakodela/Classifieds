@@ -13,14 +13,14 @@ import Firebase
 class PostDetailsController: UIViewController {
     
     //MARK: - Cell Identifiers
-    private let normalCell = "normalCell"
-    private let tableViewCell1 = "tableViewCell1"
-    private let tableViewCell2 = "tableViewCell2"
-    private let tableViewCell3 = "tableViewCell3"
-    private let tableViewCell4 = "tableViewCell4"
-    private let tableViewCell5 = "tableViewCell5"
-    private let tableViewCell6 = "tableViewCell6"
-    private static let priceLabelCell = "priceLabelCell"
+    private static let normalCellID = "normalCellID"
+    private static let collectionViewCellID = "collectionViewCellID"
+    private static let titleCellID = "titleCellID"
+    private static let sellerDetailsCellID = "sellerDetailsCellID"
+    private static let postsDescriptionCellID = "postsDescriptionCellID"
+    private static let mapViewCellID = "mapViewCellID"
+    private static let otherPostsCellID = "otherPostsCellID"
+    private static let priceLabelCellID = "priceLabelCellID"
     
     //MARK: - Variables
     var imagesArray = [String]()
@@ -32,6 +32,9 @@ class PostDetailsController: UIViewController {
         tableViewSetUp()
         navigationBarSetup()
 
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -74,18 +77,26 @@ class PostDetailsController: UIViewController {
         return tv
     }()
     
+    lazy var mapview: MKMapView = {
+        let mv = MKMapView()
+        mv.translatesAutoresizingMaskIntoConstraints = false
+        mv.isZoomEnabled = false
+        mv.isScrollEnabled = false
+        return mv
+    }()
+    
     //MARK: - Methods
     func tableViewSetUp() {
         view.backgroundColor = .white
         tableView.separatorStyle = .none
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: normalCell)
-        tableView.register(FirstTableViewCell.self, forCellReuseIdentifier: tableViewCell1)
-        tableView.register(SecondTableViewCell.self, forCellReuseIdentifier: tableViewCell2)
-        tableView.register(ThirdTableViewCell.self, forCellReuseIdentifier: tableViewCell3)
-        tableView.register(FourthTableCell.self, forCellReuseIdentifier: tableViewCell4)
-        tableView.register(FifthTableCell.self, forCellReuseIdentifier: tableViewCell5)
-        tableView.register(SixthTableCell.self, forCellReuseIdentifier: tableViewCell6)
-        tableView.register(PriceLabelCell.self, forCellReuseIdentifier: PostDetailsController.priceLabelCell)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: PostDetailsController.normalCellID)
+        tableView.register(ImagesCollectionViewCell.self, forCellReuseIdentifier: PostDetailsController.collectionViewCellID)
+        tableView.register(TitleForPostDetailCell.self, forCellReuseIdentifier: PostDetailsController.titleCellID)
+        tableView.register(SellerDetailsCell.self, forCellReuseIdentifier: PostDetailsController.sellerDetailsCellID)
+        tableView.register(PostDescriptionDetailsCell.self, forCellReuseIdentifier: PostDetailsController.postsDescriptionCellID)
+        tableView.register(MapViewCell.self, forCellReuseIdentifier: PostDetailsController.mapViewCellID)
+        tableView.register(OtherPostsFromSellerCell.self, forCellReuseIdentifier: PostDetailsController.otherPostsCellID)
+        tableView.register(PriceLabelCell.self, forCellReuseIdentifier: PostDetailsController.priceLabelCellID)
     }
     
     func navigationBarSetup() {
@@ -99,6 +110,10 @@ class PostDetailsController: UIViewController {
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+    }
+    
+    deinit {
+        print("Deinitialized PostDetailsController")
     }
 }
 
@@ -117,11 +132,11 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
             return view.frame.width
-        }  else if indexPath.section == 3 { // SellerInformation Cell
+        }  else if indexPath.section == 3 { // SellerInformation Section
             return 70
-        } else if indexPath.section == 5  { // MapView Cell
+        } else if indexPath.section == 5  { // MapView Section
             return 194
-        } else  if indexPath.section == 6 {
+        } else  if indexPath.section == 6 { //Other Posts Section
             return 140
         }
         return UITableView.automaticDimension
@@ -132,47 +147,49 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section == 0 {
             
-            let firstTableViewCell = tableView.dequeueReusableCell(withIdentifier: tableViewCell1, for: indexPath) as! FirstTableViewCell
+            let firstTableViewCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.collectionViewCellID, for: indexPath) as! ImagesCollectionViewCell
             firstTableViewCell.imagesArray = self.imagesArray
             return firstTableViewCell
             
         } else if indexPath.section == 1 {
             
-            let secondTableViewCell = tableView.dequeueReusableCell(withIdentifier: tableViewCell2, for: indexPath) as! SecondTableViewCell
+            let secondTableViewCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.titleCellID, for: indexPath) as! TitleForPostDetailCell
             secondTableViewCell.post = self.post
             return secondTableViewCell
             
         } else  if indexPath.section == 2 {
             
-            let priceCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.priceLabelCell, for: indexPath) as! PriceLabelCell
+            let priceCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.priceLabelCellID, for: indexPath) as! PriceLabelCell
             priceCell.post = self.post
             return priceCell
         } else if indexPath.section == 3 {
             
-            let thirdTableViewCell = tableView.dequeueReusableCell(withIdentifier: tableViewCell3, for: indexPath) as! ThirdTableViewCell
+            let thirdTableViewCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.sellerDetailsCellID, for: indexPath) as! SellerDetailsCell
             thirdTableViewCell.post = self.post
             return thirdTableViewCell
             
         } else if indexPath.section == 4 {
             
-            let fourthCell = tableView.dequeueReusableCell(withIdentifier: tableViewCell4, for: indexPath) as! FourthTableCell
+            let fourthCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.postsDescriptionCellID, for: indexPath) as! PostDescriptionDetailsCell
             fourthCell.post = self.post
             return fourthCell
             
         } else if indexPath.section == 5 {
             
-            let fifthCell = tableView.dequeueReusableCell(withIdentifier: tableViewCell5, for: indexPath) as! FifthTableCell
+            let fifthCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.mapViewCellID, for: indexPath) as! MapViewCell
             fifthCell.post = post
+            fifthCell.postDetailController = self
+            fifthCell.mapview.delegate = self
             return fifthCell
             
         } else if indexPath.section == 6 {
-            let sixthCell = tableView.dequeueReusableCell(withIdentifier: tableViewCell6, for: indexPath) as! SixthTableCell
+            let sixthCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.otherPostsCellID, for: indexPath) as! OtherPostsFromSellerCell
             sixthCell.post = post
             sixthCell.postDetails = self
             return sixthCell
         }
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: normalCell, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.normalCellID, for: indexPath)
         let attributedText = NSMutableAttributedString(string: String("  $\(post.price ?? 0)"), attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor : UIColor(red: 65/255, green: 165/255, blue: 122/255, alpha: 1)])
         cell.textLabel?.attributedText = attributedText
         return cell
@@ -188,6 +205,27 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section == 1 {
             tableView.allowsSelection = true
+        }
+    }
+}
+
+//MARK: - Fifth Cell's MapView Delegate Method
+extension PostDetailsController: MKMapViewDelegate {
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        let annotations = mapView.annotations
+        annotations.forEach { (annot) in
+            
+            let regionDistance: CLLocationDistance = 1000
+            let center = CLLocationCoordinate2D(latitude: annot.coordinate.latitude, longitude: annot.coordinate.longitude)
+            let regionSpan = MKCoordinateRegion.init(center: center, latitudinalMeters: regionDistance, longitudinalMeters: regionDistance)
+            
+            let options = [MKLaunchOptionsMapCenterKey : regionSpan.center, MKLaunchOptionsMapSpanKey : regionSpan.span] as [String : Any]
+            
+            let placemark = MKPlacemark(coordinate: annot.coordinate)
+            let mapItem = MKMapItem(placemark: placemark)
+            mapItem.name = annot.title ?? "Unknown Location"
+            mapItem.openInMaps(launchOptions: options)
         }
     }
 }

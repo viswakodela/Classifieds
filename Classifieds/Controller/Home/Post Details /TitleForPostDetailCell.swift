@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SecondTableViewCell: UITableViewCell {
+class TitleForPostDetailCell: UITableViewCell {
     
     let titleLabel: UILabel = {
         let label = UILabel()

@@ -92,44 +92,59 @@ class SearchController: UITableViewController {
         
         if cityFiler == nil {
             
-            Firestore.firestore().collection("users").getDocuments { (snap, err) in
-                snap?.documents.forEach({ (snap) in
-                    let userDictionary = snap.data()
-                    let user = User(dictionary: userDictionary)
-                    guard let uid = user.uid else {return}
-                    Firestore.firestore().collection("posts").document(uid).collection("userPosts").getDocuments(completion: { (snap, err) in
-                        snap?.documents.forEach({ (snap) in
-                            let postDictionary = snap.data()
-                            let post = Post(dictionary: postDictionary)
-                            self.posts.append(post)
-                        })
-                        
-                        self.posts.sort(by: { (p1, p2) -> Bool in
-                            let firstPost = Int(p1.date ?? 0)
-                            let secondPost = Int(p2.date ?? 0)
-                            return firstPost > secondPost
-                        })
-                        
-                        self.filteredposts = self.posts
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                        }
-                    })
+            Database.database().reference().child("posts").observeSingleEvent(of: .value) { (snap) in
+                guard let allPostsDictionary = snap.value as? [String : Any] else {return}
+                allPostsDictionary.forEach({ (key, value) in
+                    guard let dictionary = value as? [String : Any] else {return}
+                    let post = Post(dictionary: dictionary)
+                    self.posts.append(post)
                 })
+                DispatchQueue.main.async {
+                    self.filteredposts = self.posts
+                    self.tableView.reloadData()
+                }
             }
+            
+//            Firestore.firestore().collection("users").getDocuments { (snap, err) in
+//                snap?.documents.forEach({ (snap) in
+//                    let userDictionary = snap.data()
+//                    let user = User(dictionary: userDictionary)
+//                    guard let uid = user.uid else {return}
+//                    Firestore.firestore().collection("posts").document(uid).collection("userPosts").getDocuments(completion: { (snap, err) in
+//                        snap?.documents.forEach({ (snap) in
+//                            let postDictionary = snap.data()
+//                            let post = Post(dictionary: postDictionary)
+//                            self.posts.append(post)
+//                        })
+//
+//                        self.posts.sort(by: { (p1, p2) -> Bool in
+//                            let firstPost = Int(p1.date ?? 0)
+//                            let secondPost = Int(p2.date ?? 0)
+//                            return firstPost > secondPost
+//                        })
+//                        DispatchQueue.main.async {
+//                            self.filteredposts = self.posts
+//                            self.tableView.reloadData()
+//                        }
+//                    })
+//                })
+//            }
         } else {
             self.posts.removeAll()
             self.filteredposts.removeAll()
             guard let cityFilter = self.cityFiler else {return}
-            Firestore.firestore().collection("location-filter").document(cityFilter).collection("current-location").getDocuments { (snap, err) in
-                snap?.documents.forEach({ (snapshot) in
-                    let post = Post(dictionary: snapshot.data())
+            
+            Database.database().reference().child("cities").child(cityFilter).observeSingleEvent(of: .value) { (snap) in
+                guard let postDictionary = snap.value as? [String : Any] else {return}
+                postDictionary.forEach({ (key, value) in
+                    guard let dictionary = value as? [String : Any] else {return}
+                    let post = Post(dictionary: dictionary)
                     self.posts.append(post)
-                    self.filteredposts.append(post)
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
                 })
+                DispatchQueue.main.async {
+                    self.filteredposts = self.posts
+                    self.tableView.reloadData()
+                }
             }
         }
     }
@@ -209,6 +224,12 @@ extension SearchController: SearchLocationFilterDelegate {
 extension SearchController {
     
     @objc func handleRefresh() {
+        
+        if self.cityFiler != nil {
+            tableView.refreshControl?.endRefreshing()
+            return
+        }
+        
         self.posts.removeAll()
         fetchPostsfromFirebase()
         tableView.refreshControl?.endRefreshing()

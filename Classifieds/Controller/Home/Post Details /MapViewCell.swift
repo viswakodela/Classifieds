@@ -11,8 +11,7 @@ import MapKit
 
 class MapViewCell: UITableViewCell {
     
-    var postDetailController: PostDetailsController?
-//    var mapview: MKMapView?
+    weak var postDetailController: PostDetailsController?
     
     //MARK: - Cell Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -66,7 +65,8 @@ class MapViewCell: UITableViewCell {
         
         let geoCoder = CLGeocoder()
         guard let location = post.location else {return}
-        geoCoder.geocodeAddressString(location) { (placemarks, err) in
+        geoCoder.geocodeAddressString(location) { [weak self] (placemarks, err) in
+            guard let self = self else {return}
             if let error = err {
                 print(error.localizedDescription)
             }
@@ -94,6 +94,7 @@ class MapViewCell: UITableViewCell {
     }
     
     deinit {
+        print("MapCell Deinitialized")
         clearMapViewMemoryLeak()
     }
     

@@ -9,17 +9,37 @@
 import UIKit
 import Firebase
 import JGProgressHUD
+import MapKit
 
 class TabBarControllr: UITabBarController {
-
+    
+    //MARK: - Constants
+    let locationManager = CLLocationManager()
+    
+    //MARK: - Variables
     var homeController: HomeController?
+    var currentLocation: String?
+    
+    //MARK: -  Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.delegate = self
+        viewControllersSetup()
         fetchCurrentUserfromFirebase()
+        tabBarSetup()
+        
+        
+    }
+    
+    //MARK: - Methods
+    func tabBarSetup() {
         
         tabBar.tintColor = .black
+        tabBarItem.imageInsets = UIEdgeInsets(top: -4, left: -4, bottom: 4, right: 4)
+    }
+    
+    func viewControllersSetup() {
         DispatchQueue.main.async {
             if Auth.auth().currentUser?.uid == nil {
                 let navRegController = UINavigationController(rootViewController: RegistrationController())
@@ -31,15 +51,6 @@ class TabBarControllr: UITabBarController {
         self.homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
         guard let home = self.homeController else {return}
         let homeNavController = self.navBarController(image: #imageLiteral(resourceName: "home-1"), title: "Home", rootViewController: home)
-        
-//        self.baseScreenController = BaseScreenViewController()
-//        guard let baseController = self.baseScreenController else {return}
-//        let baseNavController = baseController
-        
-        let collections = ColletionsViewController(collectionViewLayout: UICollectionViewFlowLayout())
-//        let collectionsNavController = self.navBarController(image: #imageLiteral(resourceName: "collection"), title: "Collections", rootViewController: collections)
-        
-        
         
         let searchController = SearchController()
         let searchNavController = self.navBarController(image: #imageLiteral(resourceName: "search_unselected"), title: "Search", rootViewController: searchController)
@@ -54,16 +65,12 @@ class TabBarControllr: UITabBarController {
         let messagesNavController = self.navBarController(image: #imageLiteral(resourceName: "icons8-chat-bubble-100"), title: "Messages", rootViewController: messageController)
         
         
-        
         viewControllers = [homeNavController,
                            searchNavController,
                            newPoatNavController,
                            favoriteNavController,
-                            messagesNavController
-            ]
-        
-        tabBarItem.imageInsets = UIEdgeInsets(top: -4, left: -4, bottom: 4, right: 4)
-        
+                           messagesNavController
+        ]
     }
     
     func fetchCurrentUserfromFirebase() {
@@ -86,10 +93,9 @@ class TabBarControllr: UITabBarController {
         navController.tabBarItem.title = title
         return navController
     }
-
-
 }
 
+//MARK: - TabBarDelegate Method
 extension TabBarControllr: UITabBarControllerDelegate {
     
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
@@ -103,5 +109,7 @@ extension TabBarControllr: UITabBarControllerDelegate {
         }
         return true
     }
-    
 }
+
+
+

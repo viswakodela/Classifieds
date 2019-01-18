@@ -57,7 +57,6 @@ class MapPostsController: UIViewController {
     }()
     
     //MARK:- Methods
-    
     func setupLocation() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -92,7 +91,8 @@ class MapPostsController: UIViewController {
             guard let addres = post.location else {return}
             guard let title = post.title else {return}
             let geoCoder = CLGeocoder()
-            geoCoder.geocodeAddressString(addres, completionHandler: { (placemarks, err) in
+            geoCoder.geocodeAddressString(addres, completionHandler: { [weak self] (placemarks, err) in
+                guard let self = self else {return}
                 if let error = err {
                     print(error.localizedDescription)
                 }
@@ -111,22 +111,6 @@ class MapPostsController: UIViewController {
         }
     }
     
-    func setupViewControllers() {
-        
-        self.postView = bottomController.view
-        postView.translatesAutoresizingMaskIntoConstraints = false
-        postView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePullGesture(gesture:))))
-        postView.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
-        
-        bottomView.addSubview(postView)
-        postView.topAnchor.constraint(equalTo: bottomView.topAnchor, constant: 8).isActive = true
-        postView.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor).isActive = true
-        postView.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor).isActive = true
-        postView.bottomAnchor.constraint(equalTo: bottomView.bottomAnchor).isActive = true
-        
-        addChild(bottomController)
-    }
-    
     func setupLayout() {
         
         view.addSubview(mapView)
@@ -143,6 +127,31 @@ class MapPostsController: UIViewController {
         bottomView.heightAnchor.constraint(equalToConstant: view.frame.height / 2).isActive = true
         
         setupViewControllers()
+    }
+    
+    func setupViewControllers() {
+        
+        self.postView = bottomController.view
+        postView.translatesAutoresizingMaskIntoConstraints = false
+        postView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePullGesture(gesture:))))
+        postView.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
+        
+        bottomView.addSubview(postView)
+        postView.topAnchor.constraint(equalTo: bottomView.topAnchor, constant: 8).isActive = true
+        postView.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor).isActive = true
+        postView.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor).isActive = true
+        postView.bottomAnchor.constraint(equalTo: bottomView.bottomAnchor).isActive = true
+        
+        addChild(bottomController)
+    }
+    
+    func clearMemoryLeaks() {
+        bottomController.view.removeFromSuperview()
+        bottomController.removeFromParent()
+    }
+    
+    deinit {
+        print("De-initialized from MapPostsController")
     }
 }
 

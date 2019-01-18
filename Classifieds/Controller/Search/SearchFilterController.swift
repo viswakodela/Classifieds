@@ -65,6 +65,7 @@ class SearchFilterController: UITableViewController {
     
     func fetchrecentSearchedCity() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
+        
         Firestore.firestore().collection("recent-citysearch").document(uid).getDocument { (snap, err) in
             guard let recentCity = snap?.data() else {return}
             let city = recentCity["searchedCity"] as? String
@@ -165,7 +166,9 @@ extension SearchFilterController {
         
         let search = MKLocalSearch(request: searchRequest)
         
-        search.start { (response, err) in
+        search.start { [weak self](response, err) in
+            guard let self = self else {return}
+            
             if let error = err {
                 print(error.localizedDescription)
             }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FirstTableViewCell: UITableViewCell {
+class ImagesCollectionViewCell: UITableViewCell {
     
     private let imageCellID = "imageCellID"
     
@@ -82,7 +82,7 @@ class FirstTableViewCell: UITableViewCell {
 
 
 
-extension FirstTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension ImagesCollectionViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return imagesArray.count
@@ -119,7 +119,7 @@ extension FirstTableViewCell: UICollectionViewDelegate, UICollectionViewDataSour
 }
 
 
-extension FirstTableViewCell: UIScrollViewDelegate {
+extension ImagesCollectionViewCell: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 

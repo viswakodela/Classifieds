@@ -12,43 +12,39 @@ import JGProgressHUD
 import MapKit
 
 class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-    // MARK: - Static constants
     
+    // MARK: - Static constants
     private static let cellId = "cellId"
     private static let headerId = "headerId"
     private static let customCollectionViewHeader = "customCollectionViewHeader"
     private let refreshControl = UIRefreshControl()
     let locationManager = CLLocationManager()
-    var currentLocation: String?
+    
+    //MARK: - Variables
+    var users = [User]()
+    var postsArray = [Post]()
     
     // MARK: - State
-    
     var user: User? {
         didSet {
             self.navigationItem.title = user?.name
         }
     }
     
-    func addNotificationObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateNewPost), name: NewPostController.newPostUpdateNotification, object: nil)
+    var currentLocation: String? {
+        didSet {
+            print(currentLocation ?? "")
+        }
     }
-    
-    let menuView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .red
-        return view
-    }()
-    
-    var postsArray = [Post]()
+    var previousLocation: CLLocation?
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionViewSetup()
         checkLocatinServices()
+        collectionViewSetup()
         addNotificationObservers()
         navigationControllerSetup()
         fetchPostsFromFirebase()
@@ -56,36 +52,45 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        handleRefresh()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+//        handleRefresh()
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     
     // MARK: - UI and Fetch Methods
-    var users = [User]()
     func fetchPostsFromFirebase() {
         
-        var posts = [Post]()
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+//        var posts = [Post]()
         guard let location = self.currentLocation else {return}
-        Database.database().reference().child("cities").child(location).observeSingleEvent(of: .value) { (snap) in
+        Database.database().reference().child("cities").child(location).observeSingleEvent(of: .value) { [weak self](snap) in
             guard let postDictionary = snap.value as? [String : Any] else {return}
             postDictionary.forEach({ (key, value) in
                 guard let dictionary = value as? [String : Any] else {return}
                 let post = Post(dictionary: dictionary)
-                posts.append(post)
+                
+                let favRef = Database.database().reference().child("Favorites")
+                guard let postID = post.postId else {return}
+                favRef.child(uid).child(postID).observe(.value, with: { (snap) in
+                    if let value = snap.value as? Int, value == 1 {
+                        post.isFavorited = true
+                    } else {
+                        post.isFavorited = false
+                    }
+                })
+                self?.postsArray.append(post)
             })
-            DispatchQueue.main.async {
-                self.postsArray = posts
-                self.collectionView.reloadData()
-            }
+            self?.collectionView.reloadData()
         }
     }
     
-    
+    func addNotificationObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateNewPost), name: NewPostController.newPostUpdateNotification, object: nil)
+    }
     
     fileprivate func navigationControllerSetup() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "LogOut", style: .plain, target: self, action: #selector(handleLogOut))
@@ -104,6 +109,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     fileprivate func collectionViewSetup() {
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        collectionView.allowsMultipleSelection = true
         collectionView.refreshControl = refreshControl
         collectionView?.backgroundColor = .white
         collectionView.alwaysBounceVertical = true
@@ -160,9 +166,10 @@ extension HomeController {
             let headerCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HomeController.headerId, for: indexPath) as! HomeHeader
             headerCell.homeController = self
             return headerCell
+        } else {
+            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HomeController.customCollectionViewHeader, for: indexPath) as! CustomCollectionViewHeader
+            return view
         }
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HomeController.customCollectionViewHeader, for: indexPath) as! CustomCollectionViewHeader
-        return view
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -191,6 +198,7 @@ extension HomeController {
         }
         
         let selectedPost = postsArray[indexPath.row]
+        cell.delegate = self
         cell.post = selectedPost
         return cell
     }
@@ -213,41 +221,41 @@ extension HomeController {
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let postdetails = PostDetailsController()
-        let posts = self.postsArray[indexPath.item]
-        postdetails.post = posts
+        let post = self.postsArray[indexPath.item]
+        postdetails.post = post
         navigationController?.pushViewController(postdetails, animated: true)
     }
 }
 
 
 extension HomeController: CLLocationManagerDelegate {
-    
+
     func checkLocatinServices() {
-        if CLLocationManager.locationServicesEnabled() {
-            setupLocation()
-            checkPermission()
-        }
+        checkPermission()
+        setupLocation()
     }
-    
+
     func setupLocation() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
-    
+
     func checkPermission() {
         if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
             checkLocationAuthorization()
-            locationManager.startUpdatingLocation()
         } else {
             print("Check the location Services")
         }
     }
-    
+
     func checkLocationAuthorization() {
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways:
             break
         case .authorizedWhenInUse:
+            locationManager.startUpdatingLocation()
             // DO Map Stuff
             //            mapView.showsUserLocation = true
             break
@@ -260,16 +268,50 @@ extension HomeController: CLLocationManagerDelegate {
             break
         }
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.first else {return}
-        let geoCoder = CLGeocoder()
-        geoCoder.reverseGeocodeLocation(location) { (placemarks, err) in
-            self.currentLocation = placemarks?.first?.locality
+        
+        if self.currentLocation == nil {
+            let geoCoder = CLGeocoder()
+            geoCoder.reverseGeocodeLocation(location) { [weak self](placemarks, err) in
+                guard let self = self else {return}
+                self.currentLocation = placemarks?.first?.locality
+                self.previousLocation = placemarks?.first?.location
+            }
+        } else {
+            guard let previouslocation = previousLocation else {return}
+            guard  location.distance(from: previouslocation) > 1000 else {return}
         }
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         self.checkLocationAuthorization()
+    }
+}
+
+//MARK: -  HomeControllerCell Delgate Methods
+extension HomeController: HomeCellDelegate {
+    
+    
+    func didTapFavorite(post: Post) {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        guard let postID = post.postId else {return}
+        
+        let index = self.postsArray.firstIndex { (pst) -> Bool in
+            return post.postId == pst.postId
+        }
+        
+        let values = [postID : post.isFavorited == true ? 0 : 1]
+        Database.database().reference().child("Favorites").child(uid).updateChildValues(values)
+        
+        post.isFavorited = !post.isFavorited
+        
+        guard let indx = index else {return}
+        let indexPath = IndexPath(item: indx, section: 1)
+        
+        self.postsArray[indexPath.item] = post
+        collectionView.reloadItems(at: [indexPath])
+        
     }
 }
