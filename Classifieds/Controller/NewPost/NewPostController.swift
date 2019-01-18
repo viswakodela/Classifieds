@@ -24,6 +24,8 @@ class NewPostController: UITableViewController {
     private static let titleCell = "titleCell"
     private static let textViewCell = "textViewCell"
     private static let newPostPriceCategoryImagesCellId = "newPostPriceCategoryImagesCellId"
+    
+    //MARK: - Constants
     private let locationManager = CLLocationManager()
     static let newPostUpdateNotification = Notification.Name("newPostUpdate")
     
@@ -277,6 +279,10 @@ class NewPostController: UITableViewController {
         tableView.register(TitleTextFieldCell.self, forCellReuseIdentifier: NewPostController.titleCell)
         tableView.register(TextViewCell.self, forCellReuseIdentifier: NewPostController.textViewCell)
         tableView.register(NewpostPriceCategoryLocationCell.self, forCellReuseIdentifier: NewPostController.newPostPriceCategoryImagesCellId)
+    }
+    
+    deinit {
+        print("NewPostController Deinitialized")
     }
 }
 

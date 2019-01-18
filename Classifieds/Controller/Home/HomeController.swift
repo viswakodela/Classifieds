@@ -21,8 +21,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     let locationManager = CLLocationManager()
     
     //MARK: - Variables
-    var users = [User]()
     var postsArray = [Post]()
+    var previousLocation: CLLocation?
     
     // MARK: - State
     var user: User? {
@@ -36,7 +36,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             print(currentLocation ?? "")
         }
     }
-    var previousLocation: CLLocation?
     
     // MARK: - Lifecycle
     
@@ -64,32 +63,34 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     // MARK: - UI and Fetch Methods
     func fetchPostsFromFirebase() {
         
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-//        var posts = [Post]()
+        var posts = [Post]()
         guard let location = self.currentLocation else {return}
-        Database.database().reference().child("cities").child(location).observeSingleEvent(of: .value) { [weak self](snap) in
+        Database.database().reference().child("cities").child(location).observeSingleEvent(of: .value) { [weak self] (snap) in
             guard let postDictionary = snap.value as? [String : Any] else {return}
             postDictionary.forEach({ (key, value) in
                 guard let dictionary = value as? [String : Any] else {return}
                 let post = Post(dictionary: dictionary)
                 
-                let favRef = Database.database().reference().child("Favorites")
-                guard let postID = post.postId else {return}
-                favRef.child(uid).child(postID).observe(.value, with: { (snap) in
-                    if let value = snap.value as? Int, value == 1 {
+                
+                let savedPosts = UserDefaults.standard.savedPosts()
+                savedPosts.forEach({ (pst) in
+                    if pst.postId == post.postId {
                         post.isFavorited = true
-                    } else {
-                        post.isFavorited = false
                     }
                 })
-                self?.postsArray.append(post)
+                posts.append(post)
             })
-            self?.collectionView.reloadData()
+            DispatchQueue.main.async {
+                self?.postsArray = posts
+                self?.collectionView.reloadData()
+            }
         }
     }
     
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateNewPost), name: NewPostController.newPostUpdateNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUnFavoritedPosts), name: FavoritesController.unsaveFavoriteKey, object: nil)
     }
     
     fileprivate func navigationControllerSetup() {
@@ -144,7 +145,6 @@ extension HomeController {
     
     @objc func handleRefresh() {
         self.postsArray.removeAll()
-        self.users.removeAll()
         fetchPostsFromFirebase()
         collectionView.refreshControl?.endRefreshing()
     }
@@ -154,11 +154,29 @@ extension HomeController {
         mapPosts.posts = postsArray
         navigationController?.pushViewController(mapPosts, animated: true)
     }
+    
+    @objc func handleUnFavoritedPosts(notification: Notification) {
+        guard let userInfo = notification.userInfo as? [String : Any] else {return}
+        guard let postID = userInfo["postID"] as? String else {return}
+        
+        let index = self.postsArray.firstIndex { (pst) -> Bool in
+            return postID == pst.postId
+        }
+        
+        guard let indx = index else {return}
+        postsArray[indx].isFavorited = false
+        let indexPath = IndexPath(item: indx, section: 1)
+        self.collectionView.reloadItems(at: [indexPath])
+    }
 }
 
 
 // MARK: - CollectionView Delegaete, DataScource and UICOllectionViewDelegateFlowLayout Methods
 extension HomeController {
+    
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 2
+    }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
@@ -180,9 +198,6 @@ extension HomeController {
         return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
     }
     
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
-    }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return section == 0 ? 0 : postsArray.count
@@ -227,7 +242,7 @@ extension HomeController {
     }
 }
 
-
+//MARK: - LocationManager Delegate Methods
 extension HomeController: CLLocationManagerDelegate {
 
     func checkLocatinServices() {
@@ -293,25 +308,34 @@ extension HomeController: CLLocationManagerDelegate {
 //MARK: -  HomeControllerCell Delgate Methods
 extension HomeController: HomeCellDelegate {
     
-    
-    func didTapFavorite(post: Post) {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        guard let postID = post.postId else {return}
+    func didTapFavorite(cell: HomeControllerCell) {
         
-        let index = self.postsArray.firstIndex { (pst) -> Bool in
-            return post.postId == pst.postId
+        guard let indexPath = collectionView.indexPath(for: cell) else {return}
+        let post = self.postsArray[indexPath.item]
+        
+        var savedPosts = UserDefaults.standard.savedPosts()
+        if post.isFavorited == false {
+            post.isFavorited = true
+            
+            cell.favoriteButton.setImage(#imageLiteral(resourceName: "icons8-heart-100").withRenderingMode(.alwaysOriginal), for: .normal)
+            
+            savedPosts.insert(post, at: 0)
+            
+            guard let data = try? JSONEncoder().encode(savedPosts) else {return}
+            UserDefaults.standard.set(data, forKey: UserDefaults.savePostKey)
+            
+        } else {
+            
+            post.isFavorited = false
+            let index = savedPosts.firstIndex { (pst) -> Bool in
+                return post.postId == pst.postId
+            }
+            guard let indx = index else {return}
+            cell.favoriteButton.setImage(#imageLiteral(resourceName: "icons8-heart-100-2").withRenderingMode(.alwaysOriginal), for: .normal)
+            savedPosts.remove(at: indx)
+            
+            guard let data = try? JSONEncoder().encode(savedPosts) else {return}
+            UserDefaults.standard.set(data, forKey: UserDefaults.savePostKey)
         }
-        
-        let values = [postID : post.isFavorited == true ? 0 : 1]
-        Database.database().reference().child("Favorites").child(uid).updateChildValues(values)
-        
-        post.isFavorited = !post.isFavorited
-        
-        guard let indx = index else {return}
-        let indexPath = IndexPath(item: indx, section: 1)
-        
-        self.postsArray[indexPath.item] = post
-        collectionView.reloadItems(at: [indexPath])
-        
     }
 }

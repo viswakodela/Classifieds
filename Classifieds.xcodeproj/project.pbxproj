@@ -41,6 +41,8 @@
 		BD294E1C21D1B60700976663 /* HomeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E1B21D1B60700976663 /* HomeHeader.swift */; };
 		BD294E1E21D1D30200976663 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E1D21D1D30200976663 /* CategoryCell.swift */; };
 		BD294E2121D1F29500976663 /* CategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD294E2021D1F29500976663 /* CategoryModel.swift */; };
+		BD30520221F2580A009CE53F /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD30520121F2580A009CE53F /* UserDefaults.swift */; };
+		BD30520621F27519009CE53F /* save.json in Resources */ = {isa = PBXBuildFile; fileRef = BD30520521F27519009CE53F /* save.json */; };
 		BD42D23B21E3DBD7002AC477 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D23A21E3DBD7002AC477 /* Extensions.swift */; };
 		BD42D23D21E3E3B5002AC477 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D23C21E3E3B5002AC477 /* BaseViewController.swift */; };
 		BD42D24021E4028A002AC477 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D23F21E4028A002AC477 /* MenuViewController.swift */; };
@@ -102,6 +104,8 @@
 		BD294E1B21D1B60700976663 /* HomeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeader.swift; sourceTree = "<group>"; };
 		BD294E1D21D1D30200976663 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		BD294E2021D1F29500976663 /* CategoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryModel.swift; sourceTree = "<group>"; };
+		BD30520121F2580A009CE53F /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
+		BD30520521F27519009CE53F /* save.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = save.json; sourceTree = "<group>"; };
 		BD42D23A21E3DBD7002AC477 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		BD42D23C21E3E3B5002AC477 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		BD42D23F21E4028A002AC477 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
@@ -230,6 +234,7 @@
 				BD294E1921D1B0F800976663 /* Controller */,
 				BD294E0321D1A18C00976663 /* Main.storyboard */,
 				BD294E0621D1A18E00976663 /* Assets.xcassets */,
+				BD30520521F27519009CE53F /* save.json */,
 				BD294E0821D1A18E00976663 /* LaunchScreen.storyboard */,
 				BD294E0B21D1A18E00976663 /* Info.plist */,
 				BDBBA22521D2AF960033A53C /* GoogleService-Info.plist */,
@@ -323,6 +328,7 @@
 				BD235B5221D43E3F00B69689 /* CustomTextView.swift */,
 				BD42D23A21E3DBD7002AC477 /* Extensions.swift */,
 				BDC64BCF21EFB1B40002E760 /* MapSearchHelper.swift */,
+				BD30520121F2580A009CE53F /* UserDefaults.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -397,6 +403,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD294E0A21D1A18E00976663 /* LaunchScreen.storyboard in Resources */,
+				BD30520621F27519009CE53F /* save.json in Resources */,
 				BDBBA22621D2AF960033A53C /* GoogleService-Info.plist in Resources */,
 				BD294E0721D1A18E00976663 /* Assets.xcassets in Resources */,
 				BD294E0521D1A18C00976663 /* Main.storyboard in Resources */,
@@ -429,6 +436,7 @@
 				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/lottie-ios/Lottie.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -449,6 +457,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Lottie.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -487,6 +496,7 @@
 				BD294E0221D1A18C00976663 /* TabBarController.swift in Sources */,
 				BD235B5321D43E3F00B69689 /* CustomTextView.swift in Sources */,
 				BD294E1621D1ACD000976663 /* FavoritesController.swift in Sources */,
+				BD30520221F2580A009CE53F /* UserDefaults.swift in Sources */,
 				BD235B5721D574D200B69689 /* ChooseCategoryController.swift in Sources */,
 				BD25630721EA9CD100647358 /* ImagesCollectionViewCell.swift in Sources */,
 				BD294E1821D1AFD100976663 /* ColletionsViewController.swift in Sources */,

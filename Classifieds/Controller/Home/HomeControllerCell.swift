@@ -12,8 +12,8 @@ import Firebase
 
     //MARK: - Protol
 protocol HomeCellDelegate: class {
-//    func didTapFavorite(cell: HomeControllerCell)
-    func didTapFavorite(post: Post)
+    func didTapFavorite(cell: HomeControllerCell)
+//    func didTapFavorite(post: Post)
 }
 
 class HomeControllerCell: UICollectionViewCell {
@@ -33,7 +33,7 @@ class HomeControllerCell: UICollectionViewCell {
             if post.isFavorited == true {
                 favoriteButton.setImage(#imageLiteral(resourceName: "icons8-heart-100").withRenderingMode(.alwaysOriginal), for: .normal)
             } else {
-                favoriteButton.setImage(#imageLiteral(resourceName: "heart").withRenderingMode(.alwaysOriginal), for: .normal)
+                favoriteButton.setImage(#imageLiteral(resourceName: "icons8-heart-100-2").withRenderingMode(.alwaysOriginal), for: .normal)
             }
         }
     }
@@ -126,7 +126,7 @@ class HomeControllerCell: UICollectionViewCell {
     
     @objc func handleFavorite() {
         print("Favorited")
-        delegate?.didTapFavorite(post: post)
+        delegate?.didTapFavorite(cell: self)
     }
     
     required init?(coder aDecoder: NSCoder) {

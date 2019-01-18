@@ -8,7 +8,7 @@
 
 import UIKit
 
-class Post {
+class Post: Codable {
     
     var title: String?
 //    var user: User?

@@ -25,7 +25,7 @@ class PostDetailsController: UIViewController {
     //MARK: - Variables
     var imagesArray = [String]()
     
-    //MARK: - View Controller Lifecycle
+    //MARK: - Controller Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLayout()
@@ -33,8 +33,10 @@ class PostDetailsController: UIViewController {
         navigationBarSetup()
 
     }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        self.mapview.delegate = nil
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -144,18 +146,17 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        
         if indexPath.section == 0 {
             
-            let firstTableViewCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.collectionViewCellID, for: indexPath) as! ImagesCollectionViewCell
-            firstTableViewCell.imagesArray = self.imagesArray
-            return firstTableViewCell
+            let imageCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.collectionViewCellID, for: indexPath) as! ImagesCollectionViewCell
+            imageCell.imagesArray = self.imagesArray
+            return imageCell
             
         } else if indexPath.section == 1 {
             
-            let secondTableViewCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.titleCellID, for: indexPath) as! TitleForPostDetailCell
-            secondTableViewCell.post = self.post
-            return secondTableViewCell
+            let titleCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.titleCellID, for: indexPath) as! TitleForPostDetailCell
+            titleCell.post = self.post
+            return titleCell
             
         } else  if indexPath.section == 2 {
             
@@ -164,29 +165,29 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
             return priceCell
         } else if indexPath.section == 3 {
             
-            let thirdTableViewCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.sellerDetailsCellID, for: indexPath) as! SellerDetailsCell
-            thirdTableViewCell.post = self.post
-            return thirdTableViewCell
+            let sellerCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.sellerDetailsCellID, for: indexPath) as! SellerDetailsCell
+            sellerCell.post = self.post
+            return sellerCell
             
         } else if indexPath.section == 4 {
             
-            let fourthCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.postsDescriptionCellID, for: indexPath) as! PostDescriptionDetailsCell
-            fourthCell.post = self.post
-            return fourthCell
+            let descriptionCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.postsDescriptionCellID, for: indexPath) as! PostDescriptionDetailsCell
+            descriptionCell.post = self.post
+            return descriptionCell
             
         } else if indexPath.section == 5 {
             
-            let fifthCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.mapViewCellID, for: indexPath) as! MapViewCell
-            fifthCell.post = post
-            fifthCell.postDetailController = self
-            fifthCell.mapview.delegate = self
-            return fifthCell
+            let mapCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.mapViewCellID, for: indexPath) as! MapViewCell
+            mapCell.post = post
+            mapCell.mapView = self.mapview
+            mapCell.mapView?.delegate = self
+            return mapCell
             
         } else if indexPath.section == 6 {
-            let sixthCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.otherPostsCellID, for: indexPath) as! OtherPostsFromSellerCell
-            sixthCell.post = post
-            sixthCell.postDetails = self
-            return sixthCell
+            let otherPostsCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.otherPostsCellID, for: indexPath) as! OtherPostsFromSellerCell
+            otherPostsCell.post = post
+            otherPostsCell.postDetails = self
+            return otherPostsCell
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.normalCellID, for: indexPath)

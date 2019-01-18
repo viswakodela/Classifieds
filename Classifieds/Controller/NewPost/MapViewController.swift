@@ -258,7 +258,6 @@ extension MapViewController: MKLocalSearchCompleterDelegate {
         self.searchResults = completer.results
         self.tableView.reloadData()
     }
-    
 }
 
 //MARK: -  Search Bar Delegate
