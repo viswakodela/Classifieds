@@ -22,25 +22,27 @@ class FavoritesController: UICollectionViewController {
     
     //MARK: - Variables
     var favoritesArray = [Post]()
-    var favoriteAnimationView: LOTAnimationView?
+    var animationView: LOTAnimationView = LOTAnimationView(name: "loading")
 
     //MARK: - Controller Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionViewSetUp()
+        collectionViewAndNavBarSetUp()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        favoritesArray.removeAll()
-        fetchFavoritesFromUserDefaults()
+        self.favoritesArray.removeAll()
+        self.fetchFavoritesFromUserDefaults()
     }
     
     //MARK: - Methods
-    func collectionViewSetUp() {
+    func collectionViewAndNavBarSetUp() {
         collectionView.backgroundColor = .white
+        navigationController?.navigationBar.prefersLargeTitles = true
         collectionView.register(HomeControllerCell.self, forCellWithReuseIdentifier: FavoritesController.favoritesCellID)
         collectionView.alwaysBounceVertical = true
+        navigationItem.title = "Favorites"
     }
     
     func fetchFavoritesFromUserDefaults() {

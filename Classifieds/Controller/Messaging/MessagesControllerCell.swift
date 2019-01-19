@@ -24,22 +24,36 @@ class MessagesControllerCell: UITableViewCell {
             guard let messageText = message.messageText else {return}
             self.messageLabel.text = messageText
             
-            guard let buyserID = message.fromId else {return}
+            guard let postId = message.postID else {return}
             
-            Firestore.firestore().collection("users").document(buyserID).getDocument { (snap, err) in
-                if let error = err {
-                    print(error.localizedDescription)
-                }
+            Database.database().reference().child("posts").child(postId).observe(.value) { (snap) in
+                guard let postDict = snap.value as? [String : Any] else {return}
+                let post = Post(dictionary: postDict)
                 
-                guard let userDictionary = snap?.data() else {return}
-                let user = User(dictionary: userDictionary)
-                self.postTitleLabel.text = user.name
-                if user.profileImage == nil {
-                    self.imageview.image = #imageLiteral(resourceName: "icons8-account-filled-100")
-                }
-                guard let imageUrl = user.profileImage, let url = URL(string: imageUrl) else {return}
+                guard let imageUrl = post.imageUrl1, let url = URL(string: imageUrl) else {return}
+                
                 self.imageview.sd_setImage(with: url)
+                self.postTitleLabel.text = post.title
+                
             }
+            
+            
+//            guard let buyserID = message.fromId else {return}
+//
+//            Firestore.firestore().collection("users").document(buyserID).getDocument { (snap, err) in
+//                if let error = err {
+//                    print(error.localizedDescription)
+//                }
+//
+//                guard let userDictionary = snap?.data() else {return}
+//                let user = User(dictionary: userDictionary)
+//                self.postTitleLabel.text = user.name
+//                if user.profileImage == nil {
+//                    self.imageview.image = #imageLiteral(resourceName: "icons8-account-filled-100")
+//                }
+//                guard let imageUrl = user.profileImage, let url = URL(string: imageUrl) else {return}
+//                self.imageview.sd_setImage(with: url)
+//            }
         }
     }
     

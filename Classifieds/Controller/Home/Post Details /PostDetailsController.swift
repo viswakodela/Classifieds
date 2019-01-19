@@ -162,6 +162,8 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
             
             let priceCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.priceLabelCellID, for: indexPath) as! PriceLabelCell
             priceCell.post = self.post
+            priceCell.delegate = self
+//            priceCell.messageButton.addTarget(self, action: #selector(handleNewMessage), for: .touchUpInside)
             return priceCell
         } else if indexPath.section == 3 {
             
@@ -228,6 +230,14 @@ extension PostDetailsController: MKMapViewDelegate {
             mapItem.name = annot.title ?? "Unknown Location"
             mapItem.openInMaps(launchOptions: options)
         }
+    }
+}
+
+extension PostDetailsController: PriceLabelDelegate {
+    func messageButtonTapped(post: Post) {
+        let newMessageController = NewMessageController()
+        newMessageController.post = post
+        navigationController?.pushViewController(newMessageController, animated: true)
     }
 }
 

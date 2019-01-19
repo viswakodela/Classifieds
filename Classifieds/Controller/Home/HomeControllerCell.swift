@@ -68,6 +68,7 @@ class HomeControllerCell: UICollectionViewCell {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(#imageLiteral(resourceName: "heart").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.alpha = 0.6
         button.addTarget(self, action: #selector(handleFavorite), for: .touchUpInside)
         return button
     }()

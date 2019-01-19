@@ -43,6 +43,13 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         return label
     }()
     
+    let seperatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -67,6 +74,12 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0).isActive = true
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        
+        addSubview(seperatorView)
+        seperatorView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+        seperatorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        seperatorView.heightAnchor.constraint(equalToConstant: 0.2).isActive = true
+        seperatorView.topAnchor.constraint(equalTo: stackView.bottomAnchor).isActive = true
         
     }
     
