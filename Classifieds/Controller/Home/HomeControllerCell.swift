@@ -78,6 +78,7 @@ class HomeControllerCell: UICollectionViewCell {
         label.font = UIFont.systemFont(ofSize: 15)
         label.textColor = .gray
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = UIColor(white: 0.5, alpha: 1)
         label.numberOfLines = 0
         return label
     }()
@@ -87,6 +88,7 @@ class HomeControllerCell: UICollectionViewCell {
         label.font = UIFont.boldSystemFont(ofSize: 15)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
+        label.textColor = UIColor(white: 0.8, alpha: 1)
         return label
     }()
     

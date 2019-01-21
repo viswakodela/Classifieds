@@ -32,7 +32,7 @@ class TitleForPostDetailCell: UITableViewCell {
     func setupLayout() {
         
         addSubview(titleLabel)
-        titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 4).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4).isActive = true
         titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true

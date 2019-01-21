@@ -218,7 +218,7 @@ class NewPostController: UITableViewController {
         }
         
         guard let uid = user?.uid else {return}
-        self.post.date = Date().timeIntervalSinceReferenceDate
+//        self.post.date = Date.timeIntervalSinceReferenceDate
         let postId = UUID().uuidString
         self.post.postId = postId
         
@@ -238,7 +238,7 @@ class NewPostController: UITableViewController {
             "imageUrl3" : self.post.imageUrl3,
             "imageUrl4" : self.post.imageUrl4,
             "imageUrl5" : self.post.imageUrl5,
-            "date" : self.post.date ?? "",
+            "date" : Date.timeIntervalSinceReferenceDate,
             "postId" : self.post.postId ?? ""
         ]
         

@@ -15,12 +15,78 @@ class NewMessageController: UITableViewController {
     
     private static let messageCellID = "messageCellID"
     
-    var post: Post? {
-        didSet {
-            print(post?.title ?? "")
-            observeMessages()
+    var post: Post?
+    var user: User?
+    
+    
+    func showUserAndPost(user: User, post: Post) {
+        
+        self.user = user
+        self.post = post
+        
+        var messagesArray = [Message]()
+        self.messages.removeAll()
+        guard let currentUserId = Auth.auth().currentUser?.uid else {return}
+        guard let sellerId = user.uid else {return}
+        guard let postID = post.postId else {return}
+        if sellerId ==  currentUserId {
+            return
+        }
+        
+        let messagesRef = Database.database().reference().child("messages")
+        messagesRef.child(currentUserId).child(sellerId).child(postID).observe(.childAdded) { (snap) in
+            
+            guard let messageDict = snap.value as? [String : Any] else {return}
+            let message = Message(dictionary: messageDict)
+            messagesArray.append(message)
+            
+            
+            DispatchQueue.main.async {
+                self.messages = messagesArray
+                self.tableView.reloadData()
+                let indexpath = NSIndexPath(item: self.messages.count-1, section: 0)
+                self.tableView?.scrollToRow(at: indexpath as IndexPath, at: .bottom, animated: true)
+            }
+            
+//            guard let snapDict = snap.value as? [String :  Any] else {return}
+//            snapDict.forEach({ (key, value) in
+//                guard let messageDict = value as? [String : Any] else {return}
+//                let message = Message(dictionary: messageDict)
+//                messagesArray.append(message)
+//            })
+//            DispatchQueue.main.async {
+//                messagesArray.sort(by: { (m1, m2) -> Bool in
+//                    return m1.timeStamp! < m2.timeStamp!
+//                })
+//                self.messages.removeAll()
+//                self.messages = messagesArray
+//                self.tableView.reloadData()
+//                let indexpath = NSIndexPath(item: self.messages.count-1, section: 0)
+//                self.tableView?.scrollToRow(at: indexpath as IndexPath, at: .bottom, animated: true)
+//            }
         }
     }
+    
+//    func obserMessagesFromTheMessageController() {
+//
+//        guard let postId = message?.postID else {return}
+//        guard let fromId = Auth.auth().currentUser?.uid else {return}
+//        var toId = message?.toId ?? ""
+//
+//        if toId == Auth.auth().currentUser?.uid {
+//            toId = message!.fromId!
+//        }
+//
+//        let messagesRef = Database.database().reference().child("messages")
+//        messagesRef.child(fromId).child(toId).child(postId).observe(.value) { (snap) in
+//            guard let messageDictionary = snap.value as? [String : Any] else {return}
+//            let message = Message(dictionary: messageDictionary)
+//            self.messages.append(message)
+//            DispatchQueue.main.async {
+//                self.tableView.reloadData()
+//            }
+//        }
+//    }
     
     var messages = [Message]()
     
@@ -30,17 +96,20 @@ class NewMessageController: UITableViewController {
         tableView.register(MessageCell.self, forCellReuseIdentifier: NewMessageController.messageCellID)
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .interactive
+        tableView.allowsSelection = false
         tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
+        navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.tabBarController?.tabBar.isHidden = false
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     override var canBecomeFirstResponder: Bool {
@@ -74,7 +143,7 @@ class NewMessageController: UITableViewController {
         return inputaccessoryView
     }
     
-    let sendButton: UIButton = {
+    lazy var sendButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Send", for: .normal)
@@ -91,40 +160,30 @@ class NewMessageController: UITableViewController {
         tv.font = UIFont.systemFont(ofSize: 20)
         tv.sizeToFit()
         tv.delegate = self
+        tv.font = UIFont.systemFont(ofSize: 16)
+        tv.textColor = UIColor(white: 0.4, alpha: 1)
         tv.layer.borderColor = UIColor.gray.cgColor
         tv.layer.borderWidth = 1
         return tv
     }()
     
     
-    func observeMessages() {
-        
-        var messagesArray = [Message]()
-        guard let fromId = Auth.auth().currentUser?.uid else {return}
-        guard let toId = self.post?.uid else {return}
-        guard let postId = self.post?.postId else {return}
-        
-        let messagesRef = Database.database().reference().child("messages")
-        messagesRef.child(fromId).child(toId).child(postId).observe(.childAdded) { (snap) in
-            guard let messageDictionary = snap.value as? [String : Any] else {return}
-            let message = Message(dictionary: messageDictionary)
-            self.messages.append(message)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-        
-//        messageDictionary.forEach({ (key, value) in
-//            let dictionary = value as! [String : Any]
-//            let message = Message(dictionary: dictionary)
-//            messagesArray.append(message)
-//        })
-//        DispatchQueue.main.async {
-//            self.messages.removeAll()
-//            self.messages = messagesArray
-//            self.tableView.reloadData()
+//    func observeMessages() {
+    
+//        guard let fromId = Auth.auth().currentUser?.uid else {return}
+//        guard let toId = self.post?.uid else {return}
+//        guard let postId = self.post?.postId else {return}
+//
+//        let messagesRef = Database.database().reference().child("messages")
+//        messagesRef.child(fromId).child(toId).child(postId).observe(.childAdded) { (snap) in
+//            guard let messageDictionary = snap.value as? [String : Any] else {return}
+//            let message = Message(dictionary: messageDictionary)
+//            self.messages.append(message)
+//            DispatchQueue.main.async {
+//                self.tableView.reloadData()
+//            }
 //        }
-    }
+//    }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messages.count
@@ -143,23 +202,25 @@ extension NewMessageController {
     
     @objc func handleSend() {
         
+        self.messages.removeAll()
         guard let fromId = Auth.auth().currentUser?.uid else {return}
-        guard let sellerId = self.post?.uid else {return}
-        guard let postID = self.post?.postId else {return}
+        let toId = self.user?.uid
+        let postID = self.post?.postId
         guard let messageText = messageTextView.text else {return}
-        let timeStamp = Date().timeIntervalSinceReferenceDate
+        let timeStamp = Date.timeIntervalSinceReferenceDate
         
         let values: [String : Any] = ["messageText" : messageText,
                                       "fromId" : fromId,
-                                      "toId" : sellerId,
+                                      "toId" : toId,
                                       "timeStamp" : timeStamp,
                                       "postID" : postID
         ]
         
         let messagesRef = Database.database().reference().child("messages")
-        messagesRef.child(fromId).child(sellerId).child(postID).childByAutoId().updateChildValues(values)
+        messagesRef.child(fromId).child(toId!).child(postID!).childByAutoId().updateChildValues(values)
+        messagesRef.child(toId!).child(fromId).child(postID!).childByAutoId().updateChildValues(values)
         
-        messagesRef.child(sellerId).child(fromId).child(postID).childByAutoId().updateChildValues(values)
+        self.messageTextView.text = ""
     }
 }
 

@@ -91,9 +91,13 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateNewPost), name: NewPostController.newPostUpdateNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleUnFavoritedPosts), name: FavoritesController.unsaveFavoriteKey, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleFavoritesFromPriceLabelCell), name: PriceLabelCell.priceLabelUnfavoritesKey, object: nil)
     }
     
     fileprivate func navigationControllerSetup() {
+        
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "LogOut", style: .plain, target: self, action: #selector(handleLogOut))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-map-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleMap))
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -109,10 +113,14 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     
     fileprivate func collectionViewSetup() {
+        
+        tabBarController?.tabBar.tintColor = UIColor(red: 64/255, green: 63/255, blue: 63/255, alpha: 1)
+        
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         collectionView.allowsMultipleSelection = true
+        collectionView.backgroundColor = UIColor(red: 64/255, green: 63/255, blue: 63/255, alpha: 1)
         collectionView.refreshControl = refreshControl
-        collectionView?.backgroundColor = .white
+//        collectionView?.backgroundColor = .white
         collectionView.alwaysBounceVertical = true
         collectionView.register(HomeHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HomeController.headerId)
         collectionView.register(HomeControllerCell.self, forCellWithReuseIdentifier: HomeController.cellId)
@@ -155,6 +163,7 @@ extension HomeController {
         navigationController?.pushViewController(mapPosts, animated: true)
     }
     
+    //Unfavoriting from Favorites Controller
     @objc func handleUnFavoritedPosts(notification: Notification) {
         guard let userInfo = notification.userInfo as? [String : Any] else {return}
         guard let postID = userInfo["postID"] as? String else {return}
@@ -165,6 +174,21 @@ extension HomeController {
         
         guard let indx = index else {return}
         postsArray[indx].isFavorited = false
+        let indexPath = IndexPath(item: indx, section: 1)
+        self.collectionView.reloadItems(at: [indexPath])
+    }
+    
+    
+    //Unfavoriting form PriceLabelCell
+    @objc func handleFavoritesFromPriceLabelCell(notification: Notification) {
+        guard let userInfo = notification.userInfo as? [String : Any] else {return}
+        guard let postID = userInfo["postID"] as? String else {return}
+        
+        let index = self.postsArray.firstIndex { (pst) -> Bool in
+            return postID == pst.postId
+        }
+        
+        guard let indx = index else {return}
         let indexPath = IndexPath(item: indx, section: 1)
         self.collectionView.reloadItems(at: [indexPath])
     }

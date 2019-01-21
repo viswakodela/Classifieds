@@ -33,27 +33,20 @@ class MessagesControllerCell: UITableViewCell {
                 guard let imageUrl = post.imageUrl1, let url = URL(string: imageUrl) else {return}
                 
                 self.imageview.sd_setImage(with: url)
-                self.postTitleLabel.text = post.title
                 
+                guard var fromId = self.message.fromId else {return}
+                if post.uid == fromId {
+                    fromId = self.message.toId!
+                }
+                
+                Firestore.firestore().collection("users").document(fromId).getDocument(completion: { (snap, err) in
+                    guard let userDict = snap?.data() else {return}
+                    let user = User(dictionary: userDict)
+                    DispatchQueue.main.async {
+                        self.postTitleLabel.text = "\(String(user.name!)) • \(String(post.title!))"
+                    }
+                })
             }
-            
-            
-//            guard let buyserID = message.fromId else {return}
-//
-//            Firestore.firestore().collection("users").document(buyserID).getDocument { (snap, err) in
-//                if let error = err {
-//                    print(error.localizedDescription)
-//                }
-//
-//                guard let userDictionary = snap?.data() else {return}
-//                let user = User(dictionary: userDictionary)
-//                self.postTitleLabel.text = user.name
-//                if user.profileImage == nil {
-//                    self.imageview.image = #imageLiteral(resourceName: "icons8-account-filled-100")
-//                }
-//                guard let imageUrl = user.profileImage, let url = URL(string: imageUrl) else {return}
-//                self.imageview.sd_setImage(with: url)
-//            }
         }
     }
     
@@ -69,7 +62,7 @@ class MessagesControllerCell: UITableViewCell {
     
     let postTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         return label
@@ -77,9 +70,10 @@ class MessagesControllerCell: UITableViewCell {
     
     let messageLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = UIFont.systemFont(ofSize: 14)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
+        label.textColor = .gray
         return label
     }()
     
@@ -87,7 +81,7 @@ class MessagesControllerCell: UITableViewCell {
         addSubview(imageview)
         imageview.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
         imageview.topAnchor.constraint(equalTo: topAnchor, constant: 4).isActive = true
-        imageview.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        imageview.widthAnchor.constraint(equalToConstant: 50).isActive = true
         imageview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8).isActive = true
         
         addSubview(postTitleLabel)

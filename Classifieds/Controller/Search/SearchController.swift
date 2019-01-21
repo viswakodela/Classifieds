@@ -14,6 +14,7 @@ class SearchController: UITableViewController {
     
     //MARK: - TableView Cell Identifiers
     private static let searchCellID = "searchCellID"
+    static let unsavePostFromSearchKey = "unsavePostFromSearchKey"
     
     //MARK: - variables
     var posts = [Post]()
@@ -70,10 +71,11 @@ class SearchController: UITableViewController {
     
     func navigationBarSetup() {
         
+        navigationItem.title = "Search"
         navigationItem.searchController = searchController
-        searchController.dimsBackgroundDuringPresentation = true
+        searchController.dimsBackgroundDuringPresentation = false
         searchController.searchBar.delegate = self
-        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.hidesSearchBarWhenScrolling = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-filter-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleFilter))
     }
     
@@ -97,6 +99,14 @@ class SearchController: UITableViewController {
                 allPostsDictionary.forEach({ (key, value) in
                     guard let dictionary = value as? [String : Any] else {return}
                     let post = Post(dictionary: dictionary)
+                    
+                    let savedPosts = UserDefaults.standard.savedPosts()
+                    savedPosts.forEach({ (pst) in
+                        if pst.postId == post.postId {
+                            post.isFavorited = true
+                        }
+                    })
+                    
                     self.posts.append(post)
                 })
                 DispatchQueue.main.async {
@@ -104,31 +114,6 @@ class SearchController: UITableViewController {
                     self.tableView.reloadData()
                 }
             }
-            
-//            Firestore.firestore().collection("users").getDocuments { (snap, err) in
-//                snap?.documents.forEach({ (snap) in
-//                    let userDictionary = snap.data()
-//                    let user = User(dictionary: userDictionary)
-//                    guard let uid = user.uid else {return}
-//                    Firestore.firestore().collection("posts").document(uid).collection("userPosts").getDocuments(completion: { (snap, err) in
-//                        snap?.documents.forEach({ (snap) in
-//                            let postDictionary = snap.data()
-//                            let post = Post(dictionary: postDictionary)
-//                            self.posts.append(post)
-//                        })
-//
-//                        self.posts.sort(by: { (p1, p2) -> Bool in
-//                            let firstPost = Int(p1.date ?? 0)
-//                            let secondPost = Int(p2.date ?? 0)
-//                            return firstPost > secondPost
-//                        })
-//                        DispatchQueue.main.async {
-//                            self.filteredposts = self.posts
-//                            self.tableView.reloadData()
-//                        }
-//                    })
-//                })
-//            }
         } else {
             self.posts.removeAll()
             self.filteredposts.removeAll()
@@ -139,6 +124,13 @@ class SearchController: UITableViewController {
                 postDictionary.forEach({ (key, value) in
                     guard let dictionary = value as? [String : Any] else {return}
                     let post = Post(dictionary: dictionary)
+                    
+                    let savedPosts = UserDefaults.standard.savedPosts()
+                    savedPosts.forEach({ (pst) in
+                        if pst.postId == post.postId {
+                            post.isFavorited = true
+                        }
+                    })
                     self.posts.append(post)
                 })
                 DispatchQueue.main.async {

@@ -26,7 +26,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = UIColor(red: 64/255, green: 63/255, blue: 63/255, alpha: 1)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -39,6 +39,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "  Popular Categories"
+        label.textColor = .white
         label.font = UIFont.boldSystemFont(ofSize: 24)
         return label
     }()

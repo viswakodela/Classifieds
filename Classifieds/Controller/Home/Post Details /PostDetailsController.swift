@@ -31,6 +31,7 @@ class PostDetailsController: UIViewController {
         setupLayout()
         tableViewSetUp()
         navigationBarSetup()
+        addObservers()
 
     }
     
@@ -114,6 +115,22 @@ class PostDetailsController: UIViewController {
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
     
+    func addObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(observeFromFavoritesController), name: FavoritesController.unsaveFavoriteKey, object: nil)
+    }
+        
+    @objc func observeFromFavoritesController(notification: Notification) {
+        
+        guard let userInfo = notification.userInfo else {return}
+        guard let postID = userInfo["postID"] as? String else {return}
+        guard let currentPostID = self.post.postId else {return}
+        
+        if currentPostID == postID {
+            post.isFavorited = false
+            tableView.reloadData()
+        }
+    }
+    
     deinit {
         print("Deinitialized PostDetailsController")
     }
@@ -163,7 +180,6 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
             let priceCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.priceLabelCellID, for: indexPath) as! PriceLabelCell
             priceCell.post = self.post
             priceCell.delegate = self
-//            priceCell.messageButton.addTarget(self, action: #selector(handleNewMessage), for: .touchUpInside)
             return priceCell
         } else if indexPath.section == 3 {
             
@@ -212,7 +228,7 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-//MARK: - Fifth Cell's MapView Delegate Method
+//MARK: - MapView cell's Delegate Method
 extension PostDetailsController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
@@ -233,11 +249,12 @@ extension PostDetailsController: MKMapViewDelegate {
     }
 }
 
+//MARK: - PriceLabelCellDelegate for Messaging
 extension PostDetailsController: PriceLabelDelegate {
-    func messageButtonTapped(post: Post) {
-        let newMessageController = NewMessageController()
-        newMessageController.post = post
-        navigationController?.pushViewController(newMessageController, animated: true)
+    func messageButtonTapped(user: User, post: Post) {
+        let newMessage = NewMessageController()
+        newMessage.showUserAndPost(user: user, post: post)
+        navigationController?.pushViewController(newMessage, animated: true)
     }
 }
 

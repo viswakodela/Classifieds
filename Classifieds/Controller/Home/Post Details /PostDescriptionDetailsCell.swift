@@ -35,9 +35,9 @@ class PostDescriptionDetailsCell: UITableViewCell {
     
     func setupLayout() {
         addSubview(descriptionView)
-        descriptionView.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
-        descriptionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
-        descriptionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
+        descriptionView.topAnchor.constraint(equalTo: topAnchor, constant: 4).isActive = true
+        descriptionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4).isActive = true
+        descriptionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4).isActive = true
         descriptionView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
     

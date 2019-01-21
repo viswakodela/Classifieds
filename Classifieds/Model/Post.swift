@@ -24,7 +24,7 @@ class Post:  Codable {
     var imageUrl4: String?
     var imageUrl5: String?
     var imagesArray: [String]?
-    var date: TimeInterval?
+    var date: Double?
     
     var isFavorited: Bool = false
     
@@ -44,7 +44,7 @@ class Post:  Codable {
         self.imageUrl3 = dictionary["imageUrl3"] as? String
         self.imageUrl4 = dictionary["imageUrl4"] as? String
         self.imageUrl5 = dictionary["imageUrl5"] as? String
-        self.date = dictionary["date"] as? TimeInterval
+        self.date = dictionary["date"] as? Double
     }
 }
 
