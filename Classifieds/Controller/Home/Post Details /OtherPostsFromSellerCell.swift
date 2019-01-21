@@ -9,10 +9,17 @@
 import UIKit
 import Firebase
 
-class SixthTableCell: UITableViewCell {
+class OtherPostsFromSellerCell: UITableViewCell {
     
-    var postDetails: PostDetailsController?
+    //MARK: - Cell Identifier
     let otherPostsCell = "otherPostsCell"
+    
+    //MARK: - Variables
+    var postDetails: PostDetailsController?
+    var posts = [Post]()
+    
+    
+    //MARK: - Cell Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -20,8 +27,7 @@ class SixthTableCell: UITableViewCell {
         setupLayout()
     }
     
-    var posts = [Post]()
-    
+    //MARK: - Property Observer
     var post: Post! {
         didSet {
             guard let sellerID = post.uid else {return}
@@ -43,6 +49,7 @@ class SixthTableCell: UITableViewCell {
         }
     }
     
+    //MARK: - Layout Properties
     let otherPostsLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
@@ -66,6 +73,7 @@ class SixthTableCell: UITableViewCell {
         return collectionView
     }()
     
+    //MARK: - Methods
     func setupLayout() {
         
         addSubview(otherPostsLabel)
@@ -89,7 +97,8 @@ class SixthTableCell: UITableViewCell {
     
 }
 
-extension SixthTableCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+//MARK: - Collection View Delegate and DataSource Methods
+extension OtherPostsFromSellerCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return posts.count

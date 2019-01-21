@@ -10,30 +10,62 @@ import UIKit
 import MapKit
 import Firebase
 
+//MARK: - Protocol
 protocol SearchLocationFilterDelegate: class {
     func cityLocation(of city: String)
 }
 
 class SearchFilterController: UITableViewController {
     
-    private let searchCell = "searchCell"
+    //MARK: - TabeleView cell identifier
+    private static let searchCell = "searchCell"
+    
+    //MARK: - Variables
     var searchResults = [MKLocalSearchCompletion]()
     var recentCities = [String]()
     weak var delegate: SearchLocationFilterDelegate?
+    var searchLocationController = UISearchController(searchResultsController: nil)
     
+    //MARK:- Controller Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "Location Filter"
         searchController()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: searchCell)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(handleCancel))
-        navigationController?.navigationBar.tintColor = .black
-        fetrecentSearchedCity()
+        navigationBarSetup()
+        tableViewSetup()
+        fetchrecentSearchedCity()
     }
     
-    func fetrecentSearchedCity() {
+    //MARk: - Layout Properties
+    lazy var searchCompleter: MKLocalSearchCompleter = {
+        let sC = MKLocalSearchCompleter()
+        sC.delegate = self
+        return sC
+    }()
+    
+    //MARK: - Methods
+    fileprivate func searchController() {
+        navigationItem.searchController = searchLocationController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchLocationController.searchBar.delegate = self
+        guard let searchText = searchLocationController.searchBar.text else {return}
+        searchCompleter.queryFragment = searchText
+    }
+    
+    fileprivate func tableViewSetup() {
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: SearchFilterController.searchCell)
+    }
+    
+    fileprivate func navigationBarSetup() {
+        
+        navigationItem.title = "Location Filter"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(handleCancel))
+        navigationController?.navigationBar.tintColor = .black
+    }
+    
+    func fetchrecentSearchedCity() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
+        
         Firestore.firestore().collection("recent-citysearch").document(uid).getDocument { (snap, err) in
             guard let recentCity = snap?.data() else {return}
             let city = recentCity["searchedCity"] as? String
@@ -43,28 +75,14 @@ class SearchFilterController: UITableViewController {
             }
         }
     }
-    
-    var searchLocationController = UISearchController(searchResultsController: nil)
-    
-    lazy var searchCompleter: MKLocalSearchCompleter = {
-        let sC = MKLocalSearchCompleter()
-        sC.delegate = self
-        return sC
-    }()
-    
-    func searchController() {
-        navigationItem.searchController = searchLocationController
-        navigationItem.hidesSearchBarWhenScrolling = false
-        searchLocationController.searchBar.delegate = self
-        guard let searchText = searchLocationController.searchBar.text else {return}
-        searchCompleter.queryFragment = searchText
-    }
-    
+}
+
+//MARK: - Selector objective functions
+extension SearchFilterController {
     @objc func handleCancel() {
         dismiss(animated: true)
     }
 }
-
 
 //MARK:- MKLocalSearchCompleter Delegate Method
 extension SearchFilterController: MKLocalSearchCompleterDelegate {
@@ -121,13 +139,13 @@ extension SearchFilterController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if indexPath.section == 1 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: searchCell, for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterController.searchCell, for: indexPath)
             cell.textLabel?.text = searchResults[indexPath.row].title
             cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 18)
             cell.textLabel?.numberOfLines = 0
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: searchCell, for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterController.searchCell, for: indexPath)
             cell.textLabel?.text = self.recentCities[indexPath.row]
             return cell
         }
@@ -148,7 +166,9 @@ extension SearchFilterController {
         
         let search = MKLocalSearch(request: searchRequest)
         
-        search.start { (response, err) in
+        search.start { [weak self](response, err) in
+            guard let self = self else {return}
+            
             if let error = err {
                 print(error.localizedDescription)
             }

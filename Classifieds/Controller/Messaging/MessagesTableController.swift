@@ -21,39 +21,51 @@ class MessagesTableController: UITableViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "Messages"
         tableView.register(MessagesControllerCell.self, forCellReuseIdentifier: messagesCellsId)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         fetchMessagesFromFirebase()
     }
     
+    
     func fetchMessagesFromFirebase() {
         
-        guard let currentUID = Auth.auth().currentUser?.uid else {return}
-        Firestore.firestore().collection("posts").document(currentUID).collection("userPosts").getDocuments { (snap, err) in
-            if let error = err {
-                print(error.localizedDescription)
-            }
-            snap?.documents.forEach({ (snapshot) in
-                let postDictionary = snapshot.data()
-                let post = Post(dictionary: postDictionary)
-                
-                guard let postID = post.postId else {return}
-                
-                let postMessages = Database.database().reference().child("post-messages").child(postID).child(currentUID)
-                postMessages.observe(.childAdded, with: { (snap) in
-                    let buyerID = snap.key
-                    postMessages.child(buyerID).observe(.childAdded, with: { (snap) in
-                        
-                        let messageID = snap.key
-                        let messagesRef = Database.database().reference().child("messages")
-                        messagesRef.child(messageID).observe(.value, with: { (snap) in
-                            guard let messageDictionary = snap.value as? [String : Any] else {return}
-                            let message = Message(dictionary: messageDictionary)
-                            let chatPartnerID = message.chatPartnerId()
-                            self.messagesDictionary[chatPartnerID] = message
-                            self.messages = Array(self.messagesDictionary.values)
-                            
-                            DispatchQueue.main.async {
-                                self.tableView.reloadData()
-                            }
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        var postIds = [String]()
+
+        let messagesRef = Database.database().reference().child("messages")
+        messagesRef.child(uid).observe(.value) { (snap) in
+            guard let snapDictionary = snap.value as? [String : Any] else {return}
+            snapDictionary.forEach({ (key, value) in
+
+                let toId = key
+                messagesRef.child(uid).child(toId).observe(.value, with: { (snap) in
+                    guard let postIdDictionary = snap.value as? [String : Any] else {return}
+                    postIdDictionary.forEach({ (arg) in
+                        let (key, _) = arg
+                        postIds.append(key)
+                    })
+                    
+                    postIds.forEach({ (postId) in
+
+                        messagesRef.child(uid).child(toId).child(postId).observe(.value, with: { (snap) in
+
+                            guard let snapDict = snap.value as? [String : Any] else {return}
+                            snapDict.forEach({ (key, value) in
+
+                                guard let messaageDict = value as? [String : Any] else {return}
+                                let message = Message(dictionary: messaageDict)
+                                let chatPartnerId = message.chatPartnerId()
+                                self.messagesDictionary[chatPartnerId] = message
+                                self.messages = Array(self.messagesDictionary.values)
+                                self.messages.sort(by: { (message1, message2) -> Bool in
+                                    return Double(message1.timeStamp!) > Double(message2.timeStamp!)
+                                })
+                                DispatchQueue.main.async {
+                                    self.tableView.reloadData()
+                                }
+                            })
                         })
                     })
                 })
@@ -73,29 +85,32 @@ class MessagesTableController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: messagesCellsId, for: indexPath) as! MessagesControllerCell
         let message = messages[indexPath.row]
         cell.message = message
-//        cell.messagesTableController = self
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let newMessage = NewMessageController()
-        let message = messages[indexPath.row]
+        let message = self.messages[indexPath.row]
+        var userId: String = ""
+        guard let postId = message.postID else {return}
         
-        let chatPartnerID = message.chatPartnerId()
-        print(chatPartnerID)
-        
-        Firestore.firestore().collection("users").document(chatPartnerID).getDocument { (snap, err) in
-            if let error = err {
-                print(error.localizedDescription)
+        Database.database().reference().child("posts").child(postId).observe(.value) { (snap) in
+            guard let postDict = snap.value as? [String : Any] else {return}
+            let post = Post(dictionary: postDict)
+            
+            if message.fromId == Auth.auth().currentUser?.uid {
+                userId = message.toId!
+            } else {
+                userId = message.fromId!
             }
-            guard let userDictionary = snap?.data() else {return}
-            let user = User(dictionary: userDictionary)
             
-            let newMessageController = NewMessageController()
-            newMessageController.user = user
-            
+            Firestore.firestore().collection("users").document(userId).getDocument(completion: { (snap, err) in
+                guard let userDict = snap?.data() else {return}
+                let user = User(dictionary: userDict)
+                
+                newMessage.showUserAndPost(user: user, post: post)
+                self.navigationController?.pushViewController(newMessage, animated: true)
+            })
         }
-        navigationController?.pushViewController(newMessage, animated: true)
     }
-    
 }

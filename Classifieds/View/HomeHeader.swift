@@ -12,7 +12,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     
     
     var homeController: HomeController?
-    private let popularCategoryCell = "popularCategoryCell"
+    private static let popularCategoryCell = "popularCategoryCell"
     
     let categoriesArray = [CategoryModel(image: #imageLiteral(resourceName: "phones"), categoryName: "Phones & Tablets"),
                            CategoryModel(image: #imageLiteral(resourceName: "rooms"), categoryName: "Roomes/Beds"),
@@ -26,7 +26,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = UIColor(red: 64/255, green: 63/255, blue: 63/255, alpha: 1)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -38,17 +38,29 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     let categoryLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Popular Categories"
+        label.text = "  Popular Categories"
+        label.textColor = .white
         label.font = UIFont.boldSystemFont(ofSize: 24)
         return label
     }()
     
+    let seperatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        setupView()
+        collectionViewSetup()
+    }
+    
+    func collectionViewSetup() {
         
         collectionVie.contentInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        collectionVie.register(CategoryCell.self, forCellWithReuseIdentifier: popularCategoryCell)
-        setupView()
+        collectionVie.register(CategoryCell.self, forCellWithReuseIdentifier: HomeHeader.popularCategoryCell)
     }
     
     fileprivate func setupView() {
@@ -58,11 +70,17 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         stackView.spacing = 4
         
         addSubview(stackView)
-        categoryLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        stackView.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+        categoryLabel.heightAnchor.constraint(equalToConstant: 26).isActive = true
+        stackView.topAnchor.constraint(equalTo: topAnchor, constant: 0).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0).isActive = true
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        
+        addSubview(seperatorView)
+        seperatorView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+        seperatorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        seperatorView.heightAnchor.constraint(equalToConstant: 0.2).isActive = true
+        seperatorView.topAnchor.constraint(equalTo: stackView.bottomAnchor).isActive = true
         
     }
     
@@ -71,13 +89,13 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: popularCategoryCell, for: indexPath) as! CategoryCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeHeader.popularCategoryCell, for: indexPath) as! CategoryCell
         cell.categoryModel = categoriesArray[indexPath.item]
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 150, height: 130)
+        return CGSize(width: 140, height: 120)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

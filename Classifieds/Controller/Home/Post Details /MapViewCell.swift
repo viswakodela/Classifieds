@@ -11,8 +11,16 @@ import MapKit
 
 class MapViewCell: UITableViewCell {
     
-    var postDetailController: PostDetailsController?
-//    var mapview: MKMapView?
+    var mapView: MKMapView? {
+        didSet {
+            guard let mapview = self.mapView else {return}
+            addSubview(mapview)
+            mapview.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 4).isActive = true
+            mapview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+            mapview.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+            mapview.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        }
+    }
     
     //MARK: - Cell Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -36,13 +44,7 @@ class MapViewCell: UITableViewCell {
         return label
     }()
     
-    lazy var mapview: MKMapView = {
-        let mv = MKMapView()
-        mv.translatesAutoresizingMaskIntoConstraints = false
-        mv.isZoomEnabled = false
-        mv.isScrollEnabled = false
-        return mv
-    }()
+    
     
     //MARK: - Methods
     func setupLayout() {
@@ -54,11 +56,6 @@ class MapViewCell: UITableViewCell {
         locationLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         
-        addSubview(mapview)
-        mapview.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 4).isActive = true
-        mapview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        mapview.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        mapview.heightAnchor.constraint(equalToConstant: 150).isActive = true
         
     }
     
@@ -66,7 +63,8 @@ class MapViewCell: UITableViewCell {
         
         let geoCoder = CLGeocoder()
         guard let location = post.location else {return}
-        geoCoder.geocodeAddressString(location) { (placemarks, err) in
+        geoCoder.geocodeAddressString(location) { [weak self] (placemarks, err) in
+            guard let self = self else {return}
             if let error = err {
                 print(error.localizedDescription)
             }
@@ -75,26 +73,29 @@ class MapViewCell: UITableViewCell {
             let annotation = MKPointAnnotation()
             annotation.coordinate = firstLocation.location!.coordinate
             annotation.title = self.post.location
-            self.mapview.addAnnotation(annotation)
             
-            self.mapview.showAnnotations(self.mapview.annotations, animated: false)
+            guard let mapview = self.mapView else {return}
+            mapview.addAnnotation(annotation)
+            
+            mapview.showAnnotations(mapview.annotations, animated: false)
         }
     }
     
-    func clearMapViewMemoryLeak() {
-        switch mapview.mapType {
-        case .hybrid :
-            self.mapview.mapType = .standard
-            break
-        case .standard:
-            self.mapview.mapType = .hybrid
-        default:
-            break
-        }
-    }
+//    func clearMapViewMemoryLeak() {
+//        switch mapview.mapType {
+//        case .hybrid :
+//            self.mapview.mapType = .standard
+//            break
+//        case .standard:
+//            self.mapview.mapType = .hybrid
+//        default:
+//            break
+//        }
+//    }
     
     deinit {
-        clearMapViewMemoryLeak()
+        print("MapCell Deinitialized")
+//        clearMapViewMemoryLeak()
     }
     
     required init?(coder aDecoder: NSCoder) {

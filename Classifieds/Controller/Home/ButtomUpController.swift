@@ -10,12 +10,13 @@ import UIKit
 
 class BottomUpController: UITableViewController {
     
-    var post: Post? {
-        didSet {
-        }
-    }
-    
+    //MARK:- Constants
     private let bottomId = "bottomId"
+    
+    //MARK: - Variables
+    var post: Post?
+    
+    //MARK: - View Controller Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(BottomControllerCell.self, forCellReuseIdentifier: bottomId)
@@ -32,6 +33,9 @@ class BottomUpController: UITableViewController {
         navigationController?.navigationBar.isHidden = false
     }
 }
+
+
+//MARK: - TableView Delegate Methods
 
 extension BottomUpController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -51,7 +55,6 @@ extension BottomUpController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let postDetails = PostDetailsController()
         postDetails.post = self.post
-//        postDetails.isOpened = true
         navigationController?.pushViewController(postDetails, animated: true)
     }
 }

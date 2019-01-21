@@ -18,9 +18,19 @@ class MessageCell: UITableViewCell {
     
     var message: Message! {
         didSet {
-            
-            guard let id = Auth.auth().currentUser?.uid else {return}
-            setupNameAndImage(userId: id)
+            DispatchQueue.main.async {
+                
+                guard let fromId = self.message.fromId else {return}
+                self.setupNameAndImage(userId: fromId)
+                
+                guard let date = self.message.timeStamp else {return}
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "MMM dd, yyyy"
+                let messageDate = Date.init(timeIntervalSinceReferenceDate: date)
+                let realDate = dateFormatter.string(from: messageDate)
+                self.dateLabel.text = realDate
+            }
         }
     }
     
@@ -55,19 +65,18 @@ class MessageCell: UITableViewCell {
     
     let userNameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
-        label.text = "kugv iytb"
         return label
     }()
     
     let messageTextLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 18)
+        label.font = UIFont.systemFont(ofSize: 14)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
-        label.text = "niubaiy  ugwigigfqa iugbsahvb yt tyfusavba yg ybsckwa h yt w7itq h iqfcuy 7twtfwgafuygsauyfu ozubv usg vaui g iyag cqoigeiugeiufgwqygyyiwgviwy  uvwg tg it"
+        label.textColor = .gray
         return label
     }()
     
@@ -78,6 +87,15 @@ class MessageCell: UITableViewCell {
         view.layer.cornerRadius = 20
         view.clipsToBounds = true
         return view
+    }()
+    
+    let dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.textColor = .gray
+        return label
     }()
     
     func setupLayout() {
@@ -100,16 +118,24 @@ class MessageCell: UITableViewCell {
         bubbleView.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
         bubbleView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8).isActive = true
         
+        bubbleView.addSubview(dateLabel)
+        dateLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 8).isActive = true
+        dateLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -8).isActive = true
+        dateLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        dateLabel.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        
         bubbleView.addSubview(userNameLabel)
         userNameLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 8).isActive = true
-        userNameLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -8).isActive = true
+        userNameLabel.trailingAnchor.constraint(equalTo: dateLabel.leadingAnchor).isActive = true
         userNameLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 8).isActive = true
         userNameLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
+        
+        
         bubbleView.addSubview(messageTextLabel)
-        messageTextLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 8).isActive = true
+        messageTextLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor).isActive = true
         messageTextLabel.leadingAnchor.constraint(equalTo: userNameLabel.leadingAnchor).isActive = true
-        messageTextLabel.trailingAnchor.constraint(equalTo: userNameLabel.trailingAnchor, constant: -8).isActive = true
+        messageTextLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -8).isActive = true
         messageTextLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -8).isActive = true
         
         //        self.sendSubviewToBack(bubbleView)

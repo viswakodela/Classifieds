@@ -12,8 +12,16 @@ import CoreLocation
 
 class MapPostsController: UIViewController {
     
-    var locationManager = CLLocationManager()
+    //MARK: - Contants
+    private let locationManager = CLLocationManager()
+    let bottomController = BottomUpController()
     
+    //MARK: - Variables
+    var posts: [Post] = []
+    var bottomViewTopAnchor: NSLayoutConstraint!
+    var postView: UIView!
+    
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -28,6 +36,27 @@ class MapPostsController: UIViewController {
         navigationController?.navigationBar.isHidden = false
     }
     
+    //MARK: - Layout Properties
+    
+    lazy var mapView: MKMapView = {
+        let mv = MKMapView()
+        mv.translatesAutoresizingMaskIntoConstraints = false
+        mv.isZoomEnabled = true
+        mv.isScrollEnabled = true
+        mv.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
+        mv.delegate = self
+        return mv
+    }()
+    
+    let bottomView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 10
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    //MARK:- Methods
     func setupLocation() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -56,34 +85,14 @@ class MapPostsController: UIViewController {
         }
     }
     
-    var posts: [Post] = []
-    
-    lazy var mapView: MKMapView = {
-        let mv = MKMapView()
-        mv.translatesAutoresizingMaskIntoConstraints = false
-        mv.isZoomEnabled = true
-        mv.isScrollEnabled = true
-        mv.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
-        mv.delegate = self
-        return mv
-    }()
-    
-    let bottomView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 10
-        view.clipsToBounds = true
-        return view
-    }()
-    
-    var bottomViewTopAnchor: NSLayoutConstraint!
     
     func displayAnnotationsForPosts() {
         self.posts.forEach { (post) in
             guard let addres = post.location else {return}
             guard let title = post.title else {return}
             let geoCoder = CLGeocoder()
-            geoCoder.geocodeAddressString(addres, completionHandler: { (placemarks, err) in
+            geoCoder.geocodeAddressString(addres, completionHandler: { [weak self] (placemarks, err) in
+                guard let self = self else {return}
                 if let error = err {
                     print(error.localizedDescription)
                 }
@@ -120,8 +129,6 @@ class MapPostsController: UIViewController {
         setupViewControllers()
     }
     
-    var postView: UIView!
-    let bottomController = BottomUpController()
     func setupViewControllers() {
         
         self.postView = bottomController.view
@@ -137,7 +144,18 @@ class MapPostsController: UIViewController {
         
         addChild(bottomController)
     }
+    
+    func clearMemoryLeaks() {
+        bottomController.view.removeFromSuperview()
+        bottomController.removeFromParent()
+    }
+    
+    deinit {
+        print("De-initialized from MapPostsController")
+    }
 }
+
+//MARK: - MApViewDelegate Methods
 
 extension MapPostsController: MKMapViewDelegate {
     
@@ -152,6 +170,8 @@ extension MapPostsController: MKMapViewDelegate {
     }
 }
 
+//MARK: - CoreLocationManagerDelegate Methods
+
 extension MapPostsController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -160,6 +180,7 @@ extension MapPostsController: CLLocationManagerDelegate {
 }
 
 //MARK:- Handling Pan Gesture
+
 extension MapPostsController {
     
     @objc func handlePullGesture(gesture: UIPanGestureRecognizer) {

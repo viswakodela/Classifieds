@@ -8,9 +8,10 @@
 
 import UIKit
 
-class Post {
+class Post:  Codable {
     
     var title: String?
+//    var user: User?
     var uid: String?
     var description: String?
     var postId: String?
@@ -23,10 +24,11 @@ class Post {
     var imageUrl4: String?
     var imageUrl5: String?
     var imagesArray: [String]?
-    var date: TimeInterval?
+    var date: Double?
+    
+    var isFavorited: Bool = false
     
     init() {
-        
     }
     
     init(dictionary: [String : Any]) {
@@ -42,7 +44,20 @@ class Post {
         self.imageUrl3 = dictionary["imageUrl3"] as? String
         self.imageUrl4 = dictionary["imageUrl4"] as? String
         self.imageUrl5 = dictionary["imageUrl5"] as? String
-        self.date = dictionary["date"] as? TimeInterval
+        self.date = dictionary["date"] as? Double
     }
 }
 
+//    init?(firebaseDictionary dictionary: [String : Any]) {
+//        // guard on mandatory
+//        guard let postId = dictionary["postId"] as? String,
+//            let price = dictionary["price"] as? Int else {
+//            return nil
+//        }
+//
+//        // let my non-mandatory / non-required values be (Swift)optional
+//        self.location = dictionary["location"] as? String
+//
+//        self.postId = postId
+//        self.price = price
+//    }

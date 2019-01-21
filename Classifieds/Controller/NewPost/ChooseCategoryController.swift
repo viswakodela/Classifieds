@@ -14,18 +14,26 @@ protocol ChooseCategoryDelegate: class {
 
 class ChooseCategoryController: UITableViewController {
     
-    private let chooseCategoryCellId = "chooseCategoryCellId"
-    
-    weak var delegate: ChooseCategoryDelegate?
-    
+    //MARK: - Constants
+    private static let chooseCategoryCellId = "chooseCategoryCellId"
     let caterories = ColletionsViewController.shared.collectionsArray
     
+    //MARK: - Delegate
+    weak var delegate: ChooseCategoryDelegate?
+    
+    //MARK: - Controller Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: chooseCategoryCellId)
+        tableViewAndNavigationBarSetup()
+    }
+    
+    //MARK: - Methods
+    func tableViewAndNavigationBarSetup() {
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: ChooseCategoryController.chooseCategoryCellId)
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(handleCancel))
     }
     
+    //MARK: - TableView Delgate Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return caterories.count
     }
@@ -35,7 +43,7 @@ class ChooseCategoryController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: chooseCategoryCellId, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: ChooseCategoryController.chooseCategoryCellId, for: indexPath)
         cell.textLabel?.text = caterories[indexPath.row].categoryName
         return cell
     }
@@ -46,7 +54,6 @@ class ChooseCategoryController: UITableViewController {
         delegate?.didChooseCategory(categoryName: categoryName)
         dismiss(animated: true, completion: nil)
     }
-    
     
     @objc func handleCancel() {
         dismiss(animated: true, completion: nil)

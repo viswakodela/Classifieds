@@ -10,6 +10,7 @@ import UIKit
 
 class BottomControllerCell: UITableViewCell {
     
+    //MARK: - Cell Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupLaout()
@@ -19,6 +20,7 @@ class BottomControllerCell: UITableViewCell {
         backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
     }
     
+    //MARK: - Property Observer
     var post: Post? {
         didSet {
             guard let imageString = post?.imageUrl1, let url = URL(string: imageString) else {return}
@@ -29,6 +31,7 @@ class BottomControllerCell: UITableViewCell {
         }
     }
     
+    //MARK: - Layout Properties
     let imageview: UIImageView = {
         let iv = UIImageView()
         iv.layer.cornerRadius = 5
@@ -69,6 +72,7 @@ class BottomControllerCell: UITableViewCell {
         return tv
     }()
     
+    //MARK: - Layout setting Method
     func setupLaout() {
         
         addSubview(imageview)

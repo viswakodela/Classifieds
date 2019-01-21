@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class ThirdTableViewCell: UITableViewCell {
+class SellerDetailsCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -58,14 +58,14 @@ class ThirdTableViewCell: UITableViewCell {
     func setupLayout() {
         
         addSubview(sellerImageView)
-        sellerImageView.leadingAnchor.constraint(lessThanOrEqualTo: leadingAnchor, constant: 8).isActive = true
+        sellerImageView.leadingAnchor.constraint(lessThanOrEqualTo: leadingAnchor, constant: 4).isActive = true
         sellerImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         sellerImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         sellerImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
         
         addSubview(sellerNameLabel)
-        sellerNameLabel.leadingAnchor.constraint(equalTo: sellerImageView.trailingAnchor, constant: 8).isActive = true
-        sellerNameLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -8).isActive = true
+        sellerNameLabel.leadingAnchor.constraint(equalTo: sellerImageView.trailingAnchor, constant: 4).isActive = true
+        sellerNameLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -4).isActive = true
         sellerNameLabel.centerYAnchor.constraint(equalTo: sellerImageView.centerYAnchor).isActive = true
         sellerNameLabel.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
