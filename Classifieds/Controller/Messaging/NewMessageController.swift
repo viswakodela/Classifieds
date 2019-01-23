@@ -13,83 +13,17 @@ import InputBarAccessoryView
 
 class NewMessageController: UITableViewController {
     
+    //MARK: - Cell Identifier
     private static let messageCellID = "messageCellID"
     
+    //MARK: - Variables
     var post: Post?
     var user: User?
-    
-    
-    func showUserAndPost(user: User, post: Post) {
-        
-        self.user = user
-        self.post = post
-        
-        var messagesArray = [Message]()
-        self.messages.removeAll()
-        guard let currentUserId = Auth.auth().currentUser?.uid else {return}
-        guard let sellerId = user.uid else {return}
-        guard let postID = post.postId else {return}
-        if sellerId ==  currentUserId {
-            return
-        }
-        
-        let messagesRef = Database.database().reference().child("messages")
-        messagesRef.child(currentUserId).child(sellerId).child(postID).observe(.childAdded) { (snap) in
-            
-            guard let messageDict = snap.value as? [String : Any] else {return}
-            let message = Message(dictionary: messageDict)
-            messagesArray.append(message)
-            
-            
-            DispatchQueue.main.async {
-                self.messages = messagesArray
-                self.tableView.reloadData()
-                let indexpath = NSIndexPath(item: self.messages.count-1, section: 0)
-                self.tableView?.scrollToRow(at: indexpath as IndexPath, at: .bottom, animated: true)
-            }
-            
-//            guard let snapDict = snap.value as? [String :  Any] else {return}
-//            snapDict.forEach({ (key, value) in
-//                guard let messageDict = value as? [String : Any] else {return}
-//                let message = Message(dictionary: messageDict)
-//                messagesArray.append(message)
-//            })
-//            DispatchQueue.main.async {
-//                messagesArray.sort(by: { (m1, m2) -> Bool in
-//                    return m1.timeStamp! < m2.timeStamp!
-//                })
-//                self.messages.removeAll()
-//                self.messages = messagesArray
-//                self.tableView.reloadData()
-//                let indexpath = NSIndexPath(item: self.messages.count-1, section: 0)
-//                self.tableView?.scrollToRow(at: indexpath as IndexPath, at: .bottom, animated: true)
-//            }
-        }
-    }
-    
-//    func obserMessagesFromTheMessageController() {
-//
-//        guard let postId = message?.postID else {return}
-//        guard let fromId = Auth.auth().currentUser?.uid else {return}
-//        var toId = message?.toId ?? ""
-//
-//        if toId == Auth.auth().currentUser?.uid {
-//            toId = message!.fromId!
-//        }
-//
-//        let messagesRef = Database.database().reference().child("messages")
-//        messagesRef.child(fromId).child(toId).child(postId).observe(.value) { (snap) in
-//            guard let messageDictionary = snap.value as? [String : Any] else {return}
-//            let message = Message(dictionary: messageDictionary)
-//            self.messages.append(message)
-//            DispatchQueue.main.async {
-//                self.tableView.reloadData()
-//            }
-//        }
-//    }
-    
     var messages = [Message]()
+    var inputaccessoryView: UIView!
     
+    
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -103,20 +37,18 @@ class NewMessageController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
-        navigationController?.navigationBar.prefersLargeTitles = false
+//        navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.tabBarController?.tabBar.isHidden = false
-        navigationController?.navigationBar.prefersLargeTitles = true
+//        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     override var canBecomeFirstResponder: Bool {
         return true
     }
-    
-    var inputaccessoryView: UIView!
     
     override var inputAccessoryView: UIView? {
         
@@ -143,6 +75,7 @@ class NewMessageController: UITableViewController {
         return inputaccessoryView
     }
     
+    //MARK: - Layout Properties
     lazy var sendButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -167,24 +100,39 @@ class NewMessageController: UITableViewController {
         return tv
     }()
     
+    //MARK: - Methods
+    func showUserAndPost(user: User, post: Post) {
+        
+        self.user = user
+        self.post = post
+        
+        var messagesArray = [Message]()
+        self.messages.removeAll()
+        guard let currentUserId = Auth.auth().currentUser?.uid else {return}
+        guard let sellerId = user.uid else {return}
+        guard let postID = post.postId else {return}
+        if sellerId ==  currentUserId {
+            return
+        }
+        
+        let messagesRef = Database.database().reference().child("messages")
+        messagesRef.child(currentUserId).child(sellerId).child(postID).observe(.childAdded) { (snap) in
+            
+            guard let messageDict = snap.value as? [String : Any] else {return}
+            let message = Message(dictionary: messageDict)
+            messagesArray.append(message)
+            
+            
+            DispatchQueue.main.async {
+                self.messages = messagesArray
+                let indexpath = IndexPath(row: self.messages.count-1, section: 0)
+                self.tableView.reloadData()
+                self.tableView?.scrollToRow(at: indexpath as IndexPath, at: .bottom, animated: true)
+            }
+        }
+    }
     
-//    func observeMessages() {
-    
-//        guard let fromId = Auth.auth().currentUser?.uid else {return}
-//        guard let toId = self.post?.uid else {return}
-//        guard let postId = self.post?.postId else {return}
-//
-//        let messagesRef = Database.database().reference().child("messages")
-//        messagesRef.child(fromId).child(toId).child(postId).observe(.childAdded) { (snap) in
-//            guard let messageDictionary = snap.value as? [String : Any] else {return}
-//            let message = Message(dictionary: messageDictionary)
-//            self.messages.append(message)
-//            DispatchQueue.main.async {
-//                self.tableView.reloadData()
-//            }
-//        }
-//    }
-    
+    //MARK: - TableView Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messages.count
     }
@@ -202,7 +150,7 @@ extension NewMessageController {
     
     @objc func handleSend() {
         
-        self.messages.removeAll()
+//        self.messages.removeAll()
         guard let fromId = Auth.auth().currentUser?.uid else {return}
         let toId = self.user?.uid
         let postID = self.post?.postId
@@ -224,7 +172,7 @@ extension NewMessageController {
     }
 }
 
-
+//MARK: - TextView Delegate Method
 extension NewMessageController: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
@@ -234,12 +182,10 @@ extension NewMessageController: UITextViewDelegate {
             sendButton.isEnabled = true
         }
     }
-    
 }
 
 
 class Customview: UIView {
-    
     override var intrinsicContentSize: CGSize {
         return CGSize.zero
     }

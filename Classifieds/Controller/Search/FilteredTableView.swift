@@ -41,7 +41,7 @@ class FilteredTableView: UITableViewController {
     func tableViewSetup() {
         
         tableView.separatorStyle = .none
-        navigationController?.navigationBar.prefersLargeTitles = true
+//        navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.isTranslucent = true
         navigationController?.view.backgroundColor = .clear
         tableView.register(FilterTableViewCell.self, forCellReuseIdentifier: FilteredTableView.tableCell)

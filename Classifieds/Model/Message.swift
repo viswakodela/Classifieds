@@ -9,7 +9,11 @@
 import UIKit
 import Firebase
 
-class Message {
+class Message: Equatable {
+    static func == (lhs: Message, rhs: Message) -> Bool {
+        return lhs.postID == rhs.postID && lhs.chatPartnerId() == rhs.chatPartnerId()
+    }
+    
     
     var messageText: String?
     var fromId: String?

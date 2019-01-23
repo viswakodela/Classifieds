@@ -56,7 +56,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        handleRefresh()
-        navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationItem.title = user?.name
+//        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     
@@ -98,9 +99,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     fileprivate func navigationControllerSetup() {
         
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "LogOut", style: .plain, target: self, action: #selector(handleLogOut))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-map-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleMap))
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-gear-100"), style: .plain, target: self, action: #selector(handleSettings))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-map-100"), style: .plain, target: self, action: #selector(handleMap))
+//        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     func showProgressHUD(error: Error) {
@@ -114,11 +115,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     fileprivate func collectionViewSetup() {
         
-        tabBarController?.tabBar.tintColor = UIColor(red: 64/255, green: 63/255, blue: 63/255, alpha: 1)
-        
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         collectionView.allowsMultipleSelection = true
-        collectionView.backgroundColor = UIColor(red: 64/255, green: 63/255, blue: 63/255, alpha: 1)
+        collectionView.backgroundColor = .white
         collectionView.refreshControl = refreshControl
 //        collectionView?.backgroundColor = .white
         collectionView.alwaysBounceVertical = true
@@ -153,8 +152,11 @@ extension HomeController {
     
     @objc func handleRefresh() {
         self.postsArray.removeAll()
-        fetchPostsFromFirebase()
-        collectionView.refreshControl?.endRefreshing()
+        let deadLine = DispatchTime.now() + .milliseconds(1000)
+        DispatchQueue.main.asyncAfter(deadline: deadLine) {
+            self.fetchPostsFromFirebase()
+            self.refreshControl.endRefreshing()
+        }
     }
     
     @objc func handleMap() {
@@ -192,6 +194,13 @@ extension HomeController {
         let indexPath = IndexPath(item: indx, section: 1)
         self.collectionView.reloadItems(at: [indexPath])
     }
+    
+    @objc func handleSettings() {
+        let accountsController = AccountTableViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        let navController = UINavigationController(rootViewController: accountsController)
+        accountsController.user = self.user
+        present(navController, animated: true, completion: nil)
+    }
 }
 
 
@@ -215,7 +224,7 @@ extension HomeController {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return section == 0 ? CGSize(width: view.frame.width, height: 150) : CGSize(width: view.frame.width, height: 30)
+        return section == 0 ? CGSize(width: view.frame.width, height: 160) : CGSize(width: view.frame.width, height: 20)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -248,7 +257,7 @@ extension HomeController {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = (view.frame.width - 30) / 2
-        return CGSize(width: width, height: 200)
+        return CGSize(width: width, height: 210)
     }
     
     func showHomeHeaderPush(catergory: CategoryModel) {

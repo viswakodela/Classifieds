@@ -26,7 +26,7 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = UIColor(red: 64/255, green: 63/255, blue: 63/255, alpha: 1)
+        collectionView.backgroundColor = .white
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -39,8 +39,8 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "  Popular Categories"
-        label.textColor = .white
-        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.textColor = UIColor(red: 64/255, green: 63/255, blue: 63/255, alpha: 1)
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         return label
     }()
     
@@ -76,11 +76,11 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
-        addSubview(seperatorView)
-        seperatorView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
-        seperatorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-        seperatorView.heightAnchor.constraint(equalToConstant: 0.2).isActive = true
-        seperatorView.topAnchor.constraint(equalTo: stackView.bottomAnchor).isActive = true
+//        addSubview(seperatorView)
+//        seperatorView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+//        seperatorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+//        seperatorView.heightAnchor.constraint(equalToConstant: 0.2).isActive = true
+//        seperatorView.topAnchor.constraint(equalTo: stackView.bottomAnchor).isActive = true
         
     }
     
@@ -91,11 +91,25 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeHeader.popularCategoryCell, for: indexPath) as! CategoryCell
         cell.categoryModel = categoriesArray[indexPath.item]
+        
+        cell.backgroundColor = .white
+        cell.contentView.layer.cornerRadius = 4.0
+        cell.contentView.layer.borderWidth = 1.0
+        cell.contentView.layer.borderColor = UIColor.clear.cgColor
+        cell.contentView.layer.masksToBounds = false;
+        
+        cell.layer.shadowColor = UIColor.lightGray.cgColor
+        cell.layer.shadowOffset = CGSize(width:0,height: 0)
+        cell.layer.shadowRadius = 5
+        cell.layer.shadowOpacity = 0.6
+        cell.layer.masksToBounds = false;
+        cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).cgPath
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 140, height: 120)
+        return CGSize(width: 150, height: 125)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

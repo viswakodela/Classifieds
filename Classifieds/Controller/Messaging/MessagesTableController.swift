@@ -11,16 +11,23 @@ import Firebase
 
 class MessagesTableController: UITableViewController {
     
+    //MARK: - Cell Identifiers
+    private let messagesCellsId = "messagesCellsId"
+    
+    //MARK: - Variables
     var messages = [Message]()
     var post: Post?
     var messagesDictionary = [String : Message]()
     
-    private let messagesCellsId = "messagesCellsId"
+    
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true
+//        navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "Messages"
         tableView.register(MessagesControllerCell.self, forCellReuseIdentifier: messagesCellsId)
+        tableView.tableFooterView = UIView()
+//        fetchMessagesFromFirebase()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -28,51 +35,86 @@ class MessagesTableController: UITableViewController {
         fetchMessagesFromFirebase()
     }
     
-    
+    //MARK: - Methods
     func fetchMessagesFromFirebase() {
         
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        var postIds = [String]()
+//        var postIds = [String]()
 
         let messagesRef = Database.database().reference().child("messages")
+        
         messagesRef.child(uid).observe(.value) { (snap) in
-            guard let snapDictionary = snap.value as? [String : Any] else {return}
-            snapDictionary.forEach({ (key, value) in
-
-                let toId = key
-                messagesRef.child(uid).child(toId).observe(.value, with: { (snap) in
-                    guard let postIdDictionary = snap.value as? [String : Any] else {return}
-                    postIdDictionary.forEach({ (arg) in
-                        let (key, _) = arg
-                        postIds.append(key)
-                    })
-                    
-                    postIds.forEach({ (postId) in
-
-                        messagesRef.child(uid).child(toId).child(postId).observe(.value, with: { (snap) in
-
-                            guard let snapDict = snap.value as? [String : Any] else {return}
-                            snapDict.forEach({ (key, value) in
-
-                                guard let messaageDict = value as? [String : Any] else {return}
-                                let message = Message(dictionary: messaageDict)
-                                let chatPartnerId = message.chatPartnerId()
-                                self.messagesDictionary[chatPartnerId] = message
-                                self.messages = Array(self.messagesDictionary.values)
+            guard let snapDict = snap.value as? [String : Any] else {return}
+            snapDict.forEach({ (partnerId, value) in
+                
+                messagesRef.child(uid).child(partnerId).observe(.value, with: { (snap) in
+                    guard let dict = snap.value as? [String : Any] else { return }
+                    dict.forEach({ (postId, value) in
+                        
+                        messagesRef.child(uid).child(partnerId).child(postId).observe(.childAdded, with: { (snap) in
+                            guard let messageDict = snap.value as? [String : Any] else {return}
+                            let message = Message(dictionary: messageDict)
+                            let chatPartnerId = message.chatPartnerId()
+                            
+                            self.messagesDictionary[postId] = message
+                            
+                            self.messages = Array(self.messagesDictionary.values)
+                            DispatchQueue.main.async {
                                 self.messages.sort(by: { (message1, message2) -> Bool in
                                     return Double(message1.timeStamp!) > Double(message2.timeStamp!)
                                 })
-                                DispatchQueue.main.async {
-                                    self.tableView.reloadData()
-                                }
-                            })
+                                self.tableView.reloadData()
+                            }
                         })
                     })
                 })
             })
         }
+        
+        
+//        messagesRef.child(uid).observe(.value) { (snap) in
+//            guard let snapDictionary = snap.value as? [String : Any] else {return}
+//            snapDictionary.forEach({ (key, value) in
+//
+//                let toId = key
+//                messagesRef.child(uid).child(toId).observe(.value, with: { (snap) in
+//                    guard let postIdDictionary = snap.value as? [String : Any] else {return}
+//                    postIdDictionary.forEach({ (arg) in
+//                        let (key, _) = arg
+//                        postIds.append(key)
+//                    })
+//
+//                    postIds.forEach({ (postId) in
+//
+//                        messagesRef.child(uid).child(toId).child(postId).observe(.value, with: { (snap) in
+//
+//                            guard let snapDict = snap.value as? [String : Any] else {return}
+//                            snapDict.forEach({ (key, value) in
+//
+//                                guard let messaageDict = value as? [String : Any] else {return}
+//                                let message = Message(dictionary: messaageDict)
+//                                let chatPartnerId = message.chatPartnerId()
+//
+////                                self.messagesDictionary[chatPartnerId] = message
+//                                self.messagesDictionary[postId] = message
+//
+//                                self.messages = Array(self.messagesDictionary.values)
+//
+//                                DispatchQueue.main.async {
+//                                    self.messages.sort(by: { (message1, message2) -> Bool in
+//                                    return Double(message1.timeStamp!) > Double(message2.timeStamp!)
+//                                })
+//                                    self.tableView.reloadData()
+//                                }
+//                            })
+//                        })
+//                    })
+//                })
+//            })
+//        }
     }
     
+    //MARK: - TableView Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messages.count
     }
