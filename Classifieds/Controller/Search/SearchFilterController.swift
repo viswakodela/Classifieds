@@ -66,13 +66,10 @@ class SearchFilterController: UITableViewController {
     func fetchrecentSearchedCity() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         
-        Firestore.firestore().collection("recent-citysearch").document(uid).getDocument { (snap, err) in
-            guard let recentCity = snap?.data() else {return}
-            let city = recentCity["searchedCity"] as? String
-            self.recentCities.append(city ?? "")
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+        Database.database().reference().child("recent-citysearch").child(uid).observe(.childAdded) { [weak self] (snap) in
+            guard let recentSearchedCity = snap.value as? String else {return}
+            self?.recentCities.append(recentSearchedCity)
+            self?.tableView.reloadData()
         }
     }
 }
@@ -181,7 +178,9 @@ extension SearchFilterController {
             
             let recentSearchData = ["searchedCity" : city]
             
-            Firestore.firestore().collection("recent-citysearch").document(uid).setData(recentSearchData)
+            Database.database().reference().child("recent-citysearch").child(uid).updateChildValues(recentSearchData)
+            
+//            Firestore.firestore().collection("recent-citysearch").document(uid).setData(recentSearchData)
             
             self.delegate?.cityLocation(of: city)
             self.dismiss(animated: true)

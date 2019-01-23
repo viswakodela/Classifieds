@@ -23,11 +23,9 @@ class MessagesTableController: UITableViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-//        navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "Messages"
         tableView.register(MessagesControllerCell.self, forCellReuseIdentifier: messagesCellsId)
         tableView.tableFooterView = UIView()
-//        fetchMessagesFromFirebase()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -39,7 +37,6 @@ class MessagesTableController: UITableViewController {
     func fetchMessagesFromFirebase() {
         
         guard let uid = Auth.auth().currentUser?.uid else {return}
-//        var postIds = [String]()
 
         let messagesRef = Database.database().reference().child("messages")
         
@@ -146,10 +143,9 @@ class MessagesTableController: UITableViewController {
                 userId = message.fromId!
             }
             
-            Firestore.firestore().collection("users").document(userId).getDocument(completion: { (snap, err) in
-                guard let userDict = snap?.data() else {return}
+            Database.database().reference().child("users").child(userId).observe(.value, with: { (snap) in
+                guard let userDict = snap.value as? [String : Any] else {return}
                 let user = User(dictionary: userDict)
-                
                 newMessage.showUserAndPost(user: user, post: post)
                 self.navigationController?.pushViewController(newMessage, animated: true)
             })

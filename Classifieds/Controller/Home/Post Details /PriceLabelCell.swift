@@ -110,9 +110,9 @@ extension PriceLabelCell {
     @objc func handleNewMessage() {
         guard let userId = post.uid else {return}
         
-        Firestore.firestore().collection("users").document(userId).getDocument { (snap, err) in
-            guard let userDictionary = snap?.data() else {return}
-            let user = User(dictionary: userDictionary)
+        Database.database().reference().child("users").child(userId).observe(.value) { (snap) in
+            guard let snapDict = snap.value as? [String :  Any] else {return}
+            let user = User(dictionary: snapDict)
             self.delegate?.messageButtonTapped(user: user, post: self.post)
         }
     }

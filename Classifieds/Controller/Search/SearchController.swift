@@ -94,18 +94,11 @@ class SearchController: UITableViewController {
         
         if cityFiler == nil {
             
-            Database.database().reference().child("posts").observeSingleEvent(of: .value) { (snap) in
-                guard let allPostsDictionary = snap.value as? [String : Any] else {return}
-                allPostsDictionary.forEach({ (key, value) in
-                    guard let dictionary = value as? [String : Any] else {return}
-                    let post = Post(dictionary: dictionary)
-                    
-                    let savedPosts = UserDefaults.standard.savedPosts()
-                    savedPosts.forEach({ (pst) in
-                        if pst.postId == post.postId {
-                            post.isFavorited = true
-                        }
-                    })
+            Database.database().reference().child("posts").observe(.childAdded) { (snap) in
+                guard let snapDict = snap.value as? [String : Any] else {return}
+                snapDict.forEach({ (key, value) in
+                    guard let postDict = value as? [String : Any] else {return}
+                    let post = Post(dictionary: postDict)
                     self.posts.append(post)
                 })
                 DispatchQueue.main.async {

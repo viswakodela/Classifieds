@@ -87,20 +87,16 @@ class MessageCell: UITableViewCell {
     //MARK: - Methods
     func setupNameAndImage(userId: String) {
         
-        Firestore.firestore().collection("users").document(userId).getDocument { (snap, err) in
-            if let error = err {
-                print(error.localizedDescription)
-            }
-            guard let snapshot = snap?.data() else {return}
-            let user = User(dictionary: snapshot)
-            self.userNameLabel.text = user.name
+        Database.database().reference().child("users").child(userId).observe(.value) { (snap) in
+            guard let snapDict = snap.value as? [String : Any] else {return}
+            let user = User(dictionary: snapDict)
             if user.profileImage == nil {
                 self.imageview.image = #imageLiteral(resourceName: "icons8-account-filled-100")
             }
+            self.userNameLabel.text = user.name
             guard let imageUrl = user.profileImage, let url = URL(string: imageUrl) else {return}
             self.imageview.sd_setImage(with: url)
         }
-        
     }
     
     func setupLayout() {

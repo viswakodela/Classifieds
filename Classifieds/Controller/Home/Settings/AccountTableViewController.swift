@@ -162,7 +162,8 @@ extension AccountTableViewController {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let changedValues: [String : Any] = ["fullName" :  user?.name,
                                              "profileImage" : user?.profileImage] as [String : Any]
-        Firestore.firestore().collection("users").document(uid).updateData(changedValues)
+        Database.database().reference().child("users").child(uid).updateChildValues(changedValues)
+        
         self.dismiss(animated: true) {
             let homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
             homeController.user = self.user

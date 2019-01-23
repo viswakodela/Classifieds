@@ -87,10 +87,12 @@ class NewPostController: UITableViewController {
     //MARK: -  Methods
     func fetchUser() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        Firestore.firestore().collection("users").document(uid).getDocument { (snap, err) in
-            guard let userDictionary = snap?.data() else {return}
-            self.user = User(dictionary: userDictionary)
-            self.post.uid = self.user?.uid
+        
+        Database.database().reference().child("users").child(uid).observe(.value) { (snap) in
+            guard let snapDict = snap.value as? [String : Any] else {return}
+            let user = User(dictionary: snapDict)
+            self.post.uid = user.uid
+            self.user = user
         }
     }
     
@@ -257,14 +259,13 @@ class NewPostController: UITableViewController {
             }
             guard let response = resp?.mapItems else{return}
             guard let city = response.first?.placemark.locality else {return}
-            DispatchQueue.main.async {
+                
+                
+//          Database.database().reference().child("posts").child(postId).updateChildValues(postData)
         Database.database().reference().child("cities").child(city).child(postId).updateChildValues(postData)
-            }
             
-            Database.database().reference().child("posts").child(postId).updateChildValues(postData)
+        Database.database().reference().child("posts").child(uid).child(postId).updateChildValues(postData)
             
-            // Firestore is for getting the user's own posts in his Profile
-            Firestore.firestore().collection("posts").document(uid).collection("userPosts").document(postId).setData(postData)
             self.dismiss(animated: true) {
                 NotificationCenter.default.post(name: NewPostController.newPostUpdateNotification, object: nil)
             }

@@ -75,13 +75,11 @@ class TabBarControllr: UITabBarController {
     
     func fetchCurrentUserfromFirebase() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        Firestore.firestore().collection("users").document(uid).getDocument { [unowned self] (snapshot, err) in
-            if let error = err {
-                print(error)
-            }
-            guard let userDictionary = snapshot?.data() else {return}
-            let user = User(dictionary: userDictionary)
-            self.homeController?.user = user
+        
+        Database.database().reference().child("users").child(uid).observe(.value) { [weak self] (snap) in
+            guard let snapDict = snap.value as? [String : Any] else {return}
+            let user = User(dictionary: snapDict)
+            self?.homeController?.user = user
         }
     }
     

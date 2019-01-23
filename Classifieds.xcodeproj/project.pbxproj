@@ -198,8 +198,8 @@
 			children = (
 				BD294E1121D1A59100976663 /* HomeController.swift */,
 				BD7F2C0D21DD596A006BBC3E /* HomeControllerCell.swift */,
-				BD04603921E129360019705D /* ButtomUpController.swift */,
 				BD4D905021E022BA0036D206 /* MapPostsController.swift */,
+				BD04603921E129360019705D /* ButtomUpController.swift */,
 				BD04603B21E138DD0019705D /* BottomControllerCell.swift */,
 				BDC019C521F68913003DBB9D /* Settings */,
 				BD25630521EA9BED00647358 /* Post Details  */,

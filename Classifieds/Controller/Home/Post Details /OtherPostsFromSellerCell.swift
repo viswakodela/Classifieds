@@ -31,10 +31,14 @@ class OtherPostsFromSellerCell: UITableViewCell {
     var post: Post! {
         didSet {
             guard let sellerID = post.uid else {return}
-            Firestore.firestore().collection("posts").document(sellerID).collection("userPosts").getDocuments { (snap, err) in
-                snap?.documents.forEach({ (snapshot) in
-                    let postDictionary = snapshot.data()
-                    let post = Post(dictionary: postDictionary)
+            
+            Database.database().reference().child("posts").child(sellerID).observe(.value) { (snap) in
+                guard let snapDict = snap.value as? [String : Any] else {return}
+                
+                snapDict.forEach({ (key, value) in
+                    
+                    guard let postDict = value as? [String : Any] else {return}
+                    let post = Post(dictionary: postDict)
                     if post.postId == self.post.postId {
                         return
                     } else if self.posts.contains(where: {$0.postId == post.postId}){
