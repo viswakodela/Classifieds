@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BD04603A21E129360019705D /* ButtomUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD04603921E129360019705D /* ButtomUpController.swift */; };
-		BD04603C21E138DD0019705D /* BottomControllerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD04603B21E138DD0019705D /* BottomControllerCell.swift */; };
 		BD05B49621F69A6500F78914 /* AccountHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD05B49521F69A6500F78914 /* AccountHeader.swift */; };
 		BD21771021DA89D30021890B /* TitleTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD21770F21DA89D30021890B /* TitleTextFieldCell.swift */; };
 		BD23388C21E520AC00C3B7D2 /* FilterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD23388B21E520AC00C3B7D2 /* FilterTableViewCell.swift */; };
@@ -73,8 +71,6 @@
 /* Begin PBXFileReference section */
 		0ED3886017A114BFA40E5D09 /* Pods-Classifieds.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Classifieds.release.xcconfig"; path = "Pods/Target Support Files/Pods-Classifieds/Pods-Classifieds.release.xcconfig"; sourceTree = "<group>"; };
 		1DCBA56CAD8F8E4F7FF9752A /* Pods_Classifieds.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Classifieds.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD04603921E129360019705D /* ButtomUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtomUpController.swift; sourceTree = "<group>"; };
-		BD04603B21E138DD0019705D /* BottomControllerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomControllerCell.swift; sourceTree = "<group>"; };
 		BD05B49521F69A6500F78914 /* AccountHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountHeader.swift; sourceTree = "<group>"; };
 		BD21770F21DA89D30021890B /* TitleTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleTextFieldCell.swift; sourceTree = "<group>"; };
 		BD23388B21E520AC00C3B7D2 /* FilterTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTableViewCell.swift; sourceTree = "<group>"; };
@@ -199,8 +195,6 @@
 				BD294E1121D1A59100976663 /* HomeController.swift */,
 				BD7F2C0D21DD596A006BBC3E /* HomeControllerCell.swift */,
 				BD4D905021E022BA0036D206 /* MapPostsController.swift */,
-				BD04603921E129360019705D /* ButtomUpController.swift */,
-				BD04603B21E138DD0019705D /* BottomControllerCell.swift */,
 				BDC019C521F68913003DBB9D /* Settings */,
 				BD25630521EA9BED00647358 /* Post Details  */,
 			);
@@ -539,14 +533,12 @@
 				BD25631921EC02AF00647358 /* MessageCell.swift in Sources */,
 				BD42D24021E4028A002AC477 /* MenuViewController.swift in Sources */,
 				BD25631421EBD40E00647358 /* PriceLabelCell.swift in Sources */,
-				BD04603C21E138DD0019705D /* BottomControllerCell.swift in Sources */,
 				BD4D905121E022BA0036D206 /* MapPostsController.swift in Sources */,
 				BDF88FE621D2B9B9004277E3 /* CollectionsCell.swift in Sources */,
 				BD6A524E21D409A50094D175 /* TextViewCell.swift in Sources */,
 				BDC019C721F6893B003DBB9D /* AccountTableViewController.swift in Sources */,
 				BD235B5521D543A300B69689 /* NewpostPriceCategoryLocationCell.swift in Sources */,
 				BD42D23D21E3E3B5002AC477 /* BaseViewController.swift in Sources */,
-				BD04603A21E129360019705D /* ButtomUpController.swift in Sources */,
 				BD26C18521E67E45003FFDDD /* NewMessageController.swift in Sources */,
 				BD25630B21EAB76E00647358 /* SellerDetailsCell.swift in Sources */,
 				BD9B740021DEA72D00196DB4 /* PostDetailsController.swift in Sources */,
