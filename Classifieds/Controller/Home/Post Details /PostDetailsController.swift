@@ -103,7 +103,7 @@ class PostDetailsController: UIViewController {
     }
     
     func navigationBarSetup() {
-        navigationController?.navigationBar.prefersLargeTitles = false
+//        navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     func setupLayout() {
@@ -198,7 +198,7 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
             let mapCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.mapViewCellID, for: indexPath) as! MapViewCell
             mapCell.post = post
             mapCell.mapView = self.mapview
-            mapCell.mapView?.delegate = self
+            mapview.delegate = self
             return mapCell
             
         } else if indexPath.section == 6 {

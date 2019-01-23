@@ -39,7 +39,7 @@ class FavoritesController: UICollectionViewController {
     //MARK: - Methods
     func collectionViewAndNavBarSetUp() {
         collectionView.backgroundColor = .white
-        navigationController?.navigationBar.prefersLargeTitles = true
+//        navigationController?.navigationBar.prefersLargeTitles = true
         collectionView.register(HomeControllerCell.self, forCellWithReuseIdentifier: FavoritesController.favoritesCellID)
         collectionView.alwaysBounceVertical = true
         navigationItem.title = "Favorites"
@@ -64,6 +64,21 @@ extension FavoritesController: UICollectionViewDelegateFlowLayout {
         let post = favoritesArray[indexPath.row]
         cell.post = post
         cell.delegate = self
+        
+        cell.backgroundColor = .white
+        cell.contentView.layer.cornerRadius = 4.0
+        cell.contentView.layer.borderWidth = 1.0
+        cell.contentView.layer.borderColor = UIColor.clear.cgColor
+        cell.contentView.layer.masksToBounds = false;
+        
+        cell.layer.shadowColor = UIColor.lightGray.cgColor
+        cell.layer.shadowOffset = CGSize(width:0,height: 0)
+        cell.layer.shadowRadius = 5
+        cell.layer.shadowOpacity = 0.6
+        cell.layer.masksToBounds = false;
+        cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).cgPath
+        
+        
         return cell
     }
     

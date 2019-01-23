@@ -13,7 +13,7 @@ class CategoryCell: UICollectionViewCell {
     let labels: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .white
+        label.textColor = UIColor(red: 64/255, green: 63/255, blue: 63/255, alpha: 1)
         label.font = UIFont.boldSystemFont(ofSize: 14)
         return label
     }()
@@ -39,6 +39,21 @@ class CategoryCell: UICollectionViewCell {
     }
     
     fileprivate func setupViews() {
+        
+        backgroundColor = .white
+        contentView.layer.cornerRadius = 4.0
+        contentView.layer.borderWidth = 1.0
+        contentView.layer.borderColor = UIColor.clear.cgColor
+        contentView.layer.masksToBounds = false;
+        
+        layer.shadowColor = UIColor.lightGray.cgColor
+        layer.shadowOffset = CGSize(width:0,height: 0)
+        layer.shadowRadius = 5
+        layer.shadowOpacity = 0.6
+        layer.masksToBounds = false;
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: contentView.layer.cornerRadius).cgPath
+        
+        
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)

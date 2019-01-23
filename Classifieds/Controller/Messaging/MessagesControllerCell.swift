@@ -11,13 +11,14 @@ import Firebase
 
 class MessagesControllerCell: UITableViewCell {
     
-    var messagesTableController : MessagesTableController?
+    //MARK: - Cell Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         setupLayout()
     }
     
+    //MARK: - Property Observer
     var message: Message! {
         didSet {
             
@@ -26,30 +27,28 @@ class MessagesControllerCell: UITableViewCell {
             
             guard let postId = message.postID else {return}
             
-            Database.database().reference().child("posts").child(postId).observe(.value) { (snap) in
+            Database.database().reference().child("posts").observe(.childAdded) { (snap) in
                 guard let postDict = snap.value as? [String : Any] else {return}
                 let post = Post(dictionary: postDict)
-                
-                guard let imageUrl = post.imageUrl1, let url = URL(string: imageUrl) else {return}
-                
-                self.imageview.sd_setImage(with: url)
                 
                 guard var fromId = self.message.fromId else {return}
                 if post.uid == fromId {
                     fromId = self.message.toId!
                 }
                 
-                Firestore.firestore().collection("users").document(fromId).getDocument(completion: { (snap, err) in
-                    guard let userDict = snap?.data() else {return}
+                Database.database().reference().child("users").child(fromId).observe(.value, with: { (snap) in
+                    guard let userDict = snap.value as? [String : Any] else {return}
                     let user = User(dictionary: userDict)
-                    DispatchQueue.main.async {
-                        self.postTitleLabel.text = "\(String(user.name!)) • \(String(post.title!))"
-                    }
+                    
+                    guard let imageUrl = post.imageUrl1, let url = URL(string: imageUrl) else {return}
+                    self.imageview.sd_setImage(with: url)
+                    self.postTitleLabel.text = "\(String(user.name!)) • \(String(post.title!))"
                 })
             }
         }
     }
     
+    //MARK: - Layout Properties
     
     let imageview: UIImageView = {
         let iv = UIImageView()
@@ -77,6 +76,7 @@ class MessagesControllerCell: UITableViewCell {
         return label
     }()
     
+    //MARK: - Methods
     func setupLayout() {
         addSubview(imageview)
         imageview.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true

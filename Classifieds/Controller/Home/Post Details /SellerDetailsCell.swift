@@ -20,12 +20,9 @@ class SellerDetailsCell: UITableViewCell {
         didSet {
             guard let sellerID = post.uid else {return}
             
-            Firestore.firestore().collection("users").document(sellerID).getDocument { (snap, err) in
-                if let error = err {
-                    print(error.localizedDescription)
-                }
-                guard let snapshot = snap?.data() else {return}
-                let user = User(dictionary: snapshot)
+            Database.database().reference().child("users").child(sellerID).observe(.value) { (snap) in
+                guard let snapDict = snap.value as? [String : Any] else {return}
+                let user = User(dictionary: snapDict)
                 self.sellerNameLabel.text = user.name
                 
                 if user.profileImage == nil {

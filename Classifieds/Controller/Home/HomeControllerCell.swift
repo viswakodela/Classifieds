@@ -49,7 +49,7 @@ class HomeControllerCell: UICollectionViewCell {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.layer.cornerRadius = 5
+//        iv.layer.cornerRadius = 5
         iv.clipsToBounds = true
         iv.isUserInteractionEnabled = true
         iv.translatesAutoresizingMaskIntoConstraints = false
@@ -78,7 +78,6 @@ class HomeControllerCell: UICollectionViewCell {
         label.font = UIFont.systemFont(ofSize: 15)
         label.textColor = .gray
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor(white: 0.5, alpha: 1)
         label.numberOfLines = 0
         return label
     }()
@@ -88,12 +87,25 @@ class HomeControllerCell: UICollectionViewCell {
         label.font = UIFont.boldSystemFont(ofSize: 15)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
-        label.textColor = UIColor(white: 0.8, alpha: 1)
         return label
     }()
     
     //MARK: - Contraiant Methods
     func setupLayout() {
+        
+        
+        backgroundColor = .white
+        contentView.layer.cornerRadius = 4.0
+        contentView.layer.borderWidth = 1.0
+        contentView.layer.borderColor = UIColor.clear.cgColor
+        contentView.layer.masksToBounds = false;
+        
+        layer.shadowColor = UIColor.gray.cgColor
+        layer.shadowOffset = CGSize(width:0,height: 0)
+        layer.shadowRadius = 5
+        layer.shadowOpacity = 0.6
+        layer.masksToBounds = false;
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: contentView.layer.cornerRadius).cgPath
         
         addSubview(imageview)
         imageview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
@@ -113,13 +125,13 @@ class HomeControllerCell: UICollectionViewCell {
 
         addSubview(titleLabel)
         titleLabel.topAnchor.constraint(equalTo: imageview.bottomAnchor).isActive = true
-        titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         titleLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
         addSubview(priceLabel)
         priceLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor).isActive = true
-        priceLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        priceLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
         priceLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         priceLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
@@ -128,8 +140,10 @@ class HomeControllerCell: UICollectionViewCell {
     }
     
     @objc func handleFavorite() {
-        print("Favorited")
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.prepare()
         delegate?.didTapFavorite(cell: self)
+        generator.impactOccurred()
     }
     
     required init?(coder aDecoder: NSCoder) {

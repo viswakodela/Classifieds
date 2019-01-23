@@ -68,13 +68,13 @@ class SearchController: UITableViewController {
     }()
     
     //MARK: -  Methods
-    
     func navigationBarSetup() {
-        
         navigationItem.title = "Search"
         navigationItem.searchController = searchController
         searchController.dimsBackgroundDuringPresentation = false
         searchController.searchBar.delegate = self
+        searchController.searchBar.barStyle = .black
+        
         navigationItem.hidesSearchBarWhenScrolling = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-filter-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleFilter))
     }
@@ -94,19 +94,11 @@ class SearchController: UITableViewController {
         
         if cityFiler == nil {
             
-            Database.database().reference().child("posts").observeSingleEvent(of: .value) { (snap) in
-                guard let allPostsDictionary = snap.value as? [String : Any] else {return}
-                allPostsDictionary.forEach({ (key, value) in
-                    guard let dictionary = value as? [String : Any] else {return}
-                    let post = Post(dictionary: dictionary)
-                    
-                    let savedPosts = UserDefaults.standard.savedPosts()
-                    savedPosts.forEach({ (pst) in
-                        if pst.postId == post.postId {
-                            post.isFavorited = true
-                        }
-                    })
-                    
+            Database.database().reference().child("posts").observe(.childAdded) { (snap) in
+                guard let snapDict = snap.value as? [String : Any] else {return}
+                snapDict.forEach({ (key, value) in
+                    guard let postDict = value as? [String : Any] else {return}
+                    let post = Post(dictionary: postDict)
                     self.posts.append(post)
                 })
                 DispatchQueue.main.async {
@@ -120,6 +112,7 @@ class SearchController: UITableViewController {
             guard let cityFilter = self.cityFiler else {return}
             
             Database.database().reference().child("cities").child(cityFilter).observeSingleEvent(of: .value) { (snap) in
+                
                 guard let postDictionary = snap.value as? [String : Any] else {return}
                 postDictionary.forEach({ (key, value) in
                     guard let dictionary = value as? [String : Any] else {return}
@@ -150,12 +143,23 @@ extension SearchController: UISearchBarDelegate {
         if searchText.isEmpty {
             filteredposts = posts
         } else {
+            
+            let indx = datePriceSegmentedControl.selectedSegmentIndex
             filteredposts = posts.filter({ (post) -> Bool in
                 if let title = post.title {
                     return title.lowercased().contains(searchText.lowercased())
                 }
                 return true
             })
+            if indx == 0 {
+                filteredposts.sort { (p1, p2) -> Bool in
+                    return Double(p1.date!) > Double(p2.date!)
+                }
+            } else {
+                filteredposts.sort { (p1, p2) -> Bool in
+                    return p1.price! < p2.price!
+                }
+            }
         }
         DispatchQueue.main.async {
             self.tableView.reloadData()
@@ -217,14 +221,18 @@ extension SearchController {
     
     @objc func handleRefresh() {
         
-        if self.cityFiler != nil {
-            tableView.refreshControl?.endRefreshing()
-            return
+        let deadLine = DispatchTime.now() + .milliseconds(700)
+        DispatchQueue.main.asyncAfter(deadline: deadLine) {
+            
+            if self.cityFiler != nil {
+                self.refreshControle.endRefreshing()
+                return
+            }
+            
+            self.posts.removeAll()
+            self.fetchPostsfromFirebase()
+            self.refreshControle.endRefreshing()
         }
-        
-        self.posts.removeAll()
-        fetchPostsfromFirebase()
-        tableView.refreshControl?.endRefreshing()
     }
     
     @objc func handleFilter() {
@@ -240,10 +248,20 @@ extension SearchController {
         
         if segmentControl.selectedSegmentIndex == 0 {
             
+            if filteredposts.isEmpty {
+                tableView.reloadData()
+                return
+            }
+            
             self.filteredposts.sort { (p1, p2) -> Bool in
                 return p1.date! > p2.date!
             }
         } else {
+            
+            if filteredposts.isEmpty {
+                tableView.reloadData()
+                return
+            }
             
             self.filteredposts.sort { (p1, p2) -> Bool in
                 return p1.price! < p2.price!

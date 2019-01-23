@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BD04603A21E129360019705D /* ButtomUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD04603921E129360019705D /* ButtomUpController.swift */; };
-		BD04603C21E138DD0019705D /* BottomControllerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD04603B21E138DD0019705D /* BottomControllerCell.swift */; };
+		BD05B49621F69A6500F78914 /* AccountHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD05B49521F69A6500F78914 /* AccountHeader.swift */; };
 		BD21771021DA89D30021890B /* TitleTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD21770F21DA89D30021890B /* TitleTextFieldCell.swift */; };
 		BD23388C21E520AC00C3B7D2 /* FilterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD23388B21E520AC00C3B7D2 /* FilterTableViewCell.swift */; };
 		BD235B5321D43E3F00B69689 /* CustomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD235B5221D43E3F00B69689 /* CustomTextView.swift */; };
@@ -58,7 +57,9 @@
 		BD9B740021DEA72D00196DB4 /* PostDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9B73FF21DEA72D00196DB4 /* PostDetailsController.swift */; };
 		BD9B740221DECDDA00196DB4 /* PostImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9B740121DECDDA00196DB4 /* PostImageCell.swift */; };
 		BDBBA22621D2AF960033A53C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BDBBA22521D2AF960033A53C /* GoogleService-Info.plist */; };
+		BDC019C721F6893B003DBB9D /* AccountTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC019C621F6893B003DBB9D /* AccountTableViewController.swift */; };
 		BDC64BD021EFB1B40002E760 /* MapSearchHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC64BCF21EFB1B40002E760 /* MapSearchHelper.swift */; };
+		BDDEE12521F7BFFE00254283 /* AccountSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDEE12421F7BFFE00254283 /* AccountSettingsCell.swift */; };
 		BDF88FE621D2B9B9004277E3 /* CollectionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF88FE521D2B9B9004277E3 /* CollectionsCell.swift */; };
 		BDF88FE821D2EED9004277E3 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF88FE721D2EED9004277E3 /* LoginController.swift */; };
 		BDF88FEA21D2F012004277E3 /* RegistrationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF88FE921D2F012004277E3 /* RegistrationController.swift */; };
@@ -70,8 +71,7 @@
 /* Begin PBXFileReference section */
 		0ED3886017A114BFA40E5D09 /* Pods-Classifieds.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Classifieds.release.xcconfig"; path = "Pods/Target Support Files/Pods-Classifieds/Pods-Classifieds.release.xcconfig"; sourceTree = "<group>"; };
 		1DCBA56CAD8F8E4F7FF9752A /* Pods_Classifieds.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Classifieds.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD04603921E129360019705D /* ButtomUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtomUpController.swift; sourceTree = "<group>"; };
-		BD04603B21E138DD0019705D /* BottomControllerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomControllerCell.swift; sourceTree = "<group>"; };
+		BD05B49521F69A6500F78914 /* AccountHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountHeader.swift; sourceTree = "<group>"; };
 		BD21770F21DA89D30021890B /* TitleTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleTextFieldCell.swift; sourceTree = "<group>"; };
 		BD23388B21E520AC00C3B7D2 /* FilterTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTableViewCell.swift; sourceTree = "<group>"; };
 		BD235B5221D43E3F00B69689 /* CustomTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextView.swift; sourceTree = "<group>"; };
@@ -123,7 +123,9 @@
 		BD9B73FF21DEA72D00196DB4 /* PostDetailsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailsController.swift; sourceTree = "<group>"; };
 		BD9B740121DECDDA00196DB4 /* PostImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostImageCell.swift; sourceTree = "<group>"; };
 		BDBBA22521D2AF960033A53C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BDC019C621F6893B003DBB9D /* AccountTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTableViewController.swift; sourceTree = "<group>"; };
 		BDC64BCF21EFB1B40002E760 /* MapSearchHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSearchHelper.swift; sourceTree = "<group>"; };
+		BDDEE12421F7BFFE00254283 /* AccountSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsCell.swift; sourceTree = "<group>"; };
 		BDF88FE521D2B9B9004277E3 /* CollectionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsCell.swift; sourceTree = "<group>"; };
 		BDF88FE721D2EED9004277E3 /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 		BDF88FE921D2F012004277E3 /* RegistrationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationController.swift; sourceTree = "<group>"; };
@@ -181,6 +183,8 @@
 			children = (
 				BD294E1321D1A94D00976663 /* SearchController.swift */,
 				BD25631C21ED3DC900647358 /* SearchFilterController.swift */,
+				BD42D24221E42987002AC477 /* FilteredTableView.swift */,
+				BD23388B21E520AC00C3B7D2 /* FilterTableViewCell.swift */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -191,8 +195,7 @@
 				BD294E1121D1A59100976663 /* HomeController.swift */,
 				BD7F2C0D21DD596A006BBC3E /* HomeControllerCell.swift */,
 				BD4D905021E022BA0036D206 /* MapPostsController.swift */,
-				BD04603921E129360019705D /* ButtomUpController.swift */,
-				BD04603B21E138DD0019705D /* BottomControllerCell.swift */,
+				BDC019C521F68913003DBB9D /* Settings */,
 				BD25630521EA9BED00647358 /* Post Details  */,
 			);
 			path = Home;
@@ -299,8 +302,6 @@
 			children = (
 				BD294E1721D1AFD100976663 /* ColletionsViewController.swift */,
 				BDF88FE521D2B9B9004277E3 /* CollectionsCell.swift */,
-				BD42D24221E42987002AC477 /* FilteredTableView.swift */,
-				BD23388B21E520AC00C3B7D2 /* FilterTableViewCell.swift */,
 			);
 			path = Collections;
 			sourceTree = "<group>";
@@ -324,6 +325,16 @@
 				BD42D23E21E3E3BE002AC477 /* Menucontroller */,
 			);
 			path = HomeController;
+			sourceTree = "<group>";
+		};
+		BDC019C521F68913003DBB9D /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				BDC019C621F6893B003DBB9D /* AccountTableViewController.swift */,
+				BD05B49521F69A6500F78914 /* AccountHeader.swift */,
+				BDDEE12421F7BFFE00254283 /* AccountSettingsCell.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		BDF88FEB21D2F557004277E3 /* Utilities */ = {
@@ -502,6 +513,7 @@
 				BD235B7D21D6912C00B69689 /* Post.swift in Sources */,
 				BDC64BD021EFB1B40002E760 /* MapSearchHelper.swift in Sources */,
 				BD294E0221D1A18C00976663 /* TabBarController.swift in Sources */,
+				BD05B49621F69A6500F78914 /* AccountHeader.swift in Sources */,
 				BD235B5321D43E3F00B69689 /* CustomTextView.swift in Sources */,
 				BD294E1621D1ACD000976663 /* FavoritesController.swift in Sources */,
 				BD30520221F2580A009CE53F /* UserDefaults.swift in Sources */,
@@ -510,6 +522,7 @@
 				BD294E1821D1AFD100976663 /* ColletionsViewController.swift in Sources */,
 				BDF88FED21D2F56A004277E3 /* CustomTextFiels.swift in Sources */,
 				BD25630D21EAC03300647358 /* PostDescriptionDetailsCell.swift in Sources */,
+				BDDEE12521F7BFFE00254283 /* AccountSettingsCell.swift in Sources */,
 				BD7F2C0E21DD596A006BBC3E /* HomeControllerCell.swift in Sources */,
 				BD26C18A21E68C10003FFDDD /* Message.swift in Sources */,
 				BD23388C21E520AC00C3B7D2 /* FilterTableViewCell.swift in Sources */,
@@ -520,13 +533,12 @@
 				BD25631921EC02AF00647358 /* MessageCell.swift in Sources */,
 				BD42D24021E4028A002AC477 /* MenuViewController.swift in Sources */,
 				BD25631421EBD40E00647358 /* PriceLabelCell.swift in Sources */,
-				BD04603C21E138DD0019705D /* BottomControllerCell.swift in Sources */,
 				BD4D905121E022BA0036D206 /* MapPostsController.swift in Sources */,
 				BDF88FE621D2B9B9004277E3 /* CollectionsCell.swift in Sources */,
 				BD6A524E21D409A50094D175 /* TextViewCell.swift in Sources */,
+				BDC019C721F6893B003DBB9D /* AccountTableViewController.swift in Sources */,
 				BD235B5521D543A300B69689 /* NewpostPriceCategoryLocationCell.swift in Sources */,
 				BD42D23D21E3E3B5002AC477 /* BaseViewController.swift in Sources */,
-				BD04603A21E129360019705D /* ButtomUpController.swift in Sources */,
 				BD26C18521E67E45003FFDDD /* NewMessageController.swift in Sources */,
 				BD25630B21EAB76E00647358 /* SellerDetailsCell.swift in Sources */,
 				BD9B740021DEA72D00196DB4 /* PostDetailsController.swift in Sources */,

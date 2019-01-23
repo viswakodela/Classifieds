@@ -14,7 +14,6 @@ class MapPostsController: UIViewController {
     
     //MARK: - Contants
     private let locationManager = CLLocationManager()
-    let bottomController = BottomUpController()
     
     //MARK: - Variables
     var posts: [Post] = []
@@ -33,7 +32,13 @@ class MapPostsController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.isHidden = false
+        tabBarController?.tabBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.bottomView.removeFromSuperview()
+        tabBarController?.tabBar.isHidden = false
     }
     
     //MARK: - Layout Properties
@@ -48,12 +53,84 @@ class MapPostsController: UIViewController {
         return mv
     }()
     
-    let bottomView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 10
-        view.clipsToBounds = true
-        return view
+    
+    //MARK: - BottomView Layout Properties
+    let imageview: UIImageView = {
+        let iv = UIImageView()
+        iv.layer.cornerRadius = 5
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        return iv
+    }()
+    
+    let priceLabel : UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 18)
+        label.textColor = UIColor(red: 128/255, green: 128/255, blue: 128/255, alpha: 1)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.sizeToFit()
+        label.text = "klsbaiubiuasb"
+        return label
+    }()
+    
+    let descriptionView: UILabel = {
+        let tv = UILabel()
+        tv.font = UIFont.systemFont(ofSize: 14)
+        tv.numberOfLines = 0
+        tv.textColor = .gray
+        tv.text = "lihsaoubneursv"
+        tv.sizeToFit()
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        return tv
+    }()
+    
+    lazy var bottomView: UIView = {
+        let bottomview = UIView()
+        bottomview.translatesAutoresizingMaskIntoConstraints = false
+        bottomview.layer.cornerRadius = 5
+        bottomview.clipsToBounds = true
+        bottomview.backgroundColor = .white
+        
+        let blurEffect = UIBlurEffect(style: .light)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = bottomview.bounds
+        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        bottomview.addSubview(blurEffectView)
+        
+        bottomview.addSubview(imageview)
+        imageview.topAnchor.constraint(equalTo: bottomview.topAnchor, constant: 8).isActive = true
+        imageview.leadingAnchor.constraint(equalTo: bottomview.leadingAnchor, constant: 8).isActive = true
+        imageview.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        imageview.bottomAnchor.constraint(equalTo: bottomview.bottomAnchor, constant: -8).isActive = true
+        
+        bottomview.addSubview(titleLabel)
+        titleLabel.leadingAnchor.constraint(equalTo: imageview.trailingAnchor, constant: 8).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: imageview.topAnchor).isActive = true
+        titleLabel.trailingAnchor.constraint(equalTo: bottomview.trailingAnchor, constant: -8).isActive = true
+        titleLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
+        bottomview.addSubview(priceLabel)
+        priceLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4).isActive = true
+        priceLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
+        priceLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
+        priceLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        bottomview.addSubview(descriptionView)
+        descriptionView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
+        descriptionView.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
+        descriptionView.bottomAnchor.constraint(equalTo: bottomview.bottomAnchor, constant: -8).isActive = true
+        descriptionView.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 8).isActive = true
+        return bottomview
     }()
     
     //MARK:- Methods
@@ -120,34 +197,11 @@ class MapPostsController: UIViewController {
         mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         view.addSubview(bottomView)
-        self.bottomViewTopAnchor = bottomView.topAnchor.constraint(equalTo: view.bottomAnchor, constant: 8)
+        self.bottomViewTopAnchor = bottomView.topAnchor.constraint(equalTo: view.bottomAnchor)
         bottomViewTopAnchor.isActive = true
         bottomView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         bottomView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        bottomView.heightAnchor.constraint(equalToConstant: view.frame.height / 2).isActive = true
-        
-        setupViewControllers()
-    }
-    
-    func setupViewControllers() {
-        
-        self.postView = bottomController.view
-        postView.translatesAutoresizingMaskIntoConstraints = false
-        postView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePullGesture(gesture:))))
-        postView.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
-        
-        bottomView.addSubview(postView)
-        postView.topAnchor.constraint(equalTo: bottomView.topAnchor, constant: 8).isActive = true
-        postView.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor).isActive = true
-        postView.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor).isActive = true
-        postView.bottomAnchor.constraint(equalTo: bottomView.bottomAnchor).isActive = true
-        
-        addChild(bottomController)
-    }
-    
-    func clearMemoryLeaks() {
-        bottomController.view.removeFromSuperview()
-        bottomController.removeFromParent()
+        bottomView.heightAnchor.constraint(equalToConstant: 164).isActive = true
     }
     
     deinit {
@@ -161,11 +215,20 @@ extension MapPostsController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         
-        guard let title = view.annotation?.title else {return}
+        guard let annotation = view.annotation else {return}
         
-        guard let post = self.posts.first(where: {$0.title == title}) else {return}
-        bottomController.post = post
-        bottomController.tableView.reloadData()
+        let index = self.posts.firstIndex { (post) -> Bool in
+            return post.title == annotation.title
+        }
+        
+        guard let indx = index else {return}
+        self.titleLabel.text = annotation.title ?? "No title for this Post"
+        self.descriptionView.text = posts[indx].description
+        self.priceLabel.text = "$\(posts[indx].price ?? 0)"
+        
+        guard let imageUrl = self.posts[indx].imageUrl1, let url = URL(string: imageUrl) else {return}
+        self.imageview.sd_setImage(with: url)
+        
         pullUp()
     }
 }
@@ -180,31 +243,19 @@ extension MapPostsController: CLLocationManagerDelegate {
 }
 
 //MARK:- Handling Pan Gesture
-
 extension MapPostsController {
     
-    @objc func handlePullGesture(gesture: UIPanGestureRecognizer) {
-        let translation = gesture.translation(in: view)
-        
-        if translation.y < -80 {
-            pullUp()
-        } else {
-            pullDown()
-        }
-    }
-    
     func pullUp() {
-        self.bottomViewTopAnchor.constant = -240
-        performAnimation()
+        performAnimation(constant: -bottomView.frame.size.height - 30)
     }
     
     func pullDown() {
-        self.bottomViewTopAnchor.constant = 0
-        performAnimation()
+        performAnimation(constant: 0)
     }
     
-    func performAnimation() {
+    func performAnimation(constant: CGFloat) {
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            self.bottomViewTopAnchor.constant = constant
             self.view.layoutIfNeeded()
         }, completion: nil)
     }
@@ -212,5 +263,4 @@ extension MapPostsController {
     @objc func handleTap() {
         pullDown()
     }
-    
 }

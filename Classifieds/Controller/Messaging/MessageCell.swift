@@ -11,48 +11,34 @@ import Firebase
 
 class MessageCell: UITableViewCell {
     
+    //MARK: - Cell Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupLayout()
     }
     
+    //MARK: - Property Observer
     var message: Message! {
         didSet {
+            
+            self.messageTextLabel.text = self.message.messageText
             DispatchQueue.main.async {
                 
                 guard let fromId = self.message.fromId else {return}
                 self.setupNameAndImage(userId: fromId)
+            }
                 
                 guard let date = self.message.timeStamp else {return}
                 
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "MMM dd, yyyy"
-                let messageDate = Date.init(timeIntervalSinceReferenceDate: date)
-                let realDate = dateFormatter.string(from: messageDate)
-                self.dateLabel.text = realDate
-            }
+                let messageDate = Date.init(timeIntervalSinceReferenceDate: date).timeAgoDisplay()
+//                let realDate = dateFormatter.string(from: messageDate)
+                self.dateLabel.text = messageDate
         }
     }
     
-    func setupNameAndImage(userId: String) {
-        
-        self.messageTextLabel.text = message.messageText
-        Firestore.firestore().collection("users").document(userId).getDocument { (snap, err) in
-            if let error = err {
-                print(error.localizedDescription)
-            }
-            guard let snapshot = snap?.data() else {return}
-            let user = User(dictionary: snapshot)
-            self.userNameLabel.text = user.name
-            if user.profileImage == nil {
-                self.imageview.image = #imageLiteral(resourceName: "icons8-account-filled-100")
-            }
-            guard let imageUrl = user.profileImage, let url = URL(string: imageUrl) else {return}
-            self.imageview.sd_setImage(with: url)
-        }
-        
-    }
-    
+    //MARK: - Layout Properties
     let imageview: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
@@ -98,12 +84,24 @@ class MessageCell: UITableViewCell {
         return label
     }()
     
+    //MARK: - Methods
+    func setupNameAndImage(userId: String) {
+        
+        Database.database().reference().child("users").child(userId).observe(.value) { (snap) in
+            guard let snapDict = snap.value as? [String : Any] else {return}
+            let user = User(dictionary: snapDict)
+            if user.profileImage == nil {
+                self.imageview.image = #imageLiteral(resourceName: "icons8-account-filled-100")
+            }
+            self.userNameLabel.text = user.name
+            guard let imageUrl = user.profileImage, let url = URL(string: imageUrl) else {return}
+            self.imageview.sd_setImage(with: url)
+        }
+    }
+    
     func setupLayout() {
         
         layer.cornerRadius = 20
-        
-        
-        
         addSubview(imageview)
         imageview.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
         imageview.heightAnchor.constraint(equalToConstant: 50).isActive = true
@@ -137,8 +135,6 @@ class MessageCell: UITableViewCell {
         messageTextLabel.leadingAnchor.constraint(equalTo: userNameLabel.leadingAnchor).isActive = true
         messageTextLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -8).isActive = true
         messageTextLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -8).isActive = true
-        
-        //        self.sendSubviewToBack(bubbleView)
         
     }
     
