@@ -27,15 +27,13 @@ class PostImageCell: UICollectionViewCell {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.layer.cornerRadius = 5
-        iv.clipsToBounds = true
         iv.isUserInteractionEnabled = true
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
     }()
     
     func setupImageView() {
-        
+        layer.cornerRadius = 0
         addSubview(imageview)
         imageview.topAnchor.constraint(equalTo: topAnchor).isActive = true
         imageview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true

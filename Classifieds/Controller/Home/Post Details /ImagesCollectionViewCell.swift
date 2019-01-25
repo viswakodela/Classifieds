@@ -44,7 +44,7 @@ class ImagesCollectionViewCell: UITableViewCell {
         pc.currentPage = 0
         pc.translatesAutoresizingMaskIntoConstraints = false
         pc.currentPageIndicatorTintColor = .white
-        pc.pageIndicatorTintColor = .lightGray
+        pc.pageIndicatorTintColor = .gray
         pc.hidesForSinglePage = true
         return pc
     }()
@@ -94,6 +94,8 @@ extension ImagesCollectionViewCell: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: imageCellID, for: indexPath) as! PostImageCell
         let image = imagesArray[indexPath.item]
+        cell.layer.cornerRadius = 0
+        cell.clipsToBounds = true
         cell.image = image
         cell.imageview.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(handlePinch)))
         return cell

@@ -46,7 +46,7 @@ class PostDetailsController: UIViewController {
     
     
     //MARK: - Property Observer
-    var post: Post! {
+    weak var post: Post! {
         didSet {
             navigationItem.title = post.title
             if post.imageUrl1 != nil {
@@ -152,11 +152,11 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 0 {
             return view.frame.width
         }  else if indexPath.section == 3 { // SellerInformation Section
-            return 70
+            return 50 + 4
         } else if indexPath.section == 5  { // MapView Section
-            return 194
+            return 150
         } else  if indexPath.section == 6 { //Other Posts Section
-            return 140
+            return 132
         }
         return UITableView.automaticDimension
     }
@@ -185,6 +185,7 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
             
             let sellerCell = tableView.dequeueReusableCell(withIdentifier: PostDetailsController.sellerDetailsCellID, for: indexPath) as! SellerDetailsCell
             sellerCell.post = self.post
+            sellerCell.postDetails = self
             return sellerCell
             
         } else if indexPath.section == 4 {
@@ -225,6 +226,13 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 1 {
             tableView.allowsSelection = true
         }
+    }
+    
+    func handleOpenUserImageTap(user: User) {
+        let accountsController = AccountCollectionViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        accountsController.user = user
+        let navController = UINavigationController(rootViewController: accountsController)
+        present(navController, animated: true, completion: nil)
     }
 }
 

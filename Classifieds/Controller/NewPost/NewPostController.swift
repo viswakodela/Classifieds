@@ -54,7 +54,11 @@ class NewPostController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.isHidden = false
+        if (self.post.title != nil) && (post.description != nil) && ((post.categoryName != nil)) && ((post.price != nil)) && (post.imageUrl1 != nil) {
+            navigationItem.rightBarButtonItem?.isEnabled = true
+        } else {
+            navigationItem.rightBarButtonItem?.isEnabled = true
+        }
     }
     
     //MARK: -  Layout Properties
@@ -98,6 +102,8 @@ class NewPostController: UITableViewController {
     
     func navigationBarSetup() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(savePostToFirebase))
+        
+        
     }
     
     func createButton(selector: Selector) -> UIButton {
@@ -124,8 +130,6 @@ class NewPostController: UITableViewController {
                     guard let image = image else {return}
                     thumbnail = image
                 }
-//                guard let data = thumbnail.jpegData(compressionQuality: 0.4) else {return}
-//                guard let newImage = UIImage(data: data) else {return}
                 self.photosArray.append(thumbnail)
             }
             

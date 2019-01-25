@@ -13,7 +13,6 @@ import Firebase
     //MARK: - Protol
 protocol HomeCellDelegate: class {
     func didTapFavorite(cell: HomeControllerCell)
-//    func didTapFavorite(post: Post)
 }
 
 class HomeControllerCell: UICollectionViewCell {
@@ -49,7 +48,6 @@ class HomeControllerCell: UICollectionViewCell {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-//        iv.layer.cornerRadius = 5
         iv.clipsToBounds = true
         iv.isUserInteractionEnabled = true
         iv.translatesAutoresizingMaskIntoConstraints = false
@@ -60,7 +58,7 @@ class HomeControllerCell: UICollectionViewCell {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor(white: 1, alpha: 0.5)
-        view.layer.cornerRadius = 20
+        view.layer.cornerRadius = 17.5
         return view
     }()
     
@@ -114,10 +112,10 @@ class HomeControllerCell: UICollectionViewCell {
         imageview.heightAnchor.constraint(equalToConstant: 160).isActive = true
         
         imageview.addSubview(containerViewForHeart)
-        containerViewForHeart.topAnchor.constraint(equalTo: imageview.topAnchor, constant: 8).isActive = true
-        containerViewForHeart.trailingAnchor.constraint(equalTo: imageview.trailingAnchor, constant: -8).isActive = true
-        containerViewForHeart.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        containerViewForHeart.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        containerViewForHeart.topAnchor.constraint(equalTo: imageview.topAnchor, constant: 4).isActive = true
+        containerViewForHeart.trailingAnchor.constraint(equalTo: imageview.trailingAnchor, constant: -4).isActive = true
+        containerViewForHeart.widthAnchor.constraint(equalToConstant: 35).isActive = true
+        containerViewForHeart.heightAnchor.constraint(equalToConstant: 35).isActive = true
 
         containerViewForHeart.addSubview(favoriteButton)
         favoriteButton.centerXAnchor.constraint(equalTo: containerViewForHeart.centerXAnchor).isActive = true

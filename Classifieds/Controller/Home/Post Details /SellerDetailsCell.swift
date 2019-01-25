@@ -11,18 +11,21 @@ import Firebase
 
 class SellerDetailsCell: UITableViewCell {
     
+    weak var postDetails: PostDetailsController?
+    var user: User?
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupLayout()
     }
     
-    var post: Post! {
+    weak var post: Post! {
         didSet {
             guard let sellerID = post.uid else {return}
             
             Database.database().reference().child("users").child(sellerID).observe(.value) { (snap) in
                 guard let snapDict = snap.value as? [String : Any] else {return}
                 let user = User(dictionary: snapDict)
+                self.user = user
                 self.sellerNameLabel.text = user.name
                 
                 if user.profileImage == nil {
@@ -35,12 +38,14 @@ class SellerDetailsCell: UITableViewCell {
         }
     }
     
-    let sellerImageView: UIImageView = {
+    lazy var sellerImageView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
         iv.layer.cornerRadius = 10
         iv.clipsToBounds = true
+        iv.isUserInteractionEnabled = true
         iv.translatesAutoresizingMaskIntoConstraints = false
+        iv.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleGestureUser)))
         return iv
     }()
     
@@ -55,17 +60,22 @@ class SellerDetailsCell: UITableViewCell {
     func setupLayout() {
         
         addSubview(sellerImageView)
-        sellerImageView.leadingAnchor.constraint(lessThanOrEqualTo: leadingAnchor, constant: 4).isActive = true
-        sellerImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        sellerImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        sellerImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4).isActive = true
+        sellerImageView.topAnchor.constraint(equalTo: topAnchor, constant: 4).isActive = true
+        sellerImageView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         sellerImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
         
         addSubview(sellerNameLabel)
-        sellerNameLabel.leadingAnchor.constraint(equalTo: sellerImageView.trailingAnchor, constant: 4).isActive = true
-        sellerNameLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -4).isActive = true
+        sellerNameLabel.leadingAnchor.constraint(equalTo: sellerImageView.trailingAnchor, constant: 8).isActive = true
+        sellerNameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4).isActive = true
         sellerNameLabel.centerYAnchor.constraint(equalTo: sellerImageView.centerYAnchor).isActive = true
-        sellerNameLabel.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        sellerNameLabel.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
+    }
+    
+    @objc func handleGestureUser() {
+        guard let user = self.user else{return}
+        self.postDetails?.handleOpenUserImageTap(user: user)
     }
     
     required init?(coder aDecoder: NSCoder) {

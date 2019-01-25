@@ -18,7 +18,6 @@ class MapPostsController: UIViewController {
     //MARK: - Variables
     var posts: [Post] = []
     var bottomViewTopAnchor: NSLayoutConstraint!
-    var postView: UIView!
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -54,7 +53,7 @@ class MapPostsController: UIViewController {
     }()
     
     
-    //MARK: - BottomView Layout Properties
+    //MARK:  BottomView Layout Properties
     let imageview: UIImageView = {
         let iv = UIImageView()
         iv.layer.cornerRadius = 5
@@ -99,13 +98,16 @@ class MapPostsController: UIViewController {
         bottomview.translatesAutoresizingMaskIntoConstraints = false
         bottomview.layer.cornerRadius = 5
         bottomview.clipsToBounds = true
-        bottomview.backgroundColor = .white
+//        bottomview.backgroundColor = .white
         
-        let blurEffect = UIBlurEffect(style: .light)
+        let blurEffect = UIBlurEffect(style: .dark)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = bottomview.bounds
-        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
         bottomview.addSubview(blurEffectView)
+        blurEffectView.topAnchor.constraint(equalTo: bottomview.topAnchor).isActive = true
+        blurEffectView.leadingAnchor.constraint(equalTo: bottomview.leadingAnchor).isActive = true
+        blurEffectView.trailingAnchor.constraint(equalTo: bottomview.trailingAnchor).isActive = true
+        blurEffectView.bottomAnchor.constraint(equalTo: bottomview.bottomAnchor).isActive = true
         
         bottomview.addSubview(imageview)
         imageview.topAnchor.constraint(equalTo: bottomview.topAnchor, constant: 8).isActive = true
