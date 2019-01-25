@@ -24,17 +24,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     //MARK: - Variables
     var postsArray = [Post]()
     var previousLocation: CLLocation?
-    
-    // MARK: - State
-    var user: User? {
-        didSet {
-            self.navigationItem.title = user?.name
-        }
-    }
+    var user: User?
     
     var currentLocation: String? {
         didSet {
             print(currentLocation ?? "")
+            self.fetchPostsFromFirebase()
         }
     }
     
@@ -45,7 +40,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         checkLocatinServices()
         collectionViewSetup()
-        addNotificationObservers()
         navigationControllerSetup()
         fetchPostsFromFirebase()
     }
@@ -56,7 +50,13 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationItem.title = user?.name
+        addNotificationObservers()
+        navigationController?.hidesBarsOnSwipe = true
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+//        NotificationCenter.default.removeObserver(self)
     }
     
     
@@ -100,7 +100,13 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-gear-100"), style: .plain, target: self, action: #selector(handleSettings))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-map-100"), style: .plain, target: self, action: #selector(handleMap))
-//        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        navigationController?.navigationBar.isTranslucent = false
+        let titleView = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.width - 32, height: view.frame.height))
+        titleView.text = "Home"
+        titleView.textColor = .white
+        titleView.font = UIFont.systemFont(ofSize: 22)
+        navigationItem.titleView = titleView
     }
     
     func showProgressHUD(error: Error) {
@@ -126,7 +132,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         collectionView.register(HomeControllerCell.self, forCellWithReuseIdentifier: HomeController.cellId)
         collectionView.register(CustomCollectionViewHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader.self, withReuseIdentifier: HomeController.customCollectionViewHeader)
-        collectionView.isPagingEnabled = true
+//        collectionView.isPagingEnabled = true
+        collectionView.isSpringLoaded = true
     }
 }
 
@@ -285,7 +292,7 @@ extension HomeController {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = (view.frame.width - 24) / 2
-        return indexPath.section == 0 ? CGSize(width: view.frame.width, height: 157) : CGSize(width: width, height: 200)
+        return indexPath.section == 0 ? CGSize(width: view.frame.width, height: 157) : CGSize(width: width, height: 205)
     }
     
     func showHomeHeaderPush(catergory: CategoryModel) {
@@ -316,12 +323,6 @@ extension HomeController: CLLocationManagerDelegate {
 
     func checkLocatinServices() {
         checkPermission()
-        setupLocation()
-    }
-
-    func setupLocation() {
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
 
     func checkPermission() {
@@ -337,11 +338,11 @@ extension HomeController: CLLocationManagerDelegate {
     func checkLocationAuthorization() {
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways:
+//            locationManager.requestWhenInUseAuthorization()
+            locationManager.requestLocation()
             break
         case .authorizedWhenInUse:
-            locationManager.startUpdatingLocation()
-            // DO Map Stuff
-            //            mapView.showsUserLocation = true
+            locationManager.requestLocation()
             break
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
@@ -355,7 +356,7 @@ extension HomeController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.first else {return}
-        
+        self.handleRefresh()
         if self.currentLocation == nil {
             let geoCoder = CLGeocoder()
             geoCoder.reverseGeocodeLocation(location) { [weak self](placemarks, err) in
@@ -364,9 +365,14 @@ extension HomeController: CLLocationManagerDelegate {
                 self.previousLocation = placemarks?.first?.location
             }
         } else {
+//            locationManager.pausesLocationUpdatesAutomatically = true
             guard let previouslocation = previousLocation else {return}
             guard  location.distance(from: previouslocation) > 1000 else {return}
         }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error.localizedDescription)
     }
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {

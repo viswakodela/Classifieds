@@ -36,7 +36,6 @@ class FilterPostsController: UICollectionViewController {
     var posts = [Post]() {
         didSet {
             self.filteredPosts = posts
-            self.navigationItem.title = "Your posts"
             self.collectionView.reloadData()
         }
     }
@@ -139,20 +138,11 @@ extension FilterPostsController: UICollectionViewDelegateFlowLayout {
                 return header
             } else {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FilterPostsController.headerCellId, for: indexPath) as! CustomCollectionViewHeader
+                header.headerLabel.text = "City: \(self.city ?? "")"
                 self.headerCell = header
                 header.locationLabel.isHidden = false
-                header.headerLabel.text = "City: \(self.city ?? "")"
-                let locationImage = UIImageView(image: #imageLiteral(resourceName: "icons8-marker-100"))
-                locationImage.contentMode = .scaleAspectFill
-                locationImage.clipsToBounds = true
-                locationImage.isUserInteractionEnabled = true
-                locationImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSearchLocation)))
-                locationImage.translatesAutoresizingMaskIntoConstraints = false
-                header.locationLabel.addSubview(locationImage)
-                locationImage.trailingAnchor.constraint(equalTo: header.locationLabel.trailingAnchor).isActive = true
-                locationImage.topAnchor.constraint(equalTo: header.locationLabel.topAnchor).isActive = true
-                locationImage.widthAnchor.constraint(equalToConstant: 30).isActive = true
-                locationImage.bottomAnchor.constraint(equalTo: header.locationLabel.bottomAnchor).isActive = true
+                header.locationImage.isHidden = false
+                header.locationImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSearchLocation)))
                 return header
             }
         } else {

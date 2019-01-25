@@ -32,6 +32,11 @@ class SearchController: UITableViewController {
         navigationBarSetup()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.hidesBarsOnSwipe = true
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if cityFiler != nil {
@@ -50,7 +55,7 @@ class SearchController: UITableViewController {
         sc.layer.cornerRadius = 5
         sc.clipsToBounds = true
         sc.backgroundColor = .white
-        sc.tintColor = .black
+        sc.tintColor = UIColor(red: 92/255, green: 159/255, blue: 205/255, alpha: 1)
         sc.addTarget(self, action: #selector(handleSegmentedControl), for: .valueChanged)
         return sc
     }()
@@ -69,6 +74,7 @@ class SearchController: UITableViewController {
     
     //MARK: -  Methods
     func navigationBarSetup() {
+        
         navigationItem.title = "Search"
         navigationItem.searchController = searchController
         searchController.dimsBackgroundDuringPresentation = false
@@ -76,7 +82,7 @@ class SearchController: UITableViewController {
         searchController.searchBar.barStyle = .black
         
         navigationItem.hidesSearchBarWhenScrolling = true
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-filter-100").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleFilter))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-filter-100"), style: .plain, target: self, action: #selector(handleFilter))
     }
     
     func tableViewSetup() {
@@ -99,6 +105,14 @@ class SearchController: UITableViewController {
                 snapDict.forEach({ (key, value) in
                     guard let postDict = value as? [String : Any] else {return}
                     let post = Post(dictionary: postDict)
+                    
+                    let savedPosts = UserDefaults.standard.savedPosts()
+                    savedPosts.forEach({ (pst) in
+                        if pst.postId == post.postId {
+                            post.isFavorited = true
+                        }
+                    })
+                    
                     self.posts.append(post)
                 })
                 DispatchQueue.main.async {

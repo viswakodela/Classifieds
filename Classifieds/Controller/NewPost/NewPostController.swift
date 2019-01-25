@@ -41,7 +41,6 @@ class NewPostController: UITableViewController {
     var post = Post()
     var cell: NewpostPriceCategoryLocationCell?
     var user: User?
-    var currentLocation: String?
     
     //MARk: -  Controller Lifecycle
     override func viewDidLoad() {
@@ -59,6 +58,11 @@ class NewPostController: UITableViewController {
         } else {
             navigationItem.rightBarButtonItem?.isEnabled = true
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+//        self.mapView.delegate = nil
     }
     
     //MARK: -  Layout Properties
@@ -126,7 +130,7 @@ class NewPostController: UITableViewController {
                 var thumbnail = UIImage()
                 options.isSynchronous = true
                 
-                manager.requestImage(for: asset, targetSize: CGSize(width: 1600, height: 900), contentMode: .aspectFill, options: options) { (image, info) in
+                manager.requestImage(for: asset, targetSize: CGSize(width: 200, height: 200), contentMode: .aspectFill, options: options) { (image, info) in
                     guard let image = image else {return}
                     thumbnail = image
                 }
@@ -169,16 +173,18 @@ class NewPostController: UITableViewController {
                                 self.image4Button.isEnabled = false
                                 self.image5Button.isEnabled = false
                                 
-                                guard let uploadData = image.jpegData(compressionQuality: 1) else {return}
+                                guard let uploadData = image.jpegData(compressionQuality: 0.6) else {return}
                                 
-                                ref.putData(uploadData, metadata: nil, completion: { (metadata, err) in
+                                ref.putData(uploadData, metadata: nil, completion: { [weak self] (metadata, err) in
+                                    guard let self = self else {return}
                                     hud.dismiss()
                                     if let error = err {
                                         self.showProgressHUD(error: error)
                                         return
                                     }
                                     
-                                    ref.downloadURL(completion: { (url, err) in
+                                    ref.downloadURL(completion: { [weak self] (url, err) in
+                                        guard let self = self else {return}
                                         if let error = err {
                                             self.showProgressHUD(error: error)
                                             return
@@ -405,9 +411,9 @@ extension NewPostController: CLLocationManagerDelegate {
     func checkPermission() {
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
             checkLocationAuthorization()
-            locationManager.startUpdatingLocation()
+//            locationManager.startUpdatingLocation()
         } else {
             print("Check the location Services")
         }
@@ -416,8 +422,10 @@ extension NewPostController: CLLocationManagerDelegate {
     func checkLocationAuthorization() {
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways:
+            locationManager.requestLocation()
             break
         case .authorizedWhenInUse:
+            locationManager.requestLocation()
             // DO Map Stuff
             break
         case .notDetermined:
@@ -431,11 +439,10 @@ extension NewPostController: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.first else {return}
-        let geoCoder = CLGeocoder()
-        geoCoder.reverseGeocodeLocation(location) { (placemarks, err) in
-            self.currentLocation = placemarks?.first?.locality
-        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error.localizedDescription)
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -445,7 +452,6 @@ extension NewPostController: CLLocationManagerDelegate {
 
 //MARK: - Selector objective Functions
 extension NewPostController {
-    
     
     //For title change
     @objc func handleTitleChange(textField: UITextField) {
@@ -503,17 +509,17 @@ extension NewPostController {
         
         let vc = BSImagePickerViewController()
         vc.maxNumberOfSelections = 5
-        self.bs_presentImagePickerController(vc, animated: true, select: { (PHAsset) in
+        self.bs_presentImagePickerController(vc, animated: true, select: {(PHAsset) in
             
         }, deselect: { (PHAsset) in
             
         }, cancel: { ([PHAsset]) in
             
-        }, finish: { (assets) in
+        }, finish: { [weak self] (assets) in
             for i in 0..<assets.count {
-                self.imageAssets.append(assets[i])
+                self?.imageAssets.append(assets[i])
             }
-            self.convertAssetsintoImages()
+            self?.convertAssetsintoImages()
         }, completion: nil)
     }
     
@@ -536,7 +542,6 @@ extension NewPostController: ChooseCategoryDelegate {
 
 //MARK: - MApController Delegate Methods
 extension NewPostController: MapControllerDelegate {
-    
     func didTapRow(title: String, subtitle: String) {
         let indexPath = IndexPath(row: 0, section: 4)
         self.cell = self.tableView.cellForRow(at: indexPath) as? NewpostPriceCategoryLocationCell
@@ -544,4 +549,8 @@ extension NewPostController: MapControllerDelegate {
         self.post.location = "\(title) \(subtitle)"
         self.tableView.reloadData()
     }
+}
+
+extension NewPostController: MKMapViewDelegate {
+    
 }

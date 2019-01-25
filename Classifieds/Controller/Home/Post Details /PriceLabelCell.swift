@@ -145,7 +145,6 @@ extension PriceLabelCell {
             guard let postID = post.postId else {return}
             NotificationCenter.default.post(name: PriceLabelCell.priceLabelUnfavoritesKey, object: nil, userInfo: ["postID" : postID])
             
-            
             guard let data = try? JSONEncoder().encode(savedPosts) else {return}
             UserDefaults.standard.set(data, forKey: UserDefaults.savePostKey)
         }

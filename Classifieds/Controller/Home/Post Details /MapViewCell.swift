@@ -79,18 +79,6 @@ class MapViewCell: UITableViewCell {
         }
     }
     
-//    func clearMapViewMemoryLeak() {
-//        switch mapview.mapType {
-//        case .hybrid :
-//            self.mapview.mapType = .standard
-//            break
-//        case .standard:
-//            self.mapview.mapType = .hybrid
-//        default:
-//            break
-//        }
-//    }
-    
     deinit {
         print("MapCell Deinitialized")
 //        clearMapViewMemoryLeak()

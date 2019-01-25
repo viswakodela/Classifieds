@@ -107,6 +107,10 @@ extension OtherPostsFromSellerCell: UICollectionViewDelegate, UICollectionViewDa
         return posts.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 4
+    }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: otherPostsCell, for: indexPath) as! PostImageCell
         let post = self.posts[indexPath.row]

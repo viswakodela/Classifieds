@@ -34,6 +34,7 @@ class FavoritesController: UICollectionViewController {
         super.viewWillAppear(animated)
         self.favoritesArray.removeAll()
         self.fetchFavoritesFromUserDefaults()
+        
     }
     
     //MARK: - Methods

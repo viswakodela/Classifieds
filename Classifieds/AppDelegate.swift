@@ -20,14 +20,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
         
         UINavigationBar.appearance().isTranslucent = false
-        UINavigationBar.appearance().barTintColor = UIColor(red: 64/255, green: 63/255, blue: 63/255, alpha: 1)
-//        UINavigationBar.appearance().prefersLargeTitles = true
-        UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
+        UINavigationBar.appearance().barTintColor = UIColor(red: 92/255, green: 159/255, blue: 205/255, alpha: 1)
         UINavigationBar.appearance().tintColor = .white
         UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
         
-        
         window = UIWindow()
+        UIApplication.shared.statusBarView?.backgroundColor = UIColor(red: 92/255, green: 159/255, blue: 205/255, alpha: 1)
         window?.makeKeyAndVisible()
         let tabBarController = TabBarControllr()
         window?.rootViewController = tabBarController

@@ -124,3 +124,15 @@ public extension UISearchBar {
         tf.textColor = color
     }
 }
+
+
+extension UIApplication {
+    var statusBarView: UIView? {
+        if responds(to: Selector(("statusBar"))) {
+            return value(forKey: "statusBar") as? UIView
+        }
+        return nil
+    }
+}
+
+

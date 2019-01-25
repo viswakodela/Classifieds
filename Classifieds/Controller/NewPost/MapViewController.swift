@@ -17,7 +17,7 @@ protocol MapControllerDelegate: class {
 }
 
 
-class MapViewController: UIViewController, MKMapViewDelegate {
+class MapViewController: UIViewController {
     
     //MARK: - Cell Identifiers
     private static let locationSearchCellId = "locationSearchCellId"
@@ -37,9 +37,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     lazy var mapView: MKMapView = {
         let mv = MKMapView()
         mv.translatesAutoresizingMaskIntoConstraints = false
-        mv.isZoomEnabled = true
-        mv.isScrollEnabled = true
-        mv.delegate = self
+        mv.isZoomEnabled = false
+        mv.isScrollEnabled = false
         return mv
     }()
     
@@ -67,11 +66,12 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     //MARK:- Methods
     func setupLayout() {
+        
         view.addSubview(mapView)
         mapView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        mapView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5).isActive = true
+        mapView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4).isActive = true
         
         view.addSubview(tableView)
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
@@ -85,7 +85,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             checkLocationAuthorization()
-            locationManager.startUpdatingLocation()
         } else {
             print("Check the location Services")
         }
@@ -156,10 +155,11 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     func checkLocationAuthorization() {
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways:
+            locationManager.requestLocation()
             break
         case .authorizedWhenInUse:
             // DO Map Stuff
-//            mapView.showsUserLocation = true
+            locationManager.requestLocation()
             break
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
@@ -180,6 +180,14 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 //MARK: - Location Manager Delegate
 extension MapViewController: CLLocationManagerDelegate {
     
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        return
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error.localizedDescription)
+    }
+    
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         self.checkLocationAuthorization()
     }
@@ -196,7 +204,6 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: MapViewController.locationSearchCellId, for: indexPath)
         let selectedItem = searchResults[indexPath.row]
         cell.textLabel?.text = "\(selectedItem.title), \(selectedItem.subtitle)"
-//        cell.textLabel?.text = "\(parseAddress(selectedItem: selectedItem))"
         cell.textLabel?.numberOfLines = 0
         return cell
     }
@@ -221,11 +228,13 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
         let searchRequest = MKLocalSearch.Request()
         let searchText = searchResults[indexPath.row]
         searchRequest.naturalLanguageQuery = searchText.title
+        
+        
         searchRequest.region = mapView.region
         
         
         let search = MKLocalSearch(request: searchRequest)
-        search.start { (resp, err) in
+        search.start { [weak self] (resp, err) in
             if let error = err {
                 print(error.localizedDescription)
             }
@@ -237,14 +246,14 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
                 guard let title = item.name else {return}
                 annotations.title = title
                 annotations.subtitle = item.placemark.locality
-                self.mapView.addAnnotation(annotations)
+                self?.mapView.addAnnotation(annotations)
                 let center = CLLocationCoordinate2D(latitude: annotations.coordinate.latitude, longitude: annotations.coordinate.longitude)
                 let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 10000, longitudinalMeters: 10000 )
-                self.mapView.setRegion(region, animated: true)
-                self.dismiss(animated: true, completion: {
+                self?.mapView.setRegion(region, animated: true)
+                self?.dismiss(animated: true, completion: {
                 let title = searchText.title
                 let subtitle = searchText.subtitle
-                self.delegate?.didTapRow(title: title, subtitle: subtitle)
+                self?.delegate?.didTapRow(title: title, subtitle: subtitle)
                 })
             }
         }

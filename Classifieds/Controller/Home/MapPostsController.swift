@@ -100,7 +100,7 @@ class MapPostsController: UIViewController {
         bottomview.clipsToBounds = true
 //        bottomview.backgroundColor = .white
         
-        let blurEffect = UIBlurEffect(style: .dark)
+        let blurEffect = UIBlurEffect(style: .light)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.translatesAutoresizingMaskIntoConstraints = false
         bottomview.addSubview(blurEffectView)
@@ -138,7 +138,7 @@ class MapPostsController: UIViewController {
     //MARK:- Methods
     func setupLocation() {
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
     }
     
     func checkLocatinServices() {
