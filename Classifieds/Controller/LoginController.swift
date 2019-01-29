@@ -25,7 +25,6 @@ class LoginController: UIViewController {
         tf.clipsToBounds = true
         tf.backgroundColor = UIColor(red: 220/255, green: 220/255, blue: 220/255, alpha: 1)
         tf.layer.cornerRadius = 4
-//        tf.addTarget(self, action: #selector(checkIfFormValid), for: .editingChanged)
         tf.layer.borderWidth = 0.5
         return tf
     }()
@@ -39,7 +38,6 @@ class LoginController: UIViewController {
         tf.clipsToBounds = true
         tf.backgroundColor = UIColor(red: 220/255, green: 220/255, blue: 220/255, alpha: 1)
         tf.layer.cornerRadius = 4
-//        tf.addTarget(self, action: #selector(checkIfFormValid), for: .editingChanged)
         tf.layer.borderWidth = 0.5
         return tf
     }()
@@ -62,7 +60,7 @@ class LoginController: UIViewController {
         Auth.auth().signIn(withEmail: email, password: password) { (result, err) in
             
             let tabBarControllr = TabBarControllr()
-            self.navigationController?.pushViewController(tabBarControllr, animated: true)
+            self.present(tabBarControllr, animated: true)
         }
     }
     
@@ -70,7 +68,7 @@ class LoginController: UIViewController {
         let stackView = UIStackView(arrangedSubviews: [emailTextField, passwordTextField, loginButton])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .fillEqually
         stackView.spacing = 8
         
         view.addSubview(stackView)

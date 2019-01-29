@@ -74,14 +74,13 @@ class MapViewCell: UITableViewCell {
             
             guard let mapview = self.mapView else {return}
             mapview.addAnnotation(annotation)
-            
+            mapview.showsUserLocation = false
             mapview.showAnnotations(mapview.annotations, animated: false)
         }
     }
     
     deinit {
         print("MapCell Deinitialized")
-//        clearMapViewMemoryLeak()
     }
     
     required init?(coder aDecoder: NSCoder) {

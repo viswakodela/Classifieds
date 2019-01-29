@@ -221,6 +221,12 @@ extension PostDetailsController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let cell = cell as? MapViewCell {
+            cell.mapView?.showsUserLocation = false
+        }
+    }
+    
     func pushToNewDetailsFromSixthCell(post: Post) {
         let postDetails = PostDetailsController()
         postDetails.post = post

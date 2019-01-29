@@ -36,6 +36,8 @@ class MapPostsController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        mapView.delegate = nil
+        locationManager.delegate = nil
         self.bottomView.removeFromSuperview()
         tabBarController?.tabBar.isHidden = false
     }
@@ -96,9 +98,8 @@ class MapPostsController: UIViewController {
     lazy var bottomView: UIView = {
         let bottomview = UIView()
         bottomview.translatesAutoresizingMaskIntoConstraints = false
-        bottomview.layer.cornerRadius = 5
+        bottomview.layer.cornerRadius = 3
         bottomview.clipsToBounds = true
-//        bottomview.backgroundColor = .white
         
         let blurEffect = UIBlurEffect(style: .light)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
@@ -154,6 +155,7 @@ class MapPostsController: UIViewController {
             mapView.showsUserLocation = true
             break
         case .authorizedAlways:
+            mapView.showsUserLocation = true
             break
         case .restricted:
             break
@@ -248,7 +250,7 @@ extension MapPostsController: CLLocationManagerDelegate {
 extension MapPostsController {
     
     func pullUp() {
-        performAnimation(constant: -bottomView.frame.size.height - 30)
+        performAnimation(constant: -bottomView.frame.size.height - 20)
     }
     
     func pullDown() {

@@ -64,6 +64,11 @@ class MapViewController: UIViewController {
         setupLayout()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.mapView.delegate = nil
+    }
+    
     //MARK:- Methods
     func setupLayout() {
         
@@ -155,11 +160,9 @@ class MapViewController: UIViewController {
     func checkLocationAuthorization() {
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways:
-            locationManager.requestLocation()
             break
         case .authorizedWhenInUse:
             // DO Map Stuff
-            locationManager.requestLocation()
             break
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
@@ -189,7 +192,7 @@ extension MapViewController: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        self.checkLocationAuthorization()
+//        self.checkLocationAuthorization()
     }
 }
 
@@ -224,14 +227,11 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        
         let searchRequest = MKLocalSearch.Request()
         let searchText = searchResults[indexPath.row]
         searchRequest.naturalLanguageQuery = searchText.title
         
-        
         searchRequest.region = mapView.region
-        
         
         let search = MKLocalSearch(request: searchRequest)
         search.start { [weak self] (resp, err) in
@@ -249,6 +249,7 @@ extension MapViewController: UITableViewDelegate, UITableViewDataSource {
                 self?.mapView.addAnnotation(annotations)
                 let center = CLLocationCoordinate2D(latitude: annotations.coordinate.latitude, longitude: annotations.coordinate.longitude)
                 let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 10000, longitudinalMeters: 10000 )
+                self?.mapView.showsUserLocation = false
                 self?.mapView.setRegion(region, animated: true)
                 self?.dismiss(animated: true, completion: {
                 let title = searchText.title

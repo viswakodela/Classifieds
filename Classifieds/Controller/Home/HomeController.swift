@@ -25,11 +25,16 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     var postsArray = [Post]()
     var previousLocation: CLLocation?
     var user: User?
+    var isFinishedPaging = false
+    var numberOfItems = 5
+    var currentPost: String?
     
     var currentLocation: String? {
         didSet {
             print(currentLocation ?? "")
-            self.fetchPostsFromFirebase()
+            self.postsArray.removeAll()
+            guard let location = currentLocation else {return}
+            self.fetchPostwithPaginating(location: location)
         }
     }
     
@@ -41,7 +46,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         checkLocatinServices()
         collectionViewSetup()
         navigationControllerSetup()
-        fetchPostsFromFirebase()
+//        fetchPostsFromFirebase()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -71,7 +76,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 guard let dictionary = value as? [String : Any] else {return}
                 let post = Post(dictionary: dictionary)
                 
-                
                 let savedPosts = UserDefaults.standard.savedPosts()
                 savedPosts.forEach({ (pst) in
                     if pst.postId == post.postId {
@@ -80,10 +84,127 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 })
                 posts.append(post)
             })
-            DispatchQueue.main.async {
-                self?.postsArray = posts
-                self?.collectionView.reloadData()
+            self?.postsArray = posts
+            self?.collectionView.reloadData()
+        }
+    }
+    
+    
+    func fetchPostwithPaginating(location: String) {
+        
+        let ref = Database.database().reference().child("cities").child(location)
+        
+        if currentPost == nil {
+            
+            ref.queryOrderedByKey().queryLimited(toLast: 5).observe(.value) { (snap) in
+                let snapshot = snap.children.allObjects as! [DataSnapshot]
+                
+                guard let firstKey = snapshot.first else {return}
+                
+                if snap.childrenCount > 0 {
+                    
+                    for child in snapshot {
+                        
+                        let item = child.value as! [String : Any]
+                        let post = Post(dictionary: item)
+                        
+                        let savedPosts = UserDefaults.standard.savedPosts()
+                        savedPosts.forEach({ (pst) in
+                            if pst.postId == post.postId {
+                                post.isFavorited = true
+                            }
+                        })
+                        
+                        self.postsArray.append(post)
+                    }
+                    self.currentPost = firstKey.key
+                    self.collectionView.reloadData()
+                }
             }
+        } else {
+            ref.queryOrderedByKey().queryEnding(atValue: currentPost).queryLimited(toLast: 5).observeSingleEvent(of: .value) { (snap) in
+                
+                let snapshot = snap.children.allObjects as! [DataSnapshot]
+                
+                guard let firstKey = snapshot.first else {return}
+                //                let index = self.postsArray.count
+                if snap.children.allObjects.count < 5 {
+                    self.isFinishedPaging = true
+                }
+                if snap.childrenCount > 0 {
+                    for child in snap.children.allObjects as! [DataSnapshot] {
+                        
+                        if child.key != self.currentPost {
+                            let item = child.value as! [String : Any]
+                            let post = Post(dictionary: item)
+                            
+                            let savedPosts = UserDefaults.standard.savedPosts()
+                            savedPosts.forEach({ (pst) in
+                                if pst.postId == post.postId {
+                                    post.isFavorited = true
+                                }
+                            })
+                            self.postsArray.append(post)
+                        }
+                    }
+                    self.currentPost = firstKey.key
+                    self.collectionView.reloadData()
+                }
+            }
+        }
+        
+        
+//        if currentPost == nil {
+//            ref.queryOrderedByKey().queryLimited(toFirst: UInt(numberOfItems)).observe(.value) { (snap) in
+//
+//                let first = snap.children.allObjects.last as! DataSnapshot
+//
+//                if snap.childrenCount > 0 {
+//
+//                    for child in snap.children.allObjects as! [DataSnapshot] {
+//
+//                            let item = child.value as! [String : Any]
+//                            let post = Post(dictionary: item)
+//                            self.postsArray.append(post)
+//                        }
+//                    self.currentPost = first.key
+//                    self.collectionView.reloadData()
+//                }
+//            }
+//        } else {
+//
+//            ref.queryOrderedByKey().queryStarting(atValue: currentPost).queryLimited(toFirst: 5).observeSingleEvent(of: .value) { (snap) in
+//
+//                guard let first = snap.children.allObjects.last as? DataSnapshot else {return}
+////                let index = self.postsArray.count
+//                if snap.children.allObjects.count < 5 {
+//                    self.isFinishedPaging = true
+//                }
+//                if snap.childrenCount > 0 {
+//                    for child in snap.children.allObjects as! [DataSnapshot] {
+//
+//                    if child.key != self.currentPost {
+//                        let item = child.value as! [String : Any]
+//                        let post = Post(dictionary: item)
+//                        self.postsArray.append(post)
+//
+//                        }
+//                    }
+//                    self.currentPost = first.key
+//                    self.collectionView.reloadData()
+//                }
+//            }
+//        }
+    }
+    
+    //MARK: ScrollView method for refetching the data when the maxOffset - contentOffset <= 4
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let contentOffset = scrollView.contentOffset.y
+        let maxOffset = scrollView.contentSize.height - scrollView.frame.size.height
+        
+        
+        if maxOffset - contentOffset <= 4 && isFinishedPaging == false {
+            fetchPostwithPaginating(location: self.currentLocation!)
         }
     }
     
@@ -135,6 +256,10 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
 //        collectionView.isPagingEnabled = true
         collectionView.isSpringLoaded = true
     }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 }
 
 
@@ -162,9 +287,12 @@ extension HomeController {
     
     @objc func handleRefresh() {
         self.postsArray.removeAll()
+        self.isFinishedPaging = false
+        self.currentPost = nil
         let deadLine = DispatchTime.now() + .milliseconds(1000)
         DispatchQueue.main.asyncAfter(deadline: deadLine) {
-            self.fetchPostsFromFirebase()
+//            self.fetchPostsFromFirebase()
+            self.fetchPostwithPaginating(location: self.currentLocation!)
             self.refreshControl.endRefreshing()
         }
     }
@@ -269,7 +397,6 @@ extension HomeController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         if indexPath.section == 0 {
             let header = collectionView.dequeueReusableCell(withReuseIdentifier: HomeController.headeCellId, for: indexPath) as! HomeHeader
             header.homeController = self
@@ -283,6 +410,12 @@ extension HomeController {
             self.collectionView?.reloadData()
             return cell
         }
+        
+        //For Paginating
+//        if indexPath.item == self.postsArray.count - 1 && isFinishedPaging == false {
+//            print("Paginating for Posts")
+//            fetchPostwithPaginating(location: self.currentLocation!)
+//        }
         
         let selectedPost = postsArray[indexPath.row]
         cell.delegate = self
@@ -356,7 +489,7 @@ extension HomeController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.first else {return}
-        self.handleRefresh()
+        
         if self.currentLocation == nil {
             let geoCoder = CLGeocoder()
             geoCoder.reverseGeocodeLocation(location) { [weak self](placemarks, err) in
@@ -419,6 +552,9 @@ extension HomeController: SearchLocationFilterDelegate {
     
     func cityLocation(of city: String) {
         self.currentLocation = city
-        self.fetchPostsFromFirebase()
+        self.postsArray.removeAll()
+        self.isFinishedPaging = false
+        self.currentPost = nil
+        self.fetchPostwithPaginating(location: city)
     }
 }

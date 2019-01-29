@@ -37,13 +37,13 @@ class SearchController: UITableViewController {
         navigationController?.hidesBarsOnSwipe = true
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if cityFiler != nil {
-            posts.removeAll()
-            fetchPostsfromFirebase()
-        }
-    }
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        if cityFiler != nil {
+//            posts.removeAll()
+//            fetchPostsfromFirebase()
+//        }
+//    }
     
     //MARK: - Layout Properties
     
@@ -95,56 +95,109 @@ class SearchController: UITableViewController {
         tableView.separatorStyle = .none
     }
     
-    
+    var currentPost: String?
+    var numberOfItems = 10
+    var isFinishedPaging = false
     func fetchPostsfromFirebase() {
         
         if cityFiler == nil {
             
-            Database.database().reference().child("posts").observe(.childAdded) { (snap) in
-                guard let snapDict = snap.value as? [String : Any] else {return}
-                snapDict.forEach({ (key, value) in
-                    guard let postDict = value as? [String : Any] else {return}
-                    let post = Post(dictionary: postDict)
-                    
-                    let savedPosts = UserDefaults.standard.savedPosts()
-                    savedPosts.forEach({ (pst) in
-                        if pst.postId == post.postId {
-                            post.isFavorited = true
-                        }
-                    })
-                    
-                    self.posts.append(post)
-                })
-                DispatchQueue.main.async {
-                    self.filteredposts = self.posts
-                    self.tableView.reloadData()
-                }
-            }
+//            Database.database().reference().child("posts").observe(.childAdded) { (snap) in
+//                guard let snapDict = snap.value as? [String : Any] else {return}
+//                snapDict.forEach({ (key, value) in
+//                    guard let postDict = value as? [String : Any] else {return}
+//                    let post = Post(dictionary: postDict)
+//                    
+//                    let savedPosts = UserDefaults.standard.savedPosts()
+//                    savedPosts.forEach({ (pst) in
+//                        if pst.postId == post.postId {
+//                            post.isFavorited = true
+//                        }
+//                    })
+//                    self.posts.append(post)
+//                })
+//                DispatchQueue.main.async {
+//                    self.filteredposts = self.posts
+//                    self.tableView.reloadData()
+//                }
+//            }
         } else {
-            self.posts.removeAll()
-            self.filteredposts.removeAll()
-            guard let cityFilter = self.cityFiler else {return}
             
-            Database.database().reference().child("cities").child(cityFilter).observeSingleEvent(of: .value) { (snap) in
-                
-                guard let postDictionary = snap.value as? [String : Any] else {return}
-                postDictionary.forEach({ (key, value) in
-                    guard let dictionary = value as? [String : Any] else {return}
-                    let post = Post(dictionary: dictionary)
+            guard let cityFilter = self.cityFiler else {return}
+            let ref = Database.database().reference().child("cities").child(cityFilter)
+            
+            if currentPost == nil {
+                self.posts.removeAll()
+                self.filteredposts.removeAll()
+                ref.queryOrderedByKey().queryLimited(toFirst: UInt(numberOfItems)).observe(.value) { (snap) in
                     
-                    let savedPosts = UserDefaults.standard.savedPosts()
-                    savedPosts.forEach({ (pst) in
-                        if pst.postId == post.postId {
-                            post.isFavorited = true
+                    let first = snap.children.allObjects.last as! DataSnapshot
+                    
+                    if snap.childrenCount > 0 {
+                        
+                        for child in snap.children.allObjects as! [DataSnapshot] {
+                            
+                            let item = child.value as! [String : Any]
+                            let post = Post(dictionary: item)
+                            
+                            let savedPosts = UserDefaults.standard.savedPosts()
+                            savedPosts.forEach({ (pst) in
+                                if pst.postId == post.postId {
+                                    post.isFavorited = true
+                                }
+                            })
+                            
+                            self.posts.append(post)
                         }
-                    })
-                    self.posts.append(post)
-                })
-                DispatchQueue.main.async {
-                    self.filteredposts = self.posts
-                    self.tableView.reloadData()
+                        self.filteredposts = self.posts
+                        self.currentPost = first.key
+                        self.tableView.reloadData()
+                    }
+                }
+            } else {
+                
+                ref.queryOrderedByKey().queryStarting(atValue: currentPost).queryLimited(toFirst: 10).observeSingleEvent(of: .value) { (snap) in
+                    
+                    guard let first = snap.children.allObjects.last as? DataSnapshot else {return}
+                    let index = self.posts.count
+                    if snap.children.allObjects.count < 10 {
+                        self.isFinishedPaging = true
+                    }
+                    if snap.childrenCount > 0 {
+                        for child in snap.children.allObjects as! [DataSnapshot] {
+                            
+                            if child.key != self.currentPost {
+                                let item = child.value as! [String : Any]
+                                let post = Post(dictionary: item)
+                                
+                                let savedPosts = UserDefaults.standard.savedPosts()
+                                savedPosts.forEach({ (pst) in
+                                    if pst.postId == post.postId {
+                                        post.isFavorited = true
+                                    }
+                                })
+                                
+                                self.posts.append(post)
+                            }
+                        }
+                        self.filteredposts = self.posts
+                        self.currentPost = first.key
+                        self.tableView.reloadData()
+                    }
                 }
             }
+        }
+    }
+    
+    
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        
+        let contentOffset = scrollView.contentOffset.y
+        let maxOffset = scrollView.contentSize.height - scrollView.frame.size.height
+        
+        
+        if maxOffset - contentOffset <= 50 && isFinishedPaging == false {
+            fetchPostsfromFirebase()
         }
     }
 }
@@ -227,6 +280,11 @@ extension SearchController: SearchLocationFilterDelegate {
     
     func cityLocation(of city: String) {
         self.cityFiler = city
+        posts.removeAll()
+        filteredposts.removeAll()
+        isFinishedPaging = false
+        currentPost = nil
+        fetchPostsfromFirebase()
     }
 }
 
@@ -237,14 +295,11 @@ extension SearchController {
         
         let deadLine = DispatchTime.now() + .milliseconds(700)
         DispatchQueue.main.asyncAfter(deadline: deadLine) {
-            
             if self.cityFiler != nil {
+                self.fetchPostsfromFirebase()
                 self.refreshControle.endRefreshing()
                 return
             }
-            
-            self.posts.removeAll()
-            self.fetchPostsfromFirebase()
             self.refreshControle.endRefreshing()
         }
     }

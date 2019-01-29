@@ -173,7 +173,7 @@ class NewPostController: UITableViewController {
                                 self.image4Button.isEnabled = false
                                 self.image5Button.isEnabled = false
                                 
-                                guard let uploadData = image.jpegData(compressionQuality: 0.6) else {return}
+                                guard let uploadData = image.jpegData(compressionQuality: 0.8) else {return}
                                 
                                 ref.putData(uploadData, metadata: nil, completion: { [weak self] (metadata, err) in
                                     guard let self = self else {return}
@@ -221,7 +221,7 @@ class NewPostController: UITableViewController {
     
     @objc fileprivate func savePostToFirebase() {
         
-        if post.title == nil || post.description == nil || post.location == nil {
+        if post.title == nil || post.description == nil || post.location == nil || post.imageUrl1 == nil {
             let hud = JGProgressHUD(style: .dark)
             hud.textLabel.text = "Some fields are empty, Please check your entries"
             hud.show(in: self.view)
@@ -256,7 +256,6 @@ class NewPostController: UITableViewController {
         
         guard let postLocation = post.location else {return}
         
-//        guard let location = MapSearchHelper.searchText(search: postLocation) else {return}
         
         // searchRequest is to get the location of the Post
         let searchRequest = MKLocalSearch.Request()
@@ -272,9 +271,9 @@ class NewPostController: UITableViewController {
                 
                 
 //          Database.database().reference().child("posts").child(postId).updateChildValues(postData)
-        Database.database().reference().child("cities").child(city).child(postId).updateChildValues(postData)
+        Database.database().reference().child("cities").child(city).childByAutoId().updateChildValues(postData)
             
-        Database.database().reference().child("posts").child(uid).child(postId).updateChildValues(postData)
+        Database.database().reference().child("posts").child(uid).childByAutoId().updateChildValues(postData)
             
             self.dismiss(animated: true) {
                 NotificationCenter.default.post(name: NewPostController.newPostUpdateNotification, object: nil)
