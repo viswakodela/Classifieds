@@ -268,9 +268,7 @@ class NewPostController: UITableViewController {
             }
             guard let response = resp?.mapItems else{return}
             guard let city = response.first?.placemark.locality else {return}
-                
-                
-//          Database.database().reference().child("posts").child(postId).updateChildValues(postData)
+            
         Database.database().reference().child("cities").child(city).childByAutoId().updateChildValues(postData)
             
         Database.database().reference().child("posts").child(uid).childByAutoId().updateChildValues(postData)

@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-import InputBarAccessoryView
+//import InputBarAccessoryView
 
 
 class NewMessageController: UITableViewController {

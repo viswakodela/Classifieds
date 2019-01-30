@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-import Lottie
+//import Lottie 
 
 private let reuseIdentifier = "Cell"
 
@@ -22,7 +22,6 @@ class FavoritesController: UICollectionViewController {
     
     //MARK: - Variables
     var favoritesArray = [Post]()
-    var animationView: LOTAnimationView = LOTAnimationView(name: "loading")
 
     //MARK: - Controller Lifecycle
     override func viewDidLoad() {

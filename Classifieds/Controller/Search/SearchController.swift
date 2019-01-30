@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import MapKit
 
-class SearchController: UITableViewController {
+class SearchController: UIViewController {
     
     //MARK: - TableView Cell Identifiers
     private static let searchCellID = "searchCellID"
@@ -22,6 +22,18 @@ class SearchController: UITableViewController {
     var searchController = UISearchController(searchResultsController: nil)
     var refreshControle = UIRefreshControl()
     var cityFiler: String?
+    var priceFilter: Int?
+    
+    var bottomViewTopAnchor: NSLayoutConstraint?
+    var bottomController: BottomViewOfSearchController!
+    
+    lazy var tableView: UITableView = {
+        let tv = UITableView()
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.delegate = self
+        tv.dataSource = self
+        return tv
+    }()
     
     //MARK: - Controller LifeCycle
     override func viewDidLoad() {
@@ -36,6 +48,13 @@ class SearchController: UITableViewController {
         super.viewWillAppear(animated)
         navigationController?.hidesBarsOnSwipe = true
     }
+    
+    
+//    override func viewDidDisappear(_ animated: Bool) {
+//        super.viewDidDisappear(animated)
+//        bottomController.view.removeFromSuperview()
+//        bottomController.removeFromParent()
+//    }
     
 //    override func viewDidAppear(_ animated: Bool) {
 //        super.viewDidAppear(animated)
@@ -82,21 +101,90 @@ class SearchController: UITableViewController {
         searchController.searchBar.barStyle = .black
         
         navigationItem.hidesSearchBarWhenScrolling = true
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-filter-100"), style: .plain, target: self, action: #selector(handleFilter))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-filter-100"), style: .plain, target: self, action: #selector(handleLocationFilter))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Filter", style: .plain, target: self, action: #selector(handleFilter))
     }
     
+    
+    
+    var bottomView: UIView?
+    var tapGesture: UITapGestureRecognizer?
     func tableViewSetup() {
         self.definesPresentationContext = true
         tableView.keyboardDismissMode = .onDrag
+        tableView.backgroundColor = .white
+        view.addSubview(tableView)
+        tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         refreshControle.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         tableView.refreshControl = refreshControle
         tableView.register(FilterTableViewCell.self, forCellReuseIdentifier: SearchController.searchCellID)
         tableView.separatorStyle = .none
+        
+        
+        
+        self.bottomView = UIView()
+        guard let bottomView = self.bottomView else { return }
+        bottomView.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(bottomView)
+        self.bottomViewTopAnchor =  bottomView.topAnchor.constraint(equalTo: view.bottomAnchor, constant: 20)
+        self.bottomViewTopAnchor?.isActive = true
+        bottomView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        bottomView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        bottomView.heightAnchor.constraint(equalToConstant: 400).isActive = true
+        
+        setupFilterViewControllerAtBottom()
+    }
+    
+    @objc func handleFilter() {
+        
+        self.bottomViewTopAnchor?.constant = -300
+        self.tabBarController?.tabBar.isHidden = true
+        self.tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.handleTap))
+        self.tableView.addGestureRecognizer(self.tapGesture!)
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+        
+    }
+    
+    @objc func handleTap() {
+        self.bottomViewTopAnchor?.constant = 0
+        self.tabBarController?.tabBar.isHidden = false
+        guard let tapGesture = self.tapGesture else {return}
+        self.tableView.removeGestureRecognizer(tapGesture)
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+        
+    }
+    
+    func setupFilterViewControllerAtBottom() {
+        
+        self.bottomController = BottomViewOfSearchController()
+        bottomController.delegate = self
+        guard let filterView = bottomController.view else {return}
+        guard let bottomView = self.bottomView else {return}
+        filterView.translatesAutoresizingMaskIntoConstraints = false
+        
+        bottomView.addSubview(filterView)
+        filterView.topAnchor.constraint(equalTo: bottomView.topAnchor).isActive = true
+        filterView.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor).isActive = true
+        filterView.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor).isActive = true
+        filterView.bottomAnchor.constraint(equalTo: bottomView.bottomAnchor).isActive = true
+        
+        addChild(bottomController)
+        
     }
     
     var currentPost: String?
-    var numberOfItems = 10
+    var numberOfItems = 5
     var isFinishedPaging = false
     func fetchPostsfromFirebase() {
         
@@ -160,7 +248,7 @@ class SearchController: UITableViewController {
                     
                     guard let first = snap.children.allObjects.last as? DataSnapshot else {return}
                     let index = self.posts.count
-                    if snap.children.allObjects.count < 10 {
+                    if snap.children.allObjects.count < 5 {
                         self.isFinishedPaging = true
                     }
                     if snap.childrenCount > 0 {
@@ -190,13 +278,12 @@ class SearchController: UITableViewController {
     }
     
     
-    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         let contentOffset = scrollView.contentOffset.y
         let maxOffset = scrollView.contentSize.height - scrollView.frame.size.height
         
         
-        if maxOffset - contentOffset <= 50 && isFinishedPaging == false {
+        if maxOffset - contentOffset <= 4 && isFinishedPaging == false {
             fetchPostsfromFirebase()
         }
     }
@@ -235,9 +322,9 @@ extension SearchController: UISearchBarDelegate {
 }
 
 //MARK:- TableView Delegate Methods
-extension SearchController {
+extension SearchController: UITableViewDelegate, UITableViewDataSource {
     
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = UIView()
         view.addSubview(headerView)
         headerView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
@@ -247,26 +334,27 @@ extension SearchController {
         return view
     }
     
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 40
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredposts.count
     }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 116
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: SearchController.searchCellID, for: indexPath) as! FilterTableViewCell
         let post = self.filteredposts[indexPath.row]
         cell.post = post
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         let postDetails = PostDetailsController()
         let post = filteredposts[indexPath.row]
         postDetails.post = post
@@ -304,7 +392,7 @@ extension SearchController {
         }
     }
     
-    @objc func handleFilter() {
+    @objc func handleLocationFilter() {
         
         let searchFilter = SearchFilterController()
         searchFilter.delegate = self
@@ -344,6 +432,36 @@ extension SearchController {
                 indexPathToAnimate.append(indexPath)
             }
             self.tableView.reloadRows(at: indexPathToAnimate, with: .fade)
+        }
+    }
+}
+
+extension SearchController: BottomViewDelegate {
+    
+    func userFilteredOptions(price: Int) {
+        
+        self.posts.removeAll()
+        self.filteredposts.removeAll()
+        
+        self.priceFilter = price
+        guard let location = self.cityFiler else {return}
+        let ref = Database.database().reference().child("cities").child(location)
+        
+        ref.observe(.value) { (snap) in
+            guard let snapDict = snap.value as? [String : Any] else { return }
+            
+            snapDict.forEach({ (key, value) in
+                guard let postDictionary = value as? [String : Any] else {return}
+                let post = Post(dictionary: postDictionary)
+                self.posts.append(post)
+            })
+            
+            self.posts.forEach({ (post) in
+                if post.price! <= price {
+                    self.filteredposts.append(post)
+                }
+            })
+            self.tableView.reloadData()
         }
     }
 }

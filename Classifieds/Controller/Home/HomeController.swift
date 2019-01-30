@@ -46,7 +46,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         checkLocatinServices()
         collectionViewSetup()
         navigationControllerSetup()
-//        fetchPostsFromFirebase()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -198,7 +197,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     //MARK: ScrollView method for refetching the data when the maxOffset - contentOffset <= 4
-    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         let contentOffset = scrollView.contentOffset.y
         let maxOffset = scrollView.contentSize.height - scrollView.frame.size.height
         
@@ -207,6 +206,15 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             fetchPostwithPaginating(location: self.currentLocation!)
         }
     }
+//    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+//        let contentOffset = scrollView.contentOffset.y
+//        let maxOffset = scrollView.contentSize.height - scrollView.frame.size.height
+//
+//
+//        if maxOffset - contentOffset <= 4 && isFinishedPaging == false {
+//            fetchPostwithPaginating(location: self.currentLocation!)
+//        }
+//    }
     
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateNewPost), name: NewPostController.newPostUpdateNotification, object: nil)
@@ -430,8 +438,8 @@ extension HomeController {
     
     func showHomeHeaderPush(catergory: CategoryModel) {
         let filteredPostsController = FilterPostsController(collectionViewLayout: UICollectionViewFlowLayout())
-        filteredPostsController.posts = self.postsArray
         filteredPostsController.category = catergory
+        filteredPostsController.posts = self.postsArray
         filteredPostsController.city = self.currentLocation
         navigationController?.pushViewController(filteredPostsController, animated: true)
     }

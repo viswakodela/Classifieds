@@ -44,6 +44,12 @@
 		BD30520621F27519009CE53F /* save.json in Resources */ = {isa = PBXBuildFile; fileRef = BD30520521F27519009CE53F /* save.json */; };
 		BD30522821F298B2009CE53F /* loading.json in Resources */ = {isa = PBXBuildFile; fileRef = BD30522721F298B1009CE53F /* loading.json */; };
 		BD30522A21F29C25009CE53F /* like.json in Resources */ = {isa = PBXBuildFile; fileRef = BD30522921F29C25009CE53F /* like.json */; };
+		BD37236E2202082D00EB4367 /* BottomViewOfSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD37236D2202082D00EB4367 /* BottomViewOfSearchController.swift */; };
+		BD3723722202173600EB4367 /* LocationCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD3723712202173600EB4367 /* LocationCell.xib */; };
+		BD3723742202180900EB4367 /* LocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3723732202180900EB4367 /* LocationCell.swift */; };
+		BD3723772202279F00EB4367 /* PriceCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD3723762202279F00EB4367 /* PriceCell.xib */; };
+		BD37237922022BB100EB4367 /* PriceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD37237822022BB100EB4367 /* PriceCell.swift */; };
+		BD37237B2202470E00EB4367 /* SaveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD37237A2202470E00EB4367 /* SaveCell.swift */; };
 		BD42D23B21E3DBD7002AC477 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D23A21E3DBD7002AC477 /* Extensions.swift */; };
 		BD42D23D21E3E3B5002AC477 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D23C21E3E3B5002AC477 /* BaseViewController.swift */; };
 		BD42D24021E4028A002AC477 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD42D23F21E4028A002AC477 /* MenuViewController.swift */; };
@@ -112,6 +118,12 @@
 		BD30520521F27519009CE53F /* save.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = save.json; sourceTree = "<group>"; };
 		BD30522721F298B1009CE53F /* loading.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = loading.json; sourceTree = "<group>"; };
 		BD30522921F29C25009CE53F /* like.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = like.json; sourceTree = "<group>"; };
+		BD37236D2202082D00EB4367 /* BottomViewOfSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomViewOfSearchController.swift; sourceTree = "<group>"; };
+		BD3723712202173600EB4367 /* LocationCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocationCell.xib; sourceTree = "<group>"; };
+		BD3723732202180900EB4367 /* LocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCell.swift; sourceTree = "<group>"; };
+		BD3723762202279F00EB4367 /* PriceCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PriceCell.xib; sourceTree = "<group>"; };
+		BD37237822022BB100EB4367 /* PriceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceCell.swift; sourceTree = "<group>"; };
+		BD37237A2202470E00EB4367 /* SaveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveCell.swift; sourceTree = "<group>"; };
 		BD42D23A21E3DBD7002AC477 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		BD42D23C21E3E3B5002AC477 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		BD42D23F21E4028A002AC477 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
@@ -186,6 +198,7 @@
 			isa = PBXGroup;
 			children = (
 				BD294E1321D1A94D00976663 /* SearchController.swift */,
+				BD372375220220D600EB4367 /* BottomViewController */,
 				BD25631C21ED3DC900647358 /* SearchFilterController.swift */,
 				BD42D24221E42987002AC477 /* FilteredTableView.swift */,
 				BD23388B21E520AC00C3B7D2 /* FilterTableViewCell.swift */,
@@ -291,6 +304,19 @@
 				BD26C18921E68C10003FFDDD /* Message.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		BD372375220220D600EB4367 /* BottomViewController */ = {
+			isa = PBXGroup;
+			children = (
+				BD37236D2202082D00EB4367 /* BottomViewOfSearchController.swift */,
+				BD3723732202180900EB4367 /* LocationCell.swift */,
+				BD3723712202173600EB4367 /* LocationCell.xib */,
+				BD37237822022BB100EB4367 /* PriceCell.swift */,
+				BD3723762202279F00EB4367 /* PriceCell.xib */,
+				BD37237A2202470E00EB4367 /* SaveCell.swift */,
+			);
+			path = BottomViewController;
 			sourceTree = "<group>";
 		};
 		BD42D23E21E3E3BE002AC477 /* Menucontroller */ = {
@@ -439,6 +465,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD294E0A21D1A18E00976663 /* LaunchScreen.storyboard in Resources */,
+				BD3723722202173600EB4367 /* LocationCell.xib in Resources */,
+				BD3723772202279F00EB4367 /* PriceCell.xib in Resources */,
 				BD30522A21F29C25009CE53F /* like.json in Resources */,
 				BD30520621F27519009CE53F /* save.json in Resources */,
 				BD30522821F298B2009CE53F /* loading.json in Resources */,
@@ -464,17 +492,16 @@
 				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
-				"${BUILT_PRODUCTS_DIR}/InputBarAccessoryView/InputBarAccessoryView.framework",
 				"${BUILT_PRODUCTS_DIR}/JGProgressHUD/JGProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${BUILT_PRODUCTS_DIR}/YNDropDownMenu/YNDropDownMenu.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
-				"${BUILT_PRODUCTS_DIR}/lottie-ios/Lottie.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -485,17 +512,16 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/InputBarAccessoryView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JGProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YNDropDownMenu.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Lottie.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -549,6 +575,7 @@
 				BD72432A21FA5614006CEDFB /* FilterPostCell.swift in Sources */,
 				BD7F2C1021DD5BA0006BBC3E /* CustomCollectionViewHeader.swift in Sources */,
 				BD25630921EAAAC100647358 /* TitleForPostDetailCell.swift in Sources */,
+				BD37237B2202470E00EB4367 /* SaveCell.swift in Sources */,
 				BD26C18C21E7C332003FFDDD /* MessagesTableController.swift in Sources */,
 				BD6A524C21D406A10094D175 /* CustomLabel.swift in Sources */,
 				BD25631921EC02AF00647358 /* MessageCell.swift in Sources */,
@@ -557,8 +584,10 @@
 				BD4D905121E022BA0036D206 /* MapPostsController.swift in Sources */,
 				BDF88FE621D2B9B9004277E3 /* CollectionsCell.swift in Sources */,
 				BD6A524E21D409A50094D175 /* TextViewCell.swift in Sources */,
+				BD37237922022BB100EB4367 /* PriceCell.swift in Sources */,
 				BDC019C721F6893B003DBB9D /* AccountCollectionViewController.swift in Sources */,
 				BD235B5521D543A300B69689 /* NewpostPriceCategoryLocationCell.swift in Sources */,
+				BD37236E2202082D00EB4367 /* BottomViewOfSearchController.swift in Sources */,
 				BD42D23D21E3E3B5002AC477 /* BaseViewController.swift in Sources */,
 				BD26C18521E67E45003FFDDD /* NewMessageController.swift in Sources */,
 				BD25630B21EAB76E00647358 /* SellerDetailsCell.swift in Sources */,
@@ -571,6 +600,7 @@
 				BD25630F21EAC27700647358 /* MapViewCell.swift in Sources */,
 				BD6A524721D400220094D175 /* NewPostController.swift in Sources */,
 				BD294E0021D1A18C00976663 /* AppDelegate.swift in Sources */,
+				BD3723742202180900EB4367 /* LocationCell.swift in Sources */,
 				BD294E1C21D1B60700976663 /* HomeHeader.swift in Sources */,
 				BD294E1221D1A59100976663 /* HomeController.swift in Sources */,
 				BD26C18E21E7EEE0003FFDDD /* MessagesControllerCell.swift in Sources */,
