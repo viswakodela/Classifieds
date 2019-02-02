@@ -11,11 +11,13 @@ import Firebase
 
 class FilterPostsController: UICollectionViewController {
     
+    //MARK: -  Cell Identifiers
     private static let filterPostCellID = "filterPostCellID"
     private static let headerCellId = "filterPostHeaderCell"
     private static let footerCellId = "footerCellId"
     private static let filterPriceDateLocationCell = "filterPriceDateLocationCell"
     
+    //MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLayout()
@@ -25,8 +27,10 @@ class FilterPostsController: UICollectionViewController {
         super.viewWillAppear(animated)
     }
     
+    //MARK: - Variables
     weak var headerCell: CustomCollectionViewHeader?
     var city: String?
+    
     var posts = [Post]() {
         didSet {
             posts.forEach { (post) in
@@ -51,6 +55,8 @@ class FilterPostsController: UICollectionViewController {
         }
     }
     
+    
+    //MARK: -  Methods
     func fetchPostsFromFirebase(city: String) {
         
 //        let ref = Database.database().reference().child("cities").child(city)
@@ -134,6 +140,7 @@ class FilterPostsController: UICollectionViewController {
     }
 }
 
+//MARK: -  CollectionView layout Delegate Methods
 extension FilterPostsController: UICollectionViewDelegateFlowLayout {
     
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -210,6 +217,7 @@ extension FilterPostsController: UICollectionViewDelegateFlowLayout {
     
 }
 
+//MARK: -  SearchLocationFilter Delegate
 extension FilterPostsController: SearchLocationFilterDelegate {
     
     func cityLocation(of city: String) {

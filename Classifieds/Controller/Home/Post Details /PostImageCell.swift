@@ -23,6 +23,12 @@ class PostImageCell: UICollectionViewCell {
         }
     }
     
+    var imagesFromNewPost: UIImage? {
+        didSet {
+            self.imageview.image = imagesFromNewPost
+        }
+    }
+    
     let imageview: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill

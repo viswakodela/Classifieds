@@ -10,11 +10,13 @@ import UIKit
 
 class AccountSettingsCell: UICollectionViewCell {
     
+    //MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
     }
     
+    //MARK: - LAyout Properties
     let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -33,6 +35,7 @@ class AccountSettingsCell: UICollectionViewCell {
         return tv
     }()
     
+    //MARK: -  Methods
     func setupView() {
         backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 1)
         addSubview(titleLabel)

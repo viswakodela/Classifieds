@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CategoryModel {
+struct CategoryModel {
     
     var image: UIImage?
     var categoryName: String?

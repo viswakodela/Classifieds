@@ -14,9 +14,6 @@ import Photos
 import MapKit
 
 
-class CustiomeImagePicker: UIImagePickerController {
-    var button: UIButton?
-}
 
 class NewPostController: UITableViewController {
     
@@ -41,6 +38,7 @@ class NewPostController: UITableViewController {
     var post = Post()
     var cell: NewpostPriceCategoryLocationCell?
     var user: User?
+    var currentLocation: String?
     
     //MARk: -  Controller Lifecycle
     override func viewDidLoad() {
@@ -53,16 +51,7 @@ class NewPostController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if (self.post.title != nil) && (post.description != nil) && ((post.categoryName != nil)) && ((post.price != nil)) && (post.imageUrl1 != nil) {
-            navigationItem.rightBarButtonItem?.isEnabled = true
-        } else {
-            navigationItem.rightBarButtonItem?.isEnabled = true
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-//        self.mapView.delegate = nil
+        navigationController?.navigationBar.isHidden = false
     }
     
     //MARK: -  Layout Properties
@@ -106,8 +95,6 @@ class NewPostController: UITableViewController {
     
     func navigationBarSetup() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(savePostToFirebase))
-        
-        
     }
     
     func createButton(selector: Selector) -> UIButton {
@@ -130,14 +117,16 @@ class NewPostController: UITableViewController {
                 var thumbnail = UIImage()
                 options.isSynchronous = true
                 
-                manager.requestImage(for: asset, targetSize: CGSize(width: 200, height: 200), contentMode: .aspectFill, options: options) { (image, info) in
+                manager.requestImage(for: asset, targetSize: CGSize(width: 1600, height: 900), contentMode: .aspectFill, options: options) { (image, info) in
                     guard let image = image else {return}
                     thumbnail = image
                 }
+                //                guard let data = thumbnail.jpegData(compressionQuality: 0.4) else {return}
+                //                guard let newImage = UIImage(data: data) else {return}
                 self.photosArray.append(thumbnail)
             }
             
-            DispatchQueue.main.async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 
                 var buttonsArray = [self.image1Button, self.image2Button, self.image3Button, self.image4Button, self.image5Button]
                 
@@ -146,45 +135,55 @@ class NewPostController: UITableViewController {
                     for button in buttonsArray {
                         if let imageIndex = self.photosArray.firstIndex(of: image), let buttonIndex = buttonsArray.firstIndex(of: button) {
                             
+                            let hud = JGProgressHUD(style: .dark)
                             if imageIndex == buttonIndex {
-                                buttonsArray[buttonIndex].setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
                                 
-                                let count = self.photosArray.count
+                                DispatchQueue.main.async {
+                                    buttonsArray[buttonIndex].setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
                                 
-                                for element in 0...count - 1 {
-                                    buttonsArray.forEach({ (but) in
-                                        if element > count {
-                                            return
-                                        }
-                                        buttonsArray[element].isHidden = false
-                                    })
+                                    let count = self.photosArray.count
+                                
+                                    for element in 0...count - 1 {
+                                        buttonsArray.forEach({ (but) in
+                                            if element > count {
+                                                return
+                                            }
+                                            buttonsArray[element].isHidden = false
+                                        })
+                                    }
+                                    
+                                    self.image1Button.isEnabled = false
+                                    self.image2Button.isEnabled = false
+                                    self.image3Button.isEnabled = false
+                                    self.image4Button.isEnabled = false
+                                    self.image5Button.isEnabled = false
+                                    
+                                    hud.textLabel.text = "Uploading Image"
+                                    hud.show(in: self.view)
                                 }
                                 
                                 let fileName = UUID().uuidString
                                 let ref = Storage.storage().reference().child("postImages").child(fileName)
                                 
-                                let hud = JGProgressHUD(style: .dark)
-                                hud.textLabel.text = "Uploading Image"
-                                hud.show(in: self.view)
                                 
-                                self.image1Button.isEnabled = false
-                                self.image2Button.isEnabled = false
-                                self.image3Button.isEnabled = false
-                                self.image4Button.isEnabled = false
-                                self.image5Button.isEnabled = false
                                 
-                                guard let uploadData = image.jpegData(compressionQuality: 0.8) else {return}
+                                
+                                
+                                
+                                guard let uploadData = image.jpegData(compressionQuality: 0.7) else {return}
                                 
                                 ref.putData(uploadData, metadata: nil, completion: { [weak self] (metadata, err) in
+                                    
+                                    DispatchQueue.main.async {
+                                        hud.dismiss()
+                                    }
                                     guard let self = self else {return}
-                                    hud.dismiss()
                                     if let error = err {
                                         self.showProgressHUD(error: error)
                                         return
                                     }
                                     
-                                    ref.downloadURL(completion: { [weak self] (url, err) in
-                                        guard let self = self else {return}
+                                    ref.downloadURL(completion: { (url, err) in
                                         if let error = err {
                                             self.showProgressHUD(error: error)
                                             return
@@ -230,7 +229,7 @@ class NewPostController: UITableViewController {
         }
         
         guard let uid = user?.uid else {return}
-//        self.post.date = Date.timeIntervalSinceReferenceDate
+        //        self.post.date = Date.timeIntervalSinceReferenceDate
         let postId = UUID().uuidString
         self.post.postId = postId
         
@@ -256,6 +255,7 @@ class NewPostController: UITableViewController {
         
         guard let postLocation = post.location else {return}
         
+        //        guard let location = MapSearchHelper.searchText(search: postLocation) else {return}
         
         // searchRequest is to get the location of the Post
         let searchRequest = MKLocalSearch.Request()
@@ -376,7 +376,7 @@ extension NewPostController {
             return cell
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: NewPostController.newPostPriceCategoryImagesCellId, for: indexPath) as! NewpostPriceCategoryLocationCell
-            cell.textField.addTarget(self, action: #selector(handleCategoryButton), for: .allEvents) 
+            cell.textField.addTarget(self, action: #selector(handleCategoryButton), for: .allEvents)
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: NewPostController.newPostPriceCategoryImagesCellId, for: indexPath) as! NewpostPriceCategoryLocationCell
@@ -410,7 +410,7 @@ extension NewPostController: CLLocationManagerDelegate {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
             checkLocationAuthorization()
-//            locationManager.startUpdatingLocation()
+            //            locationManager.startUpdatingLocation()
         } else {
             print("Check the location Services")
         }
@@ -445,10 +445,12 @@ extension NewPostController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         self.checkLocationAuthorization()
     }
+
 }
 
 //MARK: - Selector objective Functions
 extension NewPostController {
+    
     
     //For title change
     @objc func handleTitleChange(textField: UITextField) {
@@ -506,17 +508,17 @@ extension NewPostController {
         
         let vc = BSImagePickerViewController()
         vc.maxNumberOfSelections = 5
-        self.bs_presentImagePickerController(vc, animated: true, select: {(PHAsset) in
+        self.bs_presentImagePickerController(vc, animated: true, select: { (PHAsset) in
             
         }, deselect: { (PHAsset) in
             
         }, cancel: { ([PHAsset]) in
             
-        }, finish: { [weak self] (assets) in
+        }, finish: { (assets) in
             for i in 0..<assets.count {
-                self?.imageAssets.append(assets[i])
+                self.imageAssets.append(assets[i])
             }
-            self?.convertAssetsintoImages()
+            self.convertAssetsintoImages()
         }, completion: nil)
     }
     
@@ -539,6 +541,7 @@ extension NewPostController: ChooseCategoryDelegate {
 
 //MARK: - MApController Delegate Methods
 extension NewPostController: MapControllerDelegate {
+    
     func didTapRow(title: String, subtitle: String) {
         let indexPath = IndexPath(row: 0, section: 4)
         self.cell = self.tableView.cellForRow(at: indexPath) as? NewpostPriceCategoryLocationCell
@@ -546,8 +549,4 @@ extension NewPostController: MapControllerDelegate {
         self.post.location = "\(title) \(subtitle)"
         self.tableView.reloadData()
     }
-}
-
-extension NewPostController: MKMapViewDelegate {
-    
 }

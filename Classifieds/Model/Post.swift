@@ -44,6 +44,7 @@ class Post:  Codable {
         self.imageUrl3 = dictionary["imageUrl3"] as? String
         self.imageUrl4 = dictionary["imageUrl4"] as? String
         self.imageUrl5 = dictionary["imageUrl5"] as? String
+        self.imagesArray = dictionary["imagesArray"] as? [String]
         self.date = dictionary["date"] as? Double
     }
 }

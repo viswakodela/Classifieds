@@ -226,7 +226,7 @@ class SearchController: UIViewController {
                         for child in snap.children.allObjects as! [DataSnapshot] {
                             
                             let item = child.value as! [String : Any]
-                            let post = Post(dictionary: item)
+                            var post = Post(dictionary: item)
                             
                             let savedPosts = UserDefaults.standard.savedPosts()
                             savedPosts.forEach({ (pst) in
@@ -443,7 +443,7 @@ extension SearchController: BottomViewDelegate {
         self.posts.removeAll()
         self.filteredposts.removeAll()
         
-        self.priceFilter = price
+//        self.priceFilter = price
         guard let location = self.cityFiler else {return}
         let ref = Database.database().reference().child("cities").child(location)
         

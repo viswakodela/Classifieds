@@ -18,7 +18,7 @@ class AccountCollectionViewController: UICollectionViewController {
     private static let logOutButtonCell = "logOutButtonCell"
     
     //MARK: - Variables
-    weak var user: User?
+    var user: User?
     var logOutButton: UIButton?
     var userImageView: UIImageView?
     
@@ -62,9 +62,6 @@ class AccountCollectionViewController: UICollectionViewController {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icons8-cancel-100"), style: .plain, target: self, action: #selector(handleDismiss))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(handleSaveUser))
-        
-        
-        
     }
 }
 
@@ -233,7 +230,12 @@ extension AccountCollectionViewController: UIImagePickerControllerDelegate, UINa
         
         guard let uploadData = originalImage?.jpegData(compressionQuality: 0.7) else {return}
         
+        let hud = JGProgressHUD(style: .dark)
+        hud.textLabel.text = "Uploading Image"
+        hud.show(in: self.view)
+        
         ref.putData(uploadData, metadata: nil) { [weak self](data, err) in
+            hud.dismiss()
             if let error = err {
                 print(error.localizedDescription)
             }
@@ -245,5 +247,4 @@ extension AccountCollectionViewController: UIImagePickerControllerDelegate, UINa
         }
         dismiss(animated: true)
     }
-    
 }

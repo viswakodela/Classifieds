@@ -46,6 +46,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         checkLocatinServices()
         collectionViewSetup()
         navigationControllerSetup()
+        addNotificationObservers()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -54,8 +55,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        addNotificationObservers()
-        navigationController?.hidesBarsOnSwipe = true
+//        addNotificationObservers()
+//        navigationController?.hidesBarsOnSwipe = true
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -197,7 +198,17 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     //MARK: ScrollView method for refetching the data when the maxOffset - contentOffset <= 4
-    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+//    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+//        let contentOffset = scrollView.contentOffset.y
+//        let maxOffset = scrollView.contentSize.height - scrollView.frame.size.height
+//        
+//        
+//        if maxOffset - contentOffset <= 4 && isFinishedPaging == false {
+//            fetchPostwithPaginating(location: self.currentLocation!)
+//        }
+//    }
+    
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         let contentOffset = scrollView.contentOffset.y
         let maxOffset = scrollView.contentSize.height - scrollView.frame.size.height
         
@@ -206,6 +217,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             fetchPostwithPaginating(location: self.currentLocation!)
         }
     }
+    
 //    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
 //        let contentOffset = scrollView.contentOffset.y
 //        let maxOffset = scrollView.contentSize.height - scrollView.frame.size.height
@@ -246,7 +258,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         hud.dismiss(afterDelay: 4)
     }
     
-    
     fileprivate func collectionViewSetup() {
         
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
@@ -266,6 +277,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     deinit {
+        print("NewPost Controller Deiniitialized")
         NotificationCenter.default.removeObserver(self)
     }
 }

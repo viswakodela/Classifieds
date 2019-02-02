@@ -16,7 +16,7 @@ class MessagesTableController: UITableViewController {
     
     //MARK: - Variables
     var messages = [Message]()
-    var post: Post?
+    weak var post: Post?
     var messagesDictionary = [String : Message]()
     
     

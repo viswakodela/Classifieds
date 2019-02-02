@@ -10,14 +10,17 @@ import UIKit
 
 class AccountHeader: UICollectionReusableView {
     
+    //MARK: - Variables
     weak var accountController: AccountCollectionViewController?
-    weak var user: User?
+    var user: User?
     
+    //MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
     }
     
+    //MARK: - LAyout Properties
     let userImageView: UIImageView = {
         let iv = UIImageView()
         iv.translatesAutoresizingMaskIntoConstraints = false
@@ -55,6 +58,7 @@ class AccountHeader: UICollectionReusableView {
         return button
     }()
     
+    //MARK: - Methods
     func setupLayout() {
         
         backgroundColor = UIColor(red: 236/255, green: 113/255, blue: 110/255, alpha: 1)
