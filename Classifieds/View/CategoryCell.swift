@@ -61,7 +61,7 @@ class CategoryCell: UICollectionViewCell {
         containerView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         containerView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         containerView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        containerView.heightAnchor.constraint(equalToConstant: 120).isActive = true
+        containerView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
         containerView.addSubview(imageView)
         imageView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
@@ -70,7 +70,7 @@ class CategoryCell: UICollectionViewCell {
         imageView.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.75).isActive = true
         
         containerView.addSubview(labels)
-        labels.topAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
+        labels.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 0).isActive = true
         labels.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 0).isActive = true
         labels.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         labels.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true

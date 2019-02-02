@@ -75,6 +75,7 @@ class TabBarControllr: UITabBarController {
     
     func fetchCurrentUserfromFirebase() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
+        print(uid)
         
         Database.database().reference().child("users").child(uid).observe(.value) { [weak self] (snap) in
             guard let snapDict = snap.value as? [String : Any] else {return}

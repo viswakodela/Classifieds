@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Lottie
+//import Lottie
 import Firebase
 
 protocol PriceLabelDelegate: class {
@@ -29,7 +29,7 @@ class PriceLabelCell: UITableViewCell {
     weak var delegate: PriceLabelDelegate?
     
     //MARK: - Observers
-    var post: Post! {
+    weak var post: Post! {
         didSet {
             self.priceLabel.text = "$\(post.price ?? 0)"
             guard let date = post.date else {return}
@@ -47,7 +47,7 @@ class PriceLabelCell: UITableViewCell {
     //MARK: - Layout Properties
     let dateLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.font = UIFont.systemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.textAlignment = .center
@@ -93,8 +93,7 @@ class PriceLabelCell: UITableViewCell {
         stackView.topAnchor.constraint(equalTo: topAnchor, constant: 4).isActive = true
         stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4).isActive = true
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4).isActive = true
-        stackView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
+        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
     
     
@@ -145,7 +144,6 @@ extension PriceLabelCell {
             
             guard let postID = post.postId else {return}
             NotificationCenter.default.post(name: PriceLabelCell.priceLabelUnfavoritesKey, object: nil, userInfo: ["postID" : postID])
-            
             
             guard let data = try? JSONEncoder().encode(savedPosts) else {return}
             UserDefaults.standard.set(data, forKey: UserDefaults.savePostKey)

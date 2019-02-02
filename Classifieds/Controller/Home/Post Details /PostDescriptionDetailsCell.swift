@@ -15,7 +15,7 @@ class PostDescriptionDetailsCell: UITableViewCell {
         setupLayout()
     }
     
-    var post: Post! {
+    weak var post: Post! {
         didSet {
             self.descriptionView.text = post.description
         }

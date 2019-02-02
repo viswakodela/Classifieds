@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class Message: Equatable {
+struct Message: Equatable {
     static func == (lhs: Message, rhs: Message) -> Bool {
         return lhs.postID == rhs.postID && lhs.chatPartnerId() == rhs.chatPartnerId()
     }

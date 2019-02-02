@@ -11,10 +11,10 @@ import UIKit
 class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     
-    var homeController: HomeController?
+    weak var homeController: HomeController?
     private static let popularCategoryCell = "popularCategoryCell"
     
-    let categoriesArray = [CategoryModel(image: #imageLiteral(resourceName: "phones"), categoryName: "Phones & Tablets"),
+    let categoriesArray = [CategoryModel(image: #imageLiteral(resourceName: "558347-PKPBU8-581"), categoryName: "Phones & Tablets"),
                            CategoryModel(image: #imageLiteral(resourceName: "rooms"), categoryName: "Roomes/Beds"),
                            CategoryModel(image: #imageLiteral(resourceName: "bookmark-bowl-business-705675"), categoryName: "Laptops"),
                            CategoryModel(image: #imageLiteral(resourceName: "jobs"), categoryName: "Jobs & Services"),
@@ -33,15 +33,6 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.alwaysBounceHorizontal = true
         return collectionView
-    }()
-    
-    let categoryLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "  Popular Categories"
-        label.textColor = UIColor(red: 64/255, green: 63/255, blue: 63/255, alpha: 1)
-        label.font = UIFont.boldSystemFont(ofSize: 20)
-        return label
     }()
     
     let seperatorView: UIView = {
@@ -64,23 +55,16 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     }
     
     fileprivate func setupView() {
-        let stackView = UIStackView(arrangedSubviews: [categoryLabel, collectionVie])
+        let stackView = UIStackView(arrangedSubviews: [collectionVie])
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.spacing = 4
         
         addSubview(stackView)
-        categoryLabel.heightAnchor.constraint(equalToConstant: 26).isActive = true
         stackView.topAnchor.constraint(equalTo: topAnchor, constant: 0).isActive = true
         stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0).isActive = true
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        
-//        addSubview(seperatorView)
-//        seperatorView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
-//        seperatorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-//        seperatorView.heightAnchor.constraint(equalToConstant: 0.2).isActive = true
-//        seperatorView.topAnchor.constraint(equalTo: stackView.bottomAnchor).isActive = true
         
     }
     
@@ -109,7 +93,15 @@ class HomeHeader: UICollectionViewCell, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 150, height: 125)
+        return CGSize(width: 160, height: 150)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 8
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 8
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

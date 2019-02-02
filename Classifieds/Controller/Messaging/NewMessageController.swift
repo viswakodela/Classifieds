@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-import InputBarAccessoryView
+//import InputBarAccessoryView
 
 
 class NewMessageController: UITableViewController {
@@ -37,6 +37,7 @@ class NewMessageController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
+        navigationController?.hidesBarsOnSwipe = true
 //        navigationController?.navigationBar.prefersLargeTitles = false
     }
     

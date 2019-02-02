@@ -14,9 +14,6 @@ import Photos
 import MapKit
 
 
-class CustiomeImagePicker: UIImagePickerController {
-    var button: UIButton?
-}
 
 class NewPostController: UITableViewController {
     
@@ -124,12 +121,12 @@ class NewPostController: UITableViewController {
                     guard let image = image else {return}
                     thumbnail = image
                 }
-//                guard let data = thumbnail.jpegData(compressionQuality: 0.4) else {return}
-//                guard let newImage = UIImage(data: data) else {return}
+                //                guard let data = thumbnail.jpegData(compressionQuality: 0.4) else {return}
+                //                guard let newImage = UIImage(data: data) else {return}
                 self.photosArray.append(thumbnail)
             }
             
-            DispatchQueue.main.async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 
                 var buttonsArray = [self.image1Button, self.image2Button, self.image3Button, self.image4Button, self.image5Button]
                 
@@ -138,37 +135,49 @@ class NewPostController: UITableViewController {
                     for button in buttonsArray {
                         if let imageIndex = self.photosArray.firstIndex(of: image), let buttonIndex = buttonsArray.firstIndex(of: button) {
                             
+                            let hud = JGProgressHUD(style: .dark)
                             if imageIndex == buttonIndex {
-                                buttonsArray[buttonIndex].setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
                                 
-                                let count = self.photosArray.count
+                                DispatchQueue.main.async {
+                                    buttonsArray[buttonIndex].setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
                                 
-                                for element in 0...count - 1 {
-                                    buttonsArray.forEach({ (but) in
-                                        if element > count {
-                                            return
-                                        }
-                                        buttonsArray[element].isHidden = false
-                                    })
+                                    let count = self.photosArray.count
+                                
+                                    for element in 0...count - 1 {
+                                        buttonsArray.forEach({ (but) in
+                                            if element > count {
+                                                return
+                                            }
+                                            buttonsArray[element].isHidden = false
+                                        })
+                                    }
+                                    
+                                    self.image1Button.isEnabled = false
+                                    self.image2Button.isEnabled = false
+                                    self.image3Button.isEnabled = false
+                                    self.image4Button.isEnabled = false
+                                    self.image5Button.isEnabled = false
+                                    
+                                    hud.textLabel.text = "Uploading Image"
+                                    hud.show(in: self.view)
                                 }
                                 
                                 let fileName = UUID().uuidString
                                 let ref = Storage.storage().reference().child("postImages").child(fileName)
                                 
-                                let hud = JGProgressHUD(style: .dark)
-                                hud.textLabel.text = "Uploading Image"
-                                hud.show(in: self.view)
                                 
-                                self.image1Button.isEnabled = false
-                                self.image2Button.isEnabled = false
-                                self.image3Button.isEnabled = false
-                                self.image4Button.isEnabled = false
-                                self.image5Button.isEnabled = false
                                 
-                                guard let uploadData = image.jpegData(compressionQuality: 1) else {return}
                                 
-                                ref.putData(uploadData, metadata: nil, completion: { (metadata, err) in
-                                    hud.dismiss()
+                                
+                                
+                                guard let uploadData = image.jpegData(compressionQuality: 0.7) else {return}
+                                
+                                ref.putData(uploadData, metadata: nil, completion: { [weak self] (metadata, err) in
+                                    
+                                    DispatchQueue.main.async {
+                                        hud.dismiss()
+                                    }
+                                    guard let self = self else {return}
                                     if let error = err {
                                         self.showProgressHUD(error: error)
                                         return
@@ -211,7 +220,7 @@ class NewPostController: UITableViewController {
     
     @objc fileprivate func savePostToFirebase() {
         
-        if post.title == nil || post.description == nil || post.location == nil {
+        if post.title == nil || post.description == nil || post.location == nil || post.imageUrl1 == nil {
             let hud = JGProgressHUD(style: .dark)
             hud.textLabel.text = "Some fields are empty, Please check your entries"
             hud.show(in: self.view)
@@ -220,7 +229,7 @@ class NewPostController: UITableViewController {
         }
         
         guard let uid = user?.uid else {return}
-//        self.post.date = Date.timeIntervalSinceReferenceDate
+        //        self.post.date = Date.timeIntervalSinceReferenceDate
         let postId = UUID().uuidString
         self.post.postId = postId
         
@@ -246,7 +255,7 @@ class NewPostController: UITableViewController {
         
         guard let postLocation = post.location else {return}
         
-//        guard let location = MapSearchHelper.searchText(search: postLocation) else {return}
+        //        guard let location = MapSearchHelper.searchText(search: postLocation) else {return}
         
         // searchRequest is to get the location of the Post
         let searchRequest = MKLocalSearch.Request()
@@ -259,12 +268,10 @@ class NewPostController: UITableViewController {
             }
             guard let response = resp?.mapItems else{return}
             guard let city = response.first?.placemark.locality else {return}
-                
-                
-//          Database.database().reference().child("posts").child(postId).updateChildValues(postData)
-        Database.database().reference().child("cities").child(city).child(postId).updateChildValues(postData)
             
-        Database.database().reference().child("posts").child(uid).child(postId).updateChildValues(postData)
+        Database.database().reference().child("cities").child(city).childByAutoId().updateChildValues(postData)
+            
+        Database.database().reference().child("posts").child(uid).childByAutoId().updateChildValues(postData)
             
             self.dismiss(animated: true) {
                 NotificationCenter.default.post(name: NewPostController.newPostUpdateNotification, object: nil)
@@ -369,7 +376,7 @@ extension NewPostController {
             return cell
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: NewPostController.newPostPriceCategoryImagesCellId, for: indexPath) as! NewpostPriceCategoryLocationCell
-            cell.textField.addTarget(self, action: #selector(handleCategoryButton), for: .allEvents) 
+            cell.textField.addTarget(self, action: #selector(handleCategoryButton), for: .allEvents)
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: NewPostController.newPostPriceCategoryImagesCellId, for: indexPath) as! NewpostPriceCategoryLocationCell
@@ -401,9 +408,9 @@ extension NewPostController: CLLocationManagerDelegate {
     func checkPermission() {
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
             checkLocationAuthorization()
-            locationManager.startUpdatingLocation()
+            //            locationManager.startUpdatingLocation()
         } else {
             print("Check the location Services")
         }
@@ -412,8 +419,10 @@ extension NewPostController: CLLocationManagerDelegate {
     func checkLocationAuthorization() {
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways:
+            locationManager.requestLocation()
             break
         case .authorizedWhenInUse:
+            locationManager.requestLocation()
             // DO Map Stuff
             break
         case .notDetermined:
@@ -427,16 +436,16 @@ extension NewPostController: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.first else {return}
-        let geoCoder = CLGeocoder()
-        geoCoder.reverseGeocodeLocation(location) { (placemarks, err) in
-            self.currentLocation = placemarks?.first?.locality
-        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error.localizedDescription)
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         self.checkLocationAuthorization()
     }
+
 }
 
 //MARK: - Selector objective Functions

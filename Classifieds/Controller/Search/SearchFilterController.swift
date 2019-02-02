@@ -180,8 +180,6 @@ extension SearchFilterController {
             
             Database.database().reference().child("recent-citysearch").child(uid).updateChildValues(recentSearchData)
             
-//            Firestore.firestore().collection("recent-citysearch").document(uid).setData(recentSearchData)
-            
             self.delegate?.cityLocation(of: city)
             self.dismiss(animated: true)
         }

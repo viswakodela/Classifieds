@@ -18,7 +18,7 @@ class TitleForPostDetailCell: UITableViewCell {
         return label
     }()
     
-    var post: Post! {
+    weak var post: Post! {
         didSet {
             self.titleLabel.text = post.title
         }

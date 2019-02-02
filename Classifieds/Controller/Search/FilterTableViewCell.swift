@@ -10,7 +10,7 @@ import UIKit
 
 class FilterTableViewCell: UITableViewCell {
     
-    var post: Post! {
+    weak var post: Post! {
         didSet {
             guard let imageUrl = post.imageUrl1, let url = URL(string: imageUrl) else {return}
             imageview.sd_setImage(with: url)

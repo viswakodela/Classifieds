@@ -18,7 +18,6 @@ class MapPostsController: UIViewController {
     //MARK: - Variables
     var posts: [Post] = []
     var bottomViewTopAnchor: NSLayoutConstraint!
-    var postView: UIView!
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -37,6 +36,8 @@ class MapPostsController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        mapView.delegate = nil
+        locationManager.delegate = nil
         self.bottomView.removeFromSuperview()
         tabBarController?.tabBar.isHidden = false
     }
@@ -54,7 +55,7 @@ class MapPostsController: UIViewController {
     }()
     
     
-    //MARK: - BottomView Layout Properties
+    //MARK:  BottomView Layout Properties
     let imageview: UIImageView = {
         let iv = UIImageView()
         iv.layer.cornerRadius = 5
@@ -97,15 +98,17 @@ class MapPostsController: UIViewController {
     lazy var bottomView: UIView = {
         let bottomview = UIView()
         bottomview.translatesAutoresizingMaskIntoConstraints = false
-        bottomview.layer.cornerRadius = 5
+        bottomview.layer.cornerRadius = 3
         bottomview.clipsToBounds = true
-        bottomview.backgroundColor = .white
         
         let blurEffect = UIBlurEffect(style: .light)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = bottomview.bounds
-        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
         bottomview.addSubview(blurEffectView)
+        blurEffectView.topAnchor.constraint(equalTo: bottomview.topAnchor).isActive = true
+        blurEffectView.leadingAnchor.constraint(equalTo: bottomview.leadingAnchor).isActive = true
+        blurEffectView.trailingAnchor.constraint(equalTo: bottomview.trailingAnchor).isActive = true
+        blurEffectView.bottomAnchor.constraint(equalTo: bottomview.bottomAnchor).isActive = true
         
         bottomview.addSubview(imageview)
         imageview.topAnchor.constraint(equalTo: bottomview.topAnchor, constant: 8).isActive = true
@@ -136,7 +139,7 @@ class MapPostsController: UIViewController {
     //MARK:- Methods
     func setupLocation() {
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
     }
     
     func checkLocatinServices() {
@@ -152,6 +155,7 @@ class MapPostsController: UIViewController {
             mapView.showsUserLocation = true
             break
         case .authorizedAlways:
+            mapView.showsUserLocation = true
             break
         case .restricted:
             break
@@ -246,7 +250,7 @@ extension MapPostsController: CLLocationManagerDelegate {
 extension MapPostsController {
     
     func pullUp() {
-        performAnimation(constant: -bottomView.frame.size.height - 30)
+        performAnimation(constant: -bottomView.frame.size.height - 20)
     }
     
     func pullDown() {

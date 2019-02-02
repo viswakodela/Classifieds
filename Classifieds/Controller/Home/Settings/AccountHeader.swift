@@ -8,13 +8,19 @@
 
 import UIKit
 
-class AccountHeader: UICollectionViewCell {
+class AccountHeader: UICollectionReusableView {
     
+    //MARK: - Variables
+    weak var accountController: AccountCollectionViewController?
+    var user: User?
+    
+    //MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
     }
     
+    //MARK: - LAyout Properties
     let userImageView: UIImageView = {
         let iv = UIImageView()
         iv.translatesAutoresizingMaskIntoConstraints = false
@@ -44,6 +50,15 @@ class AccountHeader: UICollectionViewCell {
         return label
     }()
     
+    let numberofPosts: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(#imageLiteral(resourceName: "icons8-trolley-100").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(handleNumberOfPosts), for: .touchUpInside)
+        return button
+    }()
+    
+    //MARK: - Methods
     func setupLayout() {
         
         backgroundColor = UIColor(red: 236/255, green: 113/255, blue: 110/255, alpha: 1)
@@ -64,6 +79,17 @@ class AccountHeader: UICollectionViewCell {
         stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
         stackView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        addSubview(numberofPosts)
+        numberofPosts.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 8).isActive = true
+        numberofPosts.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+        numberofPosts.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8).isActive = true
+        numberofPosts.widthAnchor.constraint(equalToConstant: 80).isActive = true
+    }
+    
+    @objc func handleNumberOfPosts() {
+        guard let user = self.user else {return}
+        accountController?.pushToUserPosts(user: user)
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -15,7 +15,7 @@ class OtherPostsFromSellerCell: UITableViewCell {
     let otherPostsCell = "otherPostsCell"
     
     //MARK: - Variables
-    var postDetails: PostDetailsController?
+    weak var postDetails: PostDetailsController?
     var posts = [Post]()
     
     
@@ -28,7 +28,7 @@ class OtherPostsFromSellerCell: UITableViewCell {
     }
     
     //MARK: - Property Observer
-    var post: Post! {
+    weak var post: Post! {
         didSet {
             guard let sellerID = post.uid else {return}
             
@@ -79,19 +79,18 @@ class OtherPostsFromSellerCell: UITableViewCell {
     
     //MARK: - Methods
     func setupLayout() {
-        
         addSubview(otherPostsLabel)
-        otherPostsLabel.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        otherPostsLabel.topAnchor.constraint(equalTo: topAnchor, constant: 4).isActive = true
         otherPostsLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
         otherPostsLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
-        otherPostsLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        otherPostsLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
         
         addSubview(collectionView)
-        collectionView.topAnchor.constraint(equalTo: otherPostsLabel.bottomAnchor, constant: 4).isActive = true
-        collectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
-        collectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
-        collectionView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        collectionView.topAnchor.constraint(equalTo: otherPostsLabel.bottomAnchor, constant: 0).isActive = true
+        collectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4).isActive = true
+        collectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4).isActive = true
+        collectionView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 4).isActive = true
         
     }
     
@@ -108,10 +107,16 @@ extension OtherPostsFromSellerCell: UICollectionViewDelegate, UICollectionViewDa
         return posts.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 4
+    }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: otherPostsCell, for: indexPath) as! PostImageCell
         let post = self.posts[indexPath.row]
         cell.image = post.imageUrl1
+        cell.layer.cornerRadius = 4
+        cell.clipsToBounds = true
         return cell
     }
     

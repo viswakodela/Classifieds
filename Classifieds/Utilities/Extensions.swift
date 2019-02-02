@@ -51,15 +51,15 @@ extension Date {
         
         if secondsAgo < minute {
             quotient =  secondsAgo
-            unit = "seconds"
+            unit = "sec"
         }
         else if secondsAgo < hour{
             quotient =  secondsAgo / minute
-            unit = "minute"
+            unit = "min"
         }
         else if secondsAgo < day {
             quotient = secondsAgo / hour
-            unit = "hour"
+            unit = "h"
         }
         else if secondsAgo < week {
             quotient = secondsAgo / day
@@ -78,7 +78,7 @@ extension Date {
             unit = "year"
         }
         
-        return "\(quotient) \(unit)\(quotient == 1 ? "" : "s") ago"
+        return "\(quotient)\(unit) ago"
         
     }
     
@@ -124,3 +124,15 @@ public extension UISearchBar {
         tf.textColor = color
     }
 }
+
+
+extension UIApplication {
+    var statusBarView: UIView? {
+        if responds(to: Selector(("statusBar"))) {
+            return value(forKey: "statusBar") as? UIView
+        }
+        return nil
+    }
+}
+
+

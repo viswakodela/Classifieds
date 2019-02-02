@@ -16,7 +16,13 @@ class FilteredTableView: UITableViewController {
     private static let tableCell = "tableCell"
     
     //MARK: - Variables
-    var posts = [Post]()
+    var posts = [Post]() {
+        didSet {
+            self.filteredPosts = posts
+            self.navigationItem.title = "Your posts"
+            self.tableView.reloadData()
+        }
+    }
     var users = [User]()
     var filteredPosts = [Post]()
     

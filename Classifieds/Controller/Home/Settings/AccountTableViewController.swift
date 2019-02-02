@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import JGProgressHUD
 
-class AccountTableViewController: UICollectionViewController {
+class AccountCollectionViewController: UICollectionViewController {
     
     //MARK: - Cell Id's
     private static let accountHeaderCell = "accountHeaderCell"
@@ -39,9 +39,9 @@ class AccountTableViewController: UICollectionViewController {
     }
     
     func collectionViewSetup() {
-        collectionView.register(AccountHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: AccountTableViewController.accountHeaderCell)
-        collectionView.register(AccountSettingsCell.self, forCellWithReuseIdentifier: AccountTableViewController.collectionCell)
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: AccountTableViewController.logOutButtonCell)
+        collectionView.register(AccountHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: AccountCollectionViewController.accountHeaderCell)
+        collectionView.register(AccountSettingsCell.self, forCellWithReuseIdentifier: AccountCollectionViewController.collectionCell)
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: AccountCollectionViewController.logOutButtonCell)
         collectionView.backgroundColor = .white
         collectionView.alwaysBounceVertical = true
         collectionView.keyboardDismissMode = .interactive
@@ -54,20 +54,20 @@ class AccountTableViewController: UICollectionViewController {
 }
 
 //MARK: - CollectionView Methods
-extension AccountTableViewController: UICollectionViewDelegateFlowLayout {
+extension AccountCollectionViewController: UICollectionViewDelegateFlowLayout {
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
-        let headerCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: AccountTableViewController.accountHeaderCell, for: indexPath) as! AccountHeader
+        let headerCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: AccountCollectionViewController.accountHeaderCell, for: indexPath) as! AccountHeader
         if let imageUrl = self.user?.profileImage, let url = URL(string: imageUrl) {
             headerCell.userImageView.sd_setImage(with: url)
         }
+        headerCell.accountController = self
         headerCell.emailLabel.text = self.user?.email
         headerCell.userNameLabel.text = self.user?.name
         self.userImageView = headerCell.userImageView
         self.userImageView?.isUserInteractionEnabled = true
         self.userImageView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleImagePicker)))
-        
         return headerCell
     }
     
@@ -80,7 +80,7 @@ extension AccountTableViewController: UICollectionViewDelegateFlowLayout {
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AccountTableViewController.collectionCell, for: indexPath) as! AccountSettingsCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AccountCollectionViewController.collectionCell, for: indexPath) as! AccountSettingsCell
         cell.backgroundColor = .white
         
         if indexPath.item == 0 {
@@ -92,7 +92,7 @@ extension AccountTableViewController: UICollectionViewDelegateFlowLayout {
             cell.textField.text = self.user?.email
             cell.textField.isEnabled = false
         } else {
-            let logOutButtonCell = collectionView.dequeueReusableCell(withReuseIdentifier: AccountTableViewController.logOutButtonCell, for: indexPath)
+            let logOutButtonCell = collectionView.dequeueReusableCell(withReuseIdentifier: AccountCollectionViewController.logOutButtonCell, for: indexPath)
             self.logOutButton = UIButton(type: .system)
             logOutButton?.translatesAutoresizingMaskIntoConstraints = false
             logOutButton?.setTitle("LogOut", for: .normal)
@@ -124,10 +124,28 @@ extension AccountTableViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 10
     }
+    
+    func pushToUserPosts() {
+        let userPosts = FilteredTableView()
+        var posts = [Post]()
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        Database.database().reference().child("posts").child(uid).observe(.value) { [weak self] (snap) in
+            guard let self = self else {return}
+            guard let snapDict = snap.value as? [String : Any] else {return}
+            snapDict.forEach({ (key, value) in
+                
+                guard let postDictionary = value as? [String : Any] else {return}
+                let post = Post(dictionary: postDictionary)
+                posts.append(post)
+            })
+            userPosts.posts = posts
+            self.navigationController?.pushViewController(userPosts, animated: true)
+        }
+    }
 }
 
 //MARK: - Objective Methods
-extension AccountTableViewController {
+extension AccountCollectionViewController {
     
     @objc func handleDismiss() {
         self.user = nil
@@ -161,7 +179,7 @@ extension AccountTableViewController {
     @objc func handleSaveUser() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let changedValues: [String : Any] = ["fullName" :  user?.name,
-                                             "profileImage" : user?.profileImage] as [String : Any]
+                                             "profileImage" : user?.profileImage]
         Database.database().reference().child("users").child(uid).updateChildValues(changedValues)
         
         self.dismiss(animated: true) {
@@ -172,7 +190,7 @@ extension AccountTableViewController {
 }
 
 //MARK: -  ImagePicker Delegate Methods
-extension AccountTableViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension AccountCollectionViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let originalImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage

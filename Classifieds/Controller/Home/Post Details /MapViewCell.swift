@@ -11,14 +11,14 @@ import MapKit
 
 class MapViewCell: UITableViewCell {
     
-    var mapView: MKMapView? {
+    weak var mapView: MKMapView? {
         didSet {
             guard let mapview = self.mapView else {return}
             addSubview(mapview)
-            mapview.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 4).isActive = true
-            mapview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-            mapview.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-            mapview.heightAnchor.constraint(equalToConstant: 150).isActive = true
+            mapview.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 2).isActive = true
+            mapview.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4).isActive = true
+            mapview.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4).isActive = true
+            mapview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         }
     }
     
@@ -29,7 +29,7 @@ class MapViewCell: UITableViewCell {
     }
     
     //MARK: - Property Observer
-    var post: Post! {
+    weak var post: Post! {
         didSet {
             mapViewAnnotationStuff()
         }
@@ -50,12 +50,10 @@ class MapViewCell: UITableViewCell {
     func setupLayout() {
         
         addSubview(locationLabel)
-        locationLabel.topAnchor.constraint(equalTo: topAnchor,constant: 10).isActive = true
-        locationLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
+        locationLabel.topAnchor.constraint(equalTo: topAnchor, constant: 0).isActive = true
+        locationLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4).isActive = true
         locationLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         locationLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        
         
     }
     
@@ -76,26 +74,13 @@ class MapViewCell: UITableViewCell {
             
             guard let mapview = self.mapView else {return}
             mapview.addAnnotation(annotation)
-            
+            mapview.showsUserLocation = false
             mapview.showAnnotations(mapview.annotations, animated: false)
         }
     }
     
-//    func clearMapViewMemoryLeak() {
-//        switch mapview.mapType {
-//        case .hybrid :
-//            self.mapview.mapType = .standard
-//            break
-//        case .standard:
-//            self.mapview.mapType = .hybrid
-//        default:
-//            break
-//        }
-//    }
-    
     deinit {
         print("MapCell Deinitialized")
-//        clearMapViewMemoryLeak()
     }
     
     required init?(coder aDecoder: NSCoder) {
